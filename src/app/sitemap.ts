@@ -1,12 +1,14 @@
 import { supabase } from '@/lib/supabase';
+import { getAllBlogSlugs } from '@/lib/blog';
 import type { MetadataRoute } from 'next';
 
 const BASE_URL = 'https://hireanypro.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [{ data: listings }, { data: categories }] = await Promise.all([
+  const [{ data: listings }, { data: categories }, blogSlugs] = await Promise.all([
     supabase.from('listings').select('slug, updated_at'),
     supabase.from('categories').select('slug'),
+    getAllBlogSlugs(),
   ]);
 
   const staticPages: MetadataRoute.Sitemap = [
@@ -29,5 +31,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [...staticPages, ...listingPages, ...categoryPages];
+  const blogPages: MetadataRoute.Sitemap = [
+    { url: `${BASE_URL}/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
+    ...blogSlugs.map((b) => ({
+      url: `${BASE_URL}/blog/${b.slug}`,
+      lastModified: b.updated_at ? new Date(b.updated_at) : new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    })),
+  ];
+
+  return [...staticPages, ...listingPages, ...categoryPages, ...blogPages];
 }

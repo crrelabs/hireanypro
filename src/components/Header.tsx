@@ -26,6 +26,9 @@ export default function Header() {
             <Link href="/search" className="text-gray-600 hover:text-blue-800 text-sm font-medium transition-colors">
               Search
             </Link>
+            <Link href="/blog" className="text-gray-600 hover:text-blue-800 text-sm font-medium transition-colors">
+              Blog
+            </Link>
             <Link href="/pricing" className="text-gray-600 hover:text-blue-800 text-sm font-medium transition-colors">
               Pricing
             </Link>
@@ -60,6 +63,9 @@ export default function Header() {
               </Link>
               <Link href="/search" className="text-gray-600 hover:text-blue-800 px-2 py-2 text-sm font-medium" onClick={() => setMobileOpen(false)}>
                 Search
+              </Link>
+              <Link href="/blog" className="text-gray-600 hover:text-blue-800 px-2 py-2 text-sm font-medium" onClick={() => setMobileOpen(false)}>
+                Blog
               </Link>
               <Link href="/pricing" className="text-gray-600 hover:text-blue-800 px-2 py-2 text-sm font-medium" onClick={() => setMobileOpen(false)}>
                 Pricing
