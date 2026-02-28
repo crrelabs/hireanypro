@@ -10,9 +10,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const { data: category } = await supabase.from('categories').select('name').eq('slug', slug).single();
   if (!category) return { title: 'Category Not Found' };
+  const title = `${category.name} in Miami-Dade County | HireAnyPro`;
+  const description = `Find top-rated ${category.name.toLowerCase()} professionals in Miami-Dade County. Compare ratings, read reviews, and request free quotes on HireAnyPro.`;
   return {
-    title: `${category.name} Services — HireAnyPro`,
-    description: `Find top-rated ${category.name.toLowerCase()} professionals in Miami-Dade County.`,
+    title,
+    description,
+    openGraph: { title, description, url: `https://hireanypro.com/category/${slug}`, siteName: 'HireAnyPro' },
   };
 }
 

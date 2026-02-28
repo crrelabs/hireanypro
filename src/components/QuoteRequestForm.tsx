@@ -1,0 +1,81 @@
+'use client';
+
+import { useState } from 'react';
+import { supabase } from '@/lib/supabase';
+
+export default function QuoteRequestForm({ listingId, businessName }: { listingId: string; businessName: string }) {
+  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name || !form.email || !form.message) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+    setStatus('submitting');
+    const { error } = await supabase.from('inquiries').insert({
+      listing_id: listingId,
+      name: form.name,
+      email: form.email,
+      phone: form.phone || null,
+      message: form.message,
+    });
+    if (error) {
+      setStatus('error');
+    } else {
+      setStatus('success');
+      setForm({ name: '', email: '', phone: '', message: '' });
+    }
+  };
+
+  if (status === 'success') {
+    return (
+      <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
+        <span className="text-3xl mb-2 block">✅</span>
+        <h3 className="font-semibold text-green-800 text-lg">Quote Request Sent!</h3>
+        <p className="text-green-700 text-sm mt-1">{businessName} will get back to you soon.</p>
+        <button onClick={() => setStatus('idle')} className="mt-4 text-sm text-blue-800 hover:underline">
+          Send another request
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <h2 className="font-semibold text-gray-900 text-lg mb-1">Get a Free Quote from {businessName}</h2>
+      <p className="text-gray-500 text-sm mb-4">Describe your project and get a response fast.</p>
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <input
+          type="text" placeholder="Your Name *" required value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-800 focus:border-transparent outline-none"
+        />
+        <input
+          type="email" placeholder="Email Address *" required value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-800 focus:border-transparent outline-none"
+        />
+        <input
+          type="tel" placeholder="Phone (optional)" value={form.phone}
+          onChange={(e) => setForm({ ...form, phone: e.target.value })}
+          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-800 focus:border-transparent outline-none"
+        />
+        <textarea
+          placeholder="Describe the work you need done *" required rows={4} value={form.message}
+          onChange={(e) => setForm({ ...form, message: e.target.value })}
+          className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-800 focus:border-transparent outline-none resize-none"
+        />
+        {status === 'error' && <p className="text-red-600 text-sm">Something went wrong. Please try again.</p>}
+        <button
+          type="submit" disabled={status === 'submitting'}
+          className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold py-3 rounded-lg transition-colors text-sm"
+        >
+          {status === 'submitting' ? 'Sending...' : '📩 Request a Free Quote'}
+        </button>
+      </form>
+    </div>
+  );
+}
