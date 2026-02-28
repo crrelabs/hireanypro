@@ -26,6 +26,12 @@ export default function Header() {
             <Link href="/search" className="text-gray-600 hover:text-blue-800 text-sm font-medium transition-colors">
               Search
             </Link>
+            <Link href="/pricing" className="text-gray-600 hover:text-blue-800 text-sm font-medium transition-colors">
+              Pricing
+            </Link>
+            <Link href="/claim" className="text-gray-600 hover:text-blue-800 text-sm font-medium transition-colors">
+              For Business Owners
+            </Link>
             <Link href="/search" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
               Find a Pro
             </Link>
@@ -54,6 +60,12 @@ export default function Header() {
               </Link>
               <Link href="/search" className="text-gray-600 hover:text-blue-800 px-2 py-2 text-sm font-medium" onClick={() => setMobileOpen(false)}>
                 Search
+              </Link>
+              <Link href="/pricing" className="text-gray-600 hover:text-blue-800 px-2 py-2 text-sm font-medium" onClick={() => setMobileOpen(false)}>
+                Pricing
+              </Link>
+              <Link href="/claim" className="text-gray-600 hover:text-blue-800 px-2 py-2 text-sm font-medium" onClick={() => setMobileOpen(false)}>
+                For Business Owners
               </Link>
               <Link href="/search" className="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium text-center" onClick={() => setMobileOpen(false)}>
                 Find a Pro

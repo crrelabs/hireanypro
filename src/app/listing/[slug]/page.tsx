@@ -252,9 +252,9 @@ export default async function ListingPage({ params }: Props) {
               {/* Claim CTA */}
               {!listing.claimed && (
                 <div className="mt-6 pt-4 border-t border-gray-100">
-                  <button className="w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors text-sm">
+                  <a href={`/claim?listing=${listing.slug}`} className="block w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors text-sm text-center">
                     🏢 Claim This Listing
-                  </button>
+                  </a>
                   <p className="text-xs text-gray-400 text-center mt-2">Are you the owner? Claim to manage this page.</p>
                 </div>
               )}
