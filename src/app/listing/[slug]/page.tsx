@@ -65,10 +65,12 @@ function buildJsonLd(listing: Record<string, unknown>) {
       },
     } : {}),
     ...(hours ? {
-      openingHoursSpecification: Object.entries(hours).filter(([, v]) => v && v !== 'Closed').map(([day, h]) => {
-        const dayMap: Record<string, string> = { mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday', fri: 'Friday', sat: 'Saturday', sun: 'Sunday' };
-        const parts = h.split('-').map(s => s.trim());
-        return { '@type': 'OpeningHoursSpecification', dayOfWeek: dayMap[day], opens: parts[0] || '', closes: parts[1] || '' };
+      openingHoursSpecification: Object.entries(hours).filter(([, v]) => v != null).map(([day, h]) => {
+        const dayMap: Record<string, string> = { monday: 'Monday', tuesday: 'Tuesday', wednesday: 'Wednesday', thursday: 'Thursday', friday: 'Friday', saturday: 'Saturday', sunday: 'Sunday' };
+        const hObj = typeof h === 'object' && h !== null ? h as { open?: string; close?: string } : null;
+        const opens = hObj?.open || (typeof h === 'string' ? h.split('-')[0]?.trim() : '') || '';
+        const closes = hObj?.close || (typeof h === 'string' ? h.split('-')[1]?.trim() : '') || '';
+        return { '@type': 'OpeningHoursSpecification', dayOfWeek: dayMap[day] || day, opens, closes };
       }),
     } : {}),
     priceRange: '$$',
@@ -105,7 +107,7 @@ export default async function ListingPage({ params }: Props) {
     .order('created_at', { ascending: false });
 
   const hours = listing.hours as Record<string, string> | null;
-  const dayLabels: Record<string, string> = { mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday', fri: 'Friday', sat: 'Saturday', sun: 'Sunday' };
+  const dayLabels: Record<string, string> = { monday: 'Monday', tuesday: 'Tuesday', wednesday: 'Wednesday', thursday: 'Thursday', friday: 'Friday', saturday: 'Saturday', sunday: 'Sunday' };
   const jsonLdItems = buildJsonLd(listing);
   const isPaid = listing.tier === 'pro' || listing.tier === 'featured';
 
@@ -282,7 +284,7 @@ export default async function ListingPage({ params }: Props) {
                     {Object.entries(dayLabels).map(([key, label]) => (
                       <div key={key} className="flex justify-between">
                         <span className="text-gray-500">{label}</span>
-                        <span className="text-gray-900 font-medium">{hours[key] || 'Closed'}</span>
+                        <span className="text-gray-900 font-medium">{hours[key] && typeof hours[key] === 'object' ? `${(hours[key] as {open?: string}).open || ''} - ${(hours[key] as {close?: string}).close || ''}` : (hours[key] || 'Closed')}</span>
                       </div>
                     ))}
                   </div>
