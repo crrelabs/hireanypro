@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const { data: listing } = await supabase
     .from('listings')
-    .select('name, description, city, state, phone, rating, review_count, categories(name)')
+    .select('name, description, city, state, phone, rating, review_count, tier, claimed, categories(name)')
     .eq('slug', slug)
     .single();
 
@@ -19,8 +19,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const categories = listing.categories as unknown as { name: string } | null;
   const cat = categories?.name || 'Service Provider';
+  const metaIsPaid = listing.tier === 'pro' || listing.tier === 'featured';
   const title = `${listing.name} - ${cat} in ${listing.city}, FL | HireAnyPro`;
-  const description = `${listing.name} is a trusted ${cat.toLowerCase()} in ${listing.city}, FL. Rated ${listing.rating}/5 from ${listing.review_count} reviews.${listing.phone ? ` Call ${listing.phone} for a free quote.` : ''}`;
+  const description = `${listing.name} is a trusted ${cat.toLowerCase()} in ${listing.city}, FL. Rated ${listing.rating}/5 from ${listing.review_count} reviews.${metaIsPaid && listing.phone ? ` Call ${listing.phone} for a free quote.` : ''}`;
 
   return {
     title,
@@ -106,6 +107,7 @@ export default async function ListingPage({ params }: Props) {
   const hours = listing.hours as Record<string, string> | null;
   const dayLabels: Record<string, string> = { mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday', fri: 'Friday', sat: 'Saturday', sun: 'Sunday' };
   const jsonLdItems = buildJsonLd(listing);
+  const isPaid = listing.tier === 'pro' || listing.tier === 'featured';
 
   return (
     <>
@@ -199,40 +201,78 @@ export default async function ListingPage({ params }: Props) {
           <div className="space-y-6">
             {/* Contact Card */}
             <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-24">
-              <h2 className="font-semibold text-gray-900 mb-4">Contact Info</h2>
-              <div className="space-y-3 text-sm">
-                {listing.phone && (
-                  <a href={`tel:${listing.phone}`} className="flex items-center gap-3 text-gray-700 hover:text-blue-800">
-                    <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                    {listing.phone}
-                  </a>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-semibold text-gray-900">Contact Info</h2>
+                {isPaid && (
+                  <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-green-200">
+                    ✅ Verified Business
+                  </span>
                 )}
-                {listing.email && (
-                  <a href={`mailto:${listing.email}`} className="flex items-center gap-3 text-gray-700 hover:text-blue-800">
-                    <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                    {listing.email}
-                  </a>
-                )}
-                {listing.website && (
-                  <a href={listing.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-blue-800">
-                    <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                    </svg>
-                    Website
-                  </a>
-                )}
-                <div className="flex items-start gap-3 text-gray-700">
-                  <svg className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <span>{listing.address}<br />{listing.city}, {listing.state} {listing.zip}</span>
-                </div>
               </div>
+
+              {isPaid ? (
+                <div className="space-y-3 text-sm">
+                  {listing.phone && (
+                    <a href={`tel:${listing.phone}`} className="flex items-center gap-3 text-gray-700 hover:text-blue-800">
+                      <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                      {listing.phone}
+                    </a>
+                  )}
+                  {listing.email && (
+                    <a href={`mailto:${listing.email}`} className="flex items-center gap-3 text-gray-700 hover:text-blue-800">
+                      <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      {listing.email}
+                    </a>
+                  )}
+                  {listing.website && (
+                    <a href={listing.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-blue-800">
+                      <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                      </svg>
+                      Website
+                    </a>
+                  )}
+                  <div className="flex items-start gap-3 text-gray-700">
+                    <svg className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>{listing.address}<br />{listing.city}, {listing.state} {listing.zip}</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {/* Blurred placeholder for contact info */}
+                  <div className="relative rounded-lg bg-gray-50 p-4 overflow-hidden">
+                    <div className="blur-sm select-none pointer-events-none space-y-2 text-sm text-gray-400" aria-hidden="true">
+                      <p>📞 (305) 555-0123</p>
+                      <p>✉️ info@example.com</p>
+                      <p>🌐 www.example.com</p>
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-50/80">
+                      <p className="text-sm text-gray-600 font-medium text-center px-4">
+                        📞 Contact info available when this business claims their profile
+                      </p>
+                    </div>
+                  </div>
+                  {/* Address still visible */}
+                  <div className="flex items-start gap-3 text-gray-700 text-sm">
+                    <svg className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>{listing.address}<br />{listing.city}, {listing.state} {listing.zip}</span>
+                  </div>
+                  <a href={`/claim?listing=${listing.slug}`} className="block w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors text-sm text-center mt-4">
+                    🏢 Are you the owner? Claim this listing
+                  </a>
+                  <p className="text-xs text-gray-400 text-center">Claim your profile to show contact info and receive leads directly.</p>
+                </div>
+              )}
 
               {/* Hours */}
               {hours && (
@@ -249,8 +289,8 @@ export default async function ListingPage({ params }: Props) {
                 </div>
               )}
 
-              {/* Claim CTA */}
-              {!listing.claimed && (
+              {/* Claim CTA for paid listings that somehow aren't claimed */}
+              {isPaid && !listing.claimed && (
                 <div className="mt-6 pt-4 border-t border-gray-100">
                   <a href={`/claim?listing=${listing.slug}`} className="block w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors text-sm text-center">
                     🏢 Claim This Listing
@@ -261,7 +301,7 @@ export default async function ListingPage({ params }: Props) {
             </div>
 
             {/* Quote Request Form */}
-            <QuoteRequestForm listingId={listing.id} businessName={listing.name} />
+            <QuoteRequestForm listingId={listing.id} businessName={listing.name} tier={listing.tier} businessEmail={listing.email} />
           </div>
         </div>
       </div>

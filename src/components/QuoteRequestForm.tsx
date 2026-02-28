@@ -3,9 +3,19 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
-export default function QuoteRequestForm({ listingId, businessName }: { listingId: string; businessName: string }) {
+interface QuoteRequestFormProps {
+  listingId: string;
+  businessName: string;
+  tier?: string;
+  businessEmail?: string | null;
+}
+
+export default function QuoteRequestForm({ listingId, businessName, tier = 'free', businessEmail }: QuoteRequestFormProps) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+
+  const isPaid = tier === 'pro' || tier === 'featured';
+  const routedTo = isPaid && businessEmail ? businessEmail : 'iris@hireanypro.com';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +31,7 @@ export default function QuoteRequestForm({ listingId, businessName }: { listingI
       email: form.email,
       phone: form.phone || null,
       message: form.message,
+      routed_to: routedTo,
     });
     if (error) {
       setStatus('error');
@@ -35,7 +46,9 @@ export default function QuoteRequestForm({ listingId, businessName }: { listingI
       <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
         <span className="text-3xl mb-2 block">✅</span>
         <h3 className="font-semibold text-green-800 text-lg">Quote Request Sent!</h3>
-        <p className="text-green-700 text-sm mt-1">{businessName} will get back to you soon.</p>
+        <p className="text-green-700 text-sm mt-1">
+          {isPaid ? `${businessName} will get back to you soon.` : 'Your request has been forwarded. We\'ll connect you with this business shortly.'}
+        </p>
         <button onClick={() => setStatus('idle')} className="mt-4 text-sm text-blue-800 hover:underline">
           Send another request
         </button>
@@ -46,7 +59,11 @@ export default function QuoteRequestForm({ listingId, businessName }: { listingI
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6">
       <h2 className="font-semibold text-gray-900 text-lg mb-1">Get a Free Quote from {businessName}</h2>
-      <p className="text-gray-500 text-sm mb-4">Describe your project and get a response fast.</p>
+      <p className="text-gray-500 text-sm mb-4">
+        {isPaid
+          ? `Your request goes directly to ${businessName}`
+          : 'Your request will be forwarded to this business'}
+      </p>
       <form onSubmit={handleSubmit} className="space-y-3">
         <input
           type="text" placeholder="Your Name *" required value={form.name}
