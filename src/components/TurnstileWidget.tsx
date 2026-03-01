@@ -9,7 +9,7 @@ interface TurnstileWidgetProps {
 }
 
 // Site key is public (rendered client-side) — safe to hardcode
-const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAAACkczgvp1hdo8E83';
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAAACkd47GT7Drz4bsf';
 
 export default function TurnstileWidget({ onSuccess, onError }: TurnstileWidgetProps) {
   return (
