@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { verifyTurnstile } from '@/lib/turnstile';
 import { isRateLimited, getClientIp } from '@/lib/rate-limit';
 import { isBot } from '@/lib/honeypot';
+import { notifyNewClaim } from '@/lib/notify';
 import crypto from 'crypto';
 
 const supabase = createClient(
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest) {
     // Check listing exists
     const { data: listing } = await supabase
       .from('listings')
-      .select('id, claimed')
+      .select('id, claimed, name, slug')
       .eq('id', listingId)
       .single();
 
@@ -99,6 +100,8 @@ export async function POST(req: NextRequest) {
         });
       }
 
+      // Notify Carlos
+      notifyNewClaim(listing.name || 'Unknown Business', email, listing.slug || '').catch(() => {});
       return NextResponse.json({ success: true, profileId: profile?.id, autoVerified: true });
     }
 

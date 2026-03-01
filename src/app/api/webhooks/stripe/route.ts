@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { notifyUpgrade } from '@/lib/notify';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -103,6 +104,12 @@ export async function POST(req: NextRequest) {
           .from('listings')
           .update({ tier: plan, claimed: true })
           .eq('id', listingId);
+
+        // Notify Carlos of upgrade
+        const { data: upgradedListing } = await supabase.from('listings').select('name, slug').eq('id', listingId).single();
+        if (upgradedListing) {
+          notifyUpgrade(upgradedListing.name, email, plan, upgradedListing.slug).catch(() => {});
+        }
       }
     }
 
