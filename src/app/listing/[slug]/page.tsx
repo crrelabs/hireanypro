@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import StarRating from '@/components/StarRating';
 import MapViewWrapper from '@/components/MapViewWrapper';
 import QuoteRequestForm from '@/components/QuoteRequestForm';
+import ReviewForm from '@/components/ReviewForm';
 import type { Metadata } from 'next';
 
 type Props = { params: Promise<{ slug: string }> };
@@ -150,9 +151,17 @@ export default async function ListingPage({ params }: Props) {
                     </div>
                   </div>
                   <div className="flex items-center gap-3 mt-3">
-                    <StarRating rating={listing.rating} size="md" />
-                    <span className="font-semibold text-gray-900">{listing.rating}</span>
-                    <span className="text-gray-400 text-sm">({listing.review_count} reviews)</span>
+                    {listing.rating ? (
+                      <>
+                        <StarRating rating={listing.rating} size="md" />
+                        <span className="font-semibold text-gray-900">{listing.rating}</span>
+                        {listing.review_count > 0 && (
+                          <span className="text-gray-400 text-sm">on Google · {listing.review_count} reviews</span>
+                        )}
+                      </>
+                    ) : (
+                      <span className="text-gray-400 text-sm">New listing</span>
+                    )}
                   </div>
                 </div>
                 {listing.featured && (
@@ -173,9 +182,18 @@ export default async function ListingPage({ params }: Props) {
 
             {/* Reviews */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Reviews ({reviews?.length || 0})</h2>
+              {listing.rating && listing.review_count > 0 && (
+                <div className="flex items-center gap-2 mb-4 pb-4 border-b border-gray-100">
+                  <StarRating rating={listing.rating} size="md" />
+                  <span className="font-semibold text-gray-900">{listing.rating}</span>
+                  <span className="text-gray-500 text-sm">on Google · {listing.review_count} reviews</span>
+                </div>
+              )}
+              <h2 className="text-xl font-bold text-gray-900 mb-4">
+                HireAnyPro Reviews {reviews && reviews.length > 0 ? `(${reviews.length})` : ''}
+              </h2>
               {reviews && reviews.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-4 mb-6">
                   {reviews.map((review) => (
                     <div key={review.id} className="border-b border-gray-100 last:border-0 pb-4 last:pb-0">
                       <div className="flex items-center gap-3 mb-2">
@@ -186,6 +204,9 @@ export default async function ListingPage({ params }: Props) {
                           <p className="font-medium text-gray-900 text-sm">{review.author_name}</p>
                           <div className="flex items-center gap-2">
                             <StarRating rating={review.rating} />
+                            <span className="text-xs text-gray-400">
+                              {new Date(review.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -194,8 +215,12 @@ export default async function ListingPage({ params }: Props) {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 text-sm">No reviews yet.</p>
+                <p className="text-gray-500 text-sm mb-6">Be the first to review {listing.name}!</p>
               )}
+              <div className="border-t border-gray-100 pt-6">
+                <h3 className="font-semibold text-gray-900 mb-4">Leave a Review</h3>
+                <ReviewForm listingId={listing.id} businessName={listing.name} />
+              </div>
             </div>
           </div>
 

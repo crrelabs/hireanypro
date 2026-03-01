@@ -35,11 +35,17 @@ export default function ListingCard({ listing }: { listing: Listing & { categori
         {listing.categories && (
           <p className="text-xs text-orange-600 font-medium mt-1">{listing.categories.name}</p>
         )}
-        <div className="flex items-center gap-2 mt-2">
-          <StarRating rating={listing.rating} />
-          <span className="text-sm text-gray-600">{listing.rating}</span>
-          <span className="text-xs text-gray-400">({listing.review_count})</span>
-        </div>
+        {listing.rating ? (
+          <div className="flex items-center gap-2 mt-2">
+            <StarRating rating={listing.rating} />
+            <span className="text-sm text-gray-600">{listing.rating}</span>
+            {listing.review_count > 0 && (
+              <span className="text-xs text-gray-400">({listing.review_count})</span>
+            )}
+          </div>
+        ) : (
+          <p className="text-xs text-gray-400 mt-2">New listing</p>
+        )}
         {isPaid && listing.phone && (
           <p className="text-sm text-gray-600 mt-2 flex items-center gap-1">
             <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
