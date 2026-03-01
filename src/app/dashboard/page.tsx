@@ -198,9 +198,11 @@ function DashboardPage() {
                 }`}>
                   {l.tier}
                 </span>
-                <Link href={`/dashboard/edit/${l.id}?email=${encodeURIComponent(email)}`} className="text-sm bg-orange-500 text-white px-4 py-1.5 rounded-lg hover:bg-orange-600 font-medium transition-colors">
-                  Edit
-                </Link>
+                {(l.tier === 'pro' || l.tier === 'featured') && (
+                  <Link href={`/dashboard/edit/${l.id}?email=${encodeURIComponent(email)}`} className="text-sm bg-orange-500 text-white px-4 py-1.5 rounded-lg hover:bg-orange-600 font-medium transition-colors">
+                    Edit
+                  </Link>
+                )}
                 {l.tier === 'free' && (
                   <Link href={`/pricing?listing=${l.id}`} className="text-sm bg-blue-800 text-white px-4 py-1.5 rounded-lg hover:bg-blue-700 font-medium">
                     Upgrade
