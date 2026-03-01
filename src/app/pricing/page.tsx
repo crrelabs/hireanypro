@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 const plans = [
@@ -65,12 +64,16 @@ const plans = [
 ];
 
 export default function PricingPage() {
-  const searchParams = useSearchParams();
-  const listingId = searchParams.get('listing') || '';
+  const [listingId, setListingId] = useState('');
   const [loading, setLoading] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<'pro' | 'featured' | null>(null);
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setListingId(params.get('listing') || '');
+  }, []);
 
   async function handleCheckout(e: React.FormEvent) {
     e.preventDefault();
