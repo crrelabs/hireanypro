@@ -269,10 +269,14 @@ export default async function ListingPage({ params }: Props) {
                     </svg>
                     <span>{listing.address}<br />{listing.city}, {listing.state} {listing.zip}</span>
                   </div>
-                  <a href={`/claim?listing=${listing.slug}`} className="block w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors text-sm text-center mt-4">
-                    🏢 Are you the owner? Claim this listing
-                  </a>
-                  <p className="text-xs text-gray-400 text-center">Claim your profile to show contact info and receive leads directly.</p>
+                  {!listing.claimed && (
+                    <>
+                      <a href={`/claim?listing=${listing.slug}`} className="block w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors text-sm text-center mt-4">
+                        🏢 Are you the owner? Claim this listing
+                      </a>
+                      <p className="text-xs text-gray-400 text-center">Claim your profile to show contact info and receive leads directly.</p>
+                    </>
+                  )}
                 </div>
               )}
 
