@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
-import ListingCard from '@/components/ListingCard';
+import CategoryFilters from '@/components/CategoryFilters';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -60,11 +60,10 @@ export default async function CategoryPage({ params }: Props) {
       </div>
 
       {listings && listings.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {listings.map((listing) => (
-            <ListingCard key={listing.id} listing={listing} />
-          ))}
-        </div>
+        <CategoryFilters
+          listings={listings}
+          cities={[...new Set(listings.map((l) => l.city).filter(Boolean))].sort()}
+        />
       ) : (
         <div className="text-center py-16">
           <span className="text-5xl mb-4 block">{category.icon}</span>
