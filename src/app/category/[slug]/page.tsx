@@ -119,7 +119,7 @@ export default async function CategoryPage({ params }: Props) {
               {popularCities.map(([city, count]) => (
                 <Link
                   key={city}
-                  href={`/${slug}/${citySlug(city)}`}
+                  href={`/services/${slug}/${citySlug(city)}`}
                   className="px-4 py-2 bg-gray-100 hover:bg-blue-50 text-gray-700 hover:text-blue-800 rounded-lg text-sm font-medium transition-colors"
                 >
                   {city} ({count})

@@ -157,7 +157,7 @@ export default async function CityLandingPage({ params }: Props) {
               {relatedCategories.map(rc => (
                 <Link
                   key={rc.slug}
-                  href={`/${rc.slug}/${cSlug}`}
+                  href={`/services/${rc.slug}/${cSlug}`}
                   className="px-4 py-2 bg-gray-100 hover:bg-blue-50 text-gray-700 hover:text-blue-800 rounded-lg text-sm font-medium transition-colors"
                 >
                   {rc.name}
@@ -175,7 +175,7 @@ export default async function CityLandingPage({ params }: Props) {
               {nearbyCities.map(nc => (
                 <Link
                   key={nc}
-                  href={`/${catSlug}/${citySlug(nc)}`}
+                  href={`/services/${catSlug}/${citySlug(nc)}`}
                   className="px-4 py-2 bg-gray-100 hover:bg-blue-50 text-gray-700 hover:text-blue-800 rounded-lg text-sm font-medium transition-colors"
                 >
                   {nc}

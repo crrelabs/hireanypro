@@ -126,7 +126,7 @@ export default async function ListingPage({ params }: Props) {
         <Breadcrumbs items={[
           { label: 'Home', href: '/' },
           ...(listing.categories ? [{ label: listing.categories.name, href: `/category/${listing.categories.slug}` }] : []),
-          ...(listing.city ? [{ label: listing.city, href: listing.categories ? `/${listing.categories.slug}/${citySlug(listing.city)}` : undefined }] : []),
+          ...(listing.city ? [{ label: listing.city, href: listing.categories ? `/services/${listing.categories.slug}/${citySlug(listing.city)}` : undefined }] : []),
           { label: listing.name },
         ]} />
 
@@ -352,7 +352,7 @@ export default async function ListingPage({ params }: Props) {
           )}
           {listing.categories && listing.city && (
             <p className="text-sm text-gray-600">
-              <Link href={`/${listing.categories.slug}/${citySlug(listing.city)}`} className="text-blue-800 hover:underline font-medium">
+              <Link href={`/services/${listing.categories.slug}/${citySlug(listing.city)}`} className="text-blue-800 hover:underline font-medium">
                 More {listing.categories.name.toLowerCase()} in {listing.city} →
               </Link>
             </p>

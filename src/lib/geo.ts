@@ -35,15 +35,13 @@ const COUNTY_MAP: Record<string, string[]> = {
     'Pine Castle', 'Sand Lake', 'Windermere', 'Winter Garden', 'Winter Park',
     'BVL', 'Forest City',
   ],
-  'Hillsborough': [
-    'Apollo Beach', 'Brandon', 'Gibsonton', 'Lutz', 'Plant City', 'Riverview',
-    'Ruskin', 'Tampa', 'Temple Terrace', 'Thonotosassa', 'Valrico', 'Wimauma',
+  'Seminole': [
+    'Altamonte Springs', 'Casselberry', 'Chuluota', 'Fern Park', 'Geneva',
+    'Lake Mary', 'Longwood', 'Oviedo', 'Sanford', 'Winter Springs',
   ],
-  'Pinellas': [
-    'Belleair Beach', 'Clearwater', 'Crystal Beach', 'Dunedin', 'Gulfport',
-    'Indian Shores', 'Largo', 'Madeira Beach', 'Oldsmar', 'Pinellas Park',
-    'Safety Harbor', 'Seminole', 'South Pasadena', 'St Pete Beach',
-    'St. Petersburg', 'Tarpon Springs', 'Treasure Island',
+  'Osceola': [
+    'Celebration', 'Davenport', 'Harmony', 'Kissimmee', 'Poinciana',
+    'St. Cloud',
   ],
 };
 

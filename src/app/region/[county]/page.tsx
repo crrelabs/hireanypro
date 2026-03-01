@@ -107,7 +107,7 @@ export default async function CountyPage({ params }: Props) {
                   {cities.slice(0, 5).map(city => (
                     <Link
                       key={city}
-                      href={`/${cat.slug}/${citySlug(city)}`}
+                      href={`/services/${cat.slug}/${citySlug(city)}`}
                       className="text-xs text-blue-700 hover:text-blue-900 hover:underline"
                     >
                       {city}
@@ -126,7 +126,7 @@ export default async function CountyPage({ params }: Props) {
             {cities.map(city => (
               <Link
                 key={city}
-                href={`/${categories[0]?.slug || 'plumbing'}/${citySlug(city)}`}
+                href={`/services/${categories[0]?.slug || 'plumbing'}/${citySlug(city)}`}
                 className="px-4 py-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all text-gray-700 hover:text-blue-800 font-medium text-sm"
               >
                 {city}

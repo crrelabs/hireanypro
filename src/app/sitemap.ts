@@ -62,7 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
   const cityPages: MetadataRoute.Sitemap = [...cityComboSet].map((combo) => ({
-    url: `${BASE_URL}/${combo}`,
+    url: `${BASE_URL}/services/${combo}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.7,
