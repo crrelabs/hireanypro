@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     }
 
     const priceId = PRICE_IDS[plan as keyof typeof PRICE_IDS];
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://hireanypro.com';
+    const appUrl = 'https://hireanypro.com';
 
     // Use Stripe REST API directly to avoid SDK issues on Vercel
     const params = new URLSearchParams();
