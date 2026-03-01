@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isRateLimited, getClientIp } from '@/lib/rate-limit';
 
 const PRICE_IDS = {
-  pro: 'price_1T6BvY2V06RCYNRQTYoqLQ8f',
-  featured: 'price_1T6BvZ2V06RCYNRQqis2Tc8l',
+  pro: 'price_1T6EcTFLKMTWNENlmdzkW5hd',
+  featured: 'price_1T6EcTFLKMTWNENlovU3r7iH',
 } as const;
 
 export async function POST(req: NextRequest) {
