@@ -13,9 +13,13 @@ export async function POST(req: NextRequest) {
 
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
-      const { listingId, email, plan } = session.metadata || {};
+      let { listingId, email, plan } = session.metadata || {};
       const customerId = session.customer;
       const subscriptionId = session.subscription;
+
+      // Use customer_email as fallback
+      email = email || session.customer_email;
+      plan = plan || 'pro';
 
       if (!email) {
         return NextResponse.json({ error: 'No email in metadata' }, { status: 400 });
@@ -28,21 +32,72 @@ export async function POST(req: NextRequest) {
         .select('id')
         .single();
 
-      // Create subscription record
-      if (profile && listingId) {
-        await supabase.from('subscriptions').insert({
-          listing_id: listingId,
-          profile_id: profile.id,
-          stripe_subscription_id: subscriptionId,
-          stripe_customer_id: customerId,
-          plan: plan || 'pro',
-          status: 'active',
-        });
+      if (!profile) {
+        return NextResponse.json({ error: 'Profile creation failed' }, { status: 500 });
+      }
+
+      // If no listingId, find the user's claimed listing via their profile
+      if (!listingId) {
+        const { data: existingSub } = await supabase
+          .from('subscriptions')
+          .select('listing_id')
+          .eq('profile_id', profile.id)
+          .eq('status', 'active')
+          .limit(1)
+          .single();
+
+        if (existingSub?.listing_id) {
+          listingId = existingSub.listing_id;
+        } else {
+          // Try finding via claims table
+          const { data: claim } = await supabase
+            .from('claims')
+            .select('listing_id')
+            .eq('email', email)
+            .eq('verified', true)
+            .limit(1)
+            .single();
+
+          if (claim?.listing_id) {
+            listingId = claim.listing_id;
+          }
+        }
+      }
+
+      if (listingId) {
+        // Update existing subscription or create new one
+        const { data: existingSub } = await supabase
+          .from('subscriptions')
+          .select('id')
+          .eq('listing_id', listingId)
+          .eq('profile_id', profile.id)
+          .single();
+
+        if (existingSub) {
+          await supabase
+            .from('subscriptions')
+            .update({
+              stripe_subscription_id: subscriptionId,
+              stripe_customer_id: customerId,
+              plan,
+              status: 'active',
+            })
+            .eq('id', existingSub.id);
+        } else {
+          await supabase.from('subscriptions').insert({
+            listing_id: listingId,
+            profile_id: profile.id,
+            stripe_subscription_id: subscriptionId,
+            stripe_customer_id: customerId,
+            plan,
+            status: 'active',
+          });
+        }
 
         // Update listing tier
         await supabase
           .from('listings')
-          .update({ tier: plan || 'pro', claimed: true })
+          .update({ tier: plan, claimed: true })
           .eq('id', listingId);
       }
     }
@@ -51,7 +106,6 @@ export async function POST(req: NextRequest) {
       const subscription = event.data.object;
       const subId = subscription.id;
 
-      // Find and downgrade
       const { data: sub } = await supabase
         .from('subscriptions')
         .select('listing_id')
