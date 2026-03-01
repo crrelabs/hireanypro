@@ -4,7 +4,10 @@ import StarRating from '@/components/StarRating';
 import MapViewWrapper from '@/components/MapViewWrapper';
 import QuoteRequestForm from '@/components/QuoteRequestForm';
 import ReviewForm from '@/components/ReviewForm';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import Link from 'next/link';
 import type { Metadata } from 'next';
+import { citySlug, getCountyForCity, countySlug } from '@/lib/geo';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -27,6 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
+    alternates: { canonical: `https://hireanypro.com/listing/${slug}` },
     openGraph: {
       title,
       description,
@@ -119,18 +123,12 @@ export default async function ListingPage({ params }: Props) {
       ))}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Breadcrumb */}
-        <nav className="text-sm text-gray-500 mb-6 flex items-center gap-2">
-          <a href="/" className="hover:text-blue-800">Home</a>
-          <span>/</span>
-          {listing.categories && (
-            <>
-              <a href={`/category/${listing.categories.slug}`} className="hover:text-blue-800">{listing.categories.name}</a>
-              <span>/</span>
-            </>
-          )}
-          <span className="text-gray-900">{listing.name}</span>
-        </nav>
+        <Breadcrumbs items={[
+          { label: 'Home', href: '/' },
+          ...(listing.categories ? [{ label: listing.categories.name, href: `/category/${listing.categories.slug}` }] : []),
+          ...(listing.city ? [{ label: listing.city, href: listing.categories ? `/${listing.categories.slug}/${citySlug(listing.city)}` : undefined }] : []),
+          { label: listing.name },
+        ]} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
@@ -341,6 +339,34 @@ export default async function ListingPage({ params }: Props) {
             <h3 className="font-semibold text-gray-900 mb-4">Leave a Review</h3>
             <ReviewForm listingId={listing.id} businessName={listing.name} />
           </div>
+        </div>
+
+        {/* Internal Linking */}
+        <div className="mt-8 p-6 bg-gray-50 rounded-xl space-y-3">
+          {listing.categories && (
+            <p className="text-sm text-gray-600">
+              <Link href={`/category/${listing.categories.slug}`} className="text-blue-800 hover:underline font-medium">
+                Browse all {listing.categories.name} in Florida →
+              </Link>
+            </p>
+          )}
+          {listing.categories && listing.city && (
+            <p className="text-sm text-gray-600">
+              <Link href={`/${listing.categories.slug}/${citySlug(listing.city)}`} className="text-blue-800 hover:underline font-medium">
+                More {listing.categories.name.toLowerCase()} in {listing.city} →
+              </Link>
+            </p>
+          )}
+          {listing.city && (() => {
+            const county = getCountyForCity(listing.city);
+            return county ? (
+              <p className="text-sm text-gray-600">
+                <Link href={`/region/${countySlug(county)}`} className="text-blue-800 hover:underline font-medium">
+                  All home services in {county} County →
+                </Link>
+              </p>
+            ) : null;
+          })()}
         </div>
       </div>
     </>

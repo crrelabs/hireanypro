@@ -19,7 +19,7 @@ export default function ListingCard({ listing }: { listing: Listing & { categori
       }`}
     >
       <div className="h-40 relative overflow-hidden">
-        <Image src={photoUrl} alt={listing.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, 33vw" />
+        <Image src={photoUrl} alt={`${listing.name} - ${listing.categories?.name || 'Service Provider'} in ${listing.city}, FL`} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, 33vw" loading="lazy" />
         {isFeatured && (
           <span className="absolute top-3 right-3 bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full z-10">
             ⭐ Featured
