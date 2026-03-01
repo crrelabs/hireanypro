@@ -270,6 +270,10 @@ export default async function ListingPage({ params }: Props) {
                     </svg>
                     <span>{listing.address}<br />{listing.city}, {listing.state} {listing.zip}</span>
                   </div>
+                  {/* Quote form for paid listings */}
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <QuoteRequestForm listingId={listing.id} businessName={listing.name} tier={listing.tier} businessEmail={listing.email} />
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -294,6 +298,11 @@ export default async function ListingPage({ params }: Props) {
                     </svg>
                     <span>{listing.address}<br />{listing.city}, {listing.state} {listing.zip}</span>
                   </div>
+                  {/* Quote form right here for free/unclaimed */}
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <QuoteRequestForm listingId={listing.id} businessName={listing.name} tier={listing.tier} businessEmail={listing.email} />
+                  </div>
+
                   {!listing.claimed && (
                     <>
                       <a href={`/claim?listing=${listing.slug}`} className="block w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors text-sm text-center mt-4">
@@ -304,11 +313,6 @@ export default async function ListingPage({ params }: Props) {
                   )}
                 </div>
               )}
-
-              {/* Quote Request Form - right after contact info */}
-              <div className="mt-6 pt-4 border-t border-gray-100">
-                <QuoteRequestForm listingId={listing.id} businessName={listing.name} tier={listing.tier} businessEmail={listing.email} />
-              </div>
 
               {/* Hours */}
               {hours && (
