@@ -35,7 +35,7 @@ export default async function HomePage() {
               Find Trusted <span className="text-orange-400">Home Service</span> Pros
             </h1>
             <p className="text-lg md:text-xl text-blue-100 mb-8">
-              Connect with top-rated plumbers, electricians, roofers, and more in Miami-Dade County.
+              Connect with top-rated plumbers, electricians, roofers, and more in South Florida.
             </p>
             <SearchBar large />
             <div className="mt-6 flex flex-wrap justify-center gap-3 text-sm text-blue-200">

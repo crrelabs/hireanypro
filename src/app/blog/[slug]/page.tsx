@@ -124,7 +124,7 @@ export default async function BlogPostPage({ params }: Props) {
             Need {categoryLabel ? `a ${categoryLabel} Pro` : 'a Home Service Professional'}?
           </h3>
           <p className="text-blue-200 mb-6">
-            Find trusted, verified professionals in Miami-Dade County.
+            Find trusted, verified professionals in South Florida.
           </p>
           <Link
             href={post.category ? `/category/${post.category}` : '/search'}

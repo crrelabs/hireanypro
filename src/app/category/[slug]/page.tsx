@@ -11,8 +11,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const { data: category } = await supabase.from('categories').select('name').eq('slug', slug).single();
   if (!category) return { title: 'Category Not Found' };
-  const title = `${category.name} in Miami-Dade County | HireAnyPro`;
-  const description = `Find top-rated ${category.name.toLowerCase()} professionals in Miami-Dade County. Compare ratings, read reviews, and request free quotes on HireAnyPro.`;
+  const title = `${category.name} in South Florida | HireAnyPro`;
+  const description = `Find top-rated ${category.name.toLowerCase()} professionals in South Florida. Compare ratings, read reviews, and request free quotes on HireAnyPro.`;
   return {
     title,
     description,
@@ -54,7 +54,7 @@ export default async function CategoryPage({ params }: Props) {
           <div>
             <span className="text-4xl mb-2 block">{category.icon}</span>
             <h1 className="text-2xl md:text-3xl font-bold text-white">{category.name}</h1>
-            <p className="text-blue-100 text-sm mt-1">{listings?.length || 0} professionals in Miami-Dade County</p>
+            <p className="text-blue-100 text-sm mt-1">{listings?.length || 0} professionals in South Florida</p>
           </div>
         </div>
       </div>
