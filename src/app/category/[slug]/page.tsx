@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import ListingCard from '@/components/ListingCard';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -44,11 +45,16 @@ export default async function CategoryPage({ params }: Props) {
         <span className="text-gray-900">{category.name}</span>
       </nav>
 
-      <div className="flex items-center gap-3 mb-8">
-        <span className="text-4xl">{category.icon}</span>
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{category.name}</h1>
-          <p className="text-gray-500 text-sm">{listings?.length || 0} professionals available</p>
+      {/* Hero Banner */}
+      <div className="relative h-48 md:h-64 rounded-xl overflow-hidden mb-8">
+        <Image src={`/categories/${slug}.png`} alt={category.name} fill className="object-cover" sizes="100vw" />
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/70 to-blue-900/30" />
+        <div className="absolute inset-0 flex items-center px-8">
+          <div>
+            <span className="text-4xl mb-2 block">{category.icon}</span>
+            <h1 className="text-2xl md:text-3xl font-bold text-white">{category.name}</h1>
+            <p className="text-blue-100 text-sm mt-1">{listings?.length || 0} professionals in Miami-Dade County</p>
+          </div>
         </div>
       </div>
 

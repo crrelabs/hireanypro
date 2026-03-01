@@ -1,10 +1,13 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import StarRating from './StarRating';
 import { Listing } from '@/lib/supabase';
 
 export default function ListingCard({ listing }: { listing: Listing & { categories?: { name: string; slug: string; icon: string } } }) {
   const isPaid = listing.tier === 'pro' || listing.tier === 'featured';
   const isFeatured = listing.tier === 'featured' || listing.featured;
+  const categorySlug = listing.categories?.slug || 'general-contractor';
+  const photoUrl = `/categories/${categorySlug}.png`;
 
   return (
     <Link
@@ -15,10 +18,10 @@ export default function ListingCard({ listing }: { listing: Listing & { categori
           : 'border-gray-200 hover:border-blue-300'
       }`}
     >
-      <div className="h-40 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center relative">
-        <span className="text-5xl">{listing.categories?.icon || '🏠'}</span>
+      <div className="h-40 relative overflow-hidden">
+        <Image src={photoUrl} alt={listing.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, 33vw" />
         {isFeatured && (
-          <span className="absolute top-3 right-3 bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+          <span className="absolute top-3 right-3 bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full z-10">
             ⭐ Featured
           </span>
         )}
