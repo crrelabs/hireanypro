@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Home Service Tips & Guides | HireAnyPro Blog',
-  description: 'Expert tips, guides, and advice for hiring home service professionals in South Florida. Plumbing, roofing, HVAC, electrical, and more.',
+  description: 'Expert tips, guides, and advice for hiring home service professionals in Florida. Plumbing, roofing, HVAC, electrical, and more.',
   openGraph: {
     title: 'Home Service Tips & Guides | HireAnyPro Blog',
     description: 'Expert tips and guides for hiring home service professionals in Miami.',

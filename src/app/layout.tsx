@@ -11,10 +11,10 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "HireAnyPro — Find Trusted Home Service Pros in Miami",
-  description: "Find and hire the best plumbers, electricians, roofers, HVAC technicians, and more in South Florida. Read reviews, compare ratings, and get quotes.",
+  description: "Find and hire the best plumbers, electricians, roofers, HVAC technicians, and more in Florida. Read reviews, compare ratings, and get quotes.",
   openGraph: {
     title: "HireAnyPro — Find Trusted Home Service Pros",
-    description: "Find and hire the best home service professionals in South Florida.",
+    description: "Find and hire the best home service professionals in Florida.",
     type: "website",
   },
 };
