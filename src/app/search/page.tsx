@@ -24,7 +24,13 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     .select('*, categories!inner(name, slug, icon)', { count: 'exact' });
 
   if (q) {
-    query = query.or(`name.ilike.%${q}%,description.ilike.%${q}%`);
+    // Detect zip code (5 digits) vs text search
+    const isZip = /^\d{5}$/.test(q.trim());
+    if (isZip) {
+      query = query.eq('zip', q.trim());
+    } else {
+      query = query.or(`name.ilike.%${q}%,description.ilike.%${q}%,city.ilike.%${q}%,address.ilike.%${q}%`);
+    }
   }
   if (category) {
     query = query.eq('categories.slug', category);
