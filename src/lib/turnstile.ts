@@ -3,7 +3,9 @@
  * Returns true if valid, false otherwise.
  */
 export async function verifyTurnstile(token: string): Promise<boolean> {
-  const secret = process.env.TURNSTILE_SECRET_KEY || '1x0000000000000000000000000000000AA';
+  // Skip verification if no real key configured (test keys or empty)
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+  if (!secret || secret.startsWith('1x000')) return true;
   try {
     const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',

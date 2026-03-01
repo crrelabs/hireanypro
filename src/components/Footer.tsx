@@ -13,7 +13,7 @@ export default function Footer() {
                 Hire<span className="text-orange-500">Any</span>Pro
               </span>
             </Link>
-            <p className="text-sm">Find trusted home service professionals in Miami-Dade County.</p>
+            <p className="text-sm">Find trusted home service professionals in South Florida.</p>
           </div>
           <div>
             <h3 className="text-white font-semibold mb-3 text-sm">Popular Categories</h3>
