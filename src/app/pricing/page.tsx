@@ -12,9 +12,8 @@ const plans = [
     features: [
       'Basic listing in directory',
       'Appears in search results',
-      'Business name & contact info',
+      'Business name & address',
       'Category placement',
-      'Customer reviews',
     ],
     cta: 'Claim Your Listing',
     ctaLink: '/claim',
@@ -30,11 +29,11 @@ const plans = [
     features: [
       'Everything in Free',
       'Direct lead routing to your email',
+      'Phone, email & website displayed',
       'Up to 10 photos',
       'Verified badge ✓',
       'Priority placement in search',
       'Edit your business profile',
-      'Response time tracking',
     ],
     cta: 'Upgrade to Pro',
     plan: 'pro' as const,
@@ -66,27 +65,30 @@ const plans = [
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<'pro' | 'featured' | null>(null);
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
 
-  async function handleCheckout(plan: 'pro' | 'featured') {
-    const email = prompt('Enter your email address:');
-    if (!email) return;
-    const listingId = prompt('Enter your listing ID (or leave blank):') || '';
+  async function handleCheckout(e: React.FormEvent) {
+    e.preventDefault();
+    if (!selectedPlan || !email) return;
 
-    setLoading(plan);
+    setLoading(selectedPlan);
+    setError('');
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan, email, listingId }),
+        body: JSON.stringify({ plan: selectedPlan, email, listingId: '' }),
       });
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert(data.error || 'Something went wrong');
+        setError(data.error || 'Something went wrong. Please try again.');
       }
     } catch {
-      alert('Something went wrong');
+      setError('Connection error. Please try again.');
     } finally {
       setLoading(null);
     }
@@ -145,16 +147,71 @@ export default function PricingPage() {
                 </Link>
               ) : (
                 <button
-                  onClick={() => handleCheckout(p.plan!)}
-                  disabled={loading === p.plan}
-                  className={`w-full py-3 rounded-lg font-semibold transition-colors ${p.buttonStyle} disabled:opacity-50`}
+                  onClick={() => setSelectedPlan(p.plan!)}
+                  className={`w-full py-3 rounded-lg font-semibold transition-colors ${p.buttonStyle}`}
                 >
-                  {loading === p.plan ? 'Loading...' : p.cta}
+                  {p.cta}
                 </button>
               )}
             </div>
           ))}
         </div>
+
+        {/* Checkout form modal */}
+        {selectedPlan && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setSelectedPlan(null)}>
+            <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Upgrade to {selectedPlan === 'pro' ? 'Pro' : 'Featured'}
+              </h2>
+              <p className="text-gray-600 mb-6">
+                {selectedPlan === 'pro' ? '$49/month — get direct leads and verified status.' : '$99/month — maximum visibility and top placement.'}
+              </p>
+
+              <form onSubmit={handleCheckout}>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Your email address
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@yourbusiness.com"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800 focus:border-transparent outline-none text-gray-900 mb-4"
+                />
+
+                {error && (
+                  <p className="text-red-600 text-sm mb-4">{error}</p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={loading !== null}
+                  className={`w-full py-3 rounded-lg font-semibold transition-colors ${
+                    selectedPlan === 'pro'
+                      ? 'bg-blue-800 text-white hover:bg-blue-700'
+                      : 'bg-orange-500 text-white hover:bg-orange-600'
+                  } disabled:opacity-50`}
+                >
+                  {loading ? 'Connecting to Stripe...' : `Continue to Payment`}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { setSelectedPlan(null); setError(''); }}
+                  className="w-full py-2 mt-3 text-gray-500 hover:text-gray-700 text-sm font-medium"
+                >
+                  Cancel
+                </button>
+              </form>
+
+              <p className="text-xs text-gray-400 text-center mt-4">
+                Secure payment via Stripe. Cancel anytime.
+              </p>
+            </div>
+          </div>
+        )}
 
         <div className="text-center mt-12 text-sm text-gray-500">
           <p>All plans include a 14-day money-back guarantee. Cancel anytime.</p>
