@@ -1,42 +1,47 @@
-/**
- * Send notifications when claims or upgrades happen.
- * Uses a simple webhook approach — can be extended to email later.
- */
+import nodemailer from 'nodemailer';
 
 const NOTIFY_EMAIL = 'carlos@crrelabs.com';
+const FROM_EMAIL = 'iris@hireanypro.com';
 
-export async function notifyNewClaim(businessName: string, claimerEmail: string, listingSlug: string) {
-  const subject = `New HireAnyPro Claim: ${businessName}`;
-  const body = `${businessName} was claimed by ${claimerEmail}\n\nListing: https://hireanypro.com/listing/${listingSlug}`;
-  await sendNotification(subject, body);
-}
-
-export async function notifyUpgrade(businessName: string, ownerEmail: string, tier: string, listingSlug: string) {
-  const subject = `New HireAnyPro Upgrade: ${businessName} → ${tier.toUpperCase()}`;
-  const body = `${businessName} upgraded to ${tier.toUpperCase()} plan!\n\nOwner: ${ownerEmail}\nListing: https://hireanypro.com/listing/${listingSlug}`;
-  await sendNotification(subject, body);
+function getTransporter() {
+  const pass = process.env.HIREANYPRO_APP_PASSWORD;
+  if (!pass) return null;
+  return nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: { user: FROM_EMAIL, pass },
+  });
 }
 
 async function sendNotification(subject: string, body: string) {
-  // Send via Resend if available, otherwise log
-  const resendKey = process.env.RESEND_API_KEY;
-  if (resendKey) {
+  const transporter = getTransporter();
+  if (transporter) {
     try {
-      await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          from: 'HireAnyPro <notifications@hireanypro.com>',
-          to: NOTIFY_EMAIL,
-          subject,
-          text: body,
-        }),
+      await transporter.sendMail({
+        from: `HireAnyPro <${FROM_EMAIL}>`,
+        to: NOTIFY_EMAIL,
+        subject,
+        text: body,
       });
     } catch (e) {
-      console.error('Resend notification failed:', e);
+      console.error('Email notification failed:', e);
     }
   } else {
-    // Fallback: log to console (visible in Vercel logs)
-    console.log(`📧 NOTIFICATION → ${NOTIFY_EMAIL}\nSubject: ${subject}\n${body}`);
+    console.log(`📧 NOTIFICATION (no SMTP) → ${NOTIFY_EMAIL}\nSubject: ${subject}\n${body}`);
   }
+}
+
+export async function notifyNewClaim(businessName: string, claimerEmail: string, listingSlug: string) {
+  await sendNotification(
+    `New HireAnyPro Claim: ${businessName}`,
+    `${businessName} was claimed by ${claimerEmail}\n\nListing: https://hireanypro.com/listing/${listingSlug}\nDashboard: https://hireanypro.com/dashboard`
+  );
+}
+
+export async function notifyUpgrade(businessName: string, ownerEmail: string, tier: string, listingSlug: string) {
+  await sendNotification(
+    `💰 New HireAnyPro Upgrade: ${businessName} → ${tier.toUpperCase()}`,
+    `${businessName} upgraded to ${tier.toUpperCase()} plan!\n\nOwner: ${ownerEmail}\nListing: https://hireanypro.com/listing/${listingSlug}\n\nRevenue: ${tier === 'pro' ? '$9/mo' : '$49.99/mo'}`
+  );
 }
