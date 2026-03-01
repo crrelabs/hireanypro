@@ -151,6 +151,8 @@ function DashboardPage() {
     );
   }
 
+  const isFree = data.listings.every((l) => l.tier === 'free');
+
   return (
     <div className="max-w-5xl mx-auto py-12 px-4">
       <div className="flex items-center justify-between mb-8">
@@ -209,12 +211,48 @@ function DashboardPage() {
 
       {/* Inquiries */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Inquiries</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Inquiries ({data.totalInquiries})</h2>
         {data.inquiries.length === 0 ? (
           <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
             No inquiries yet. They&apos;ll show up here when customers reach out.
           </div>
+        ) : isFree ? (
+          /* FREE TIER: Show inquiry count but blur details */
+          <div>
+            <div className="bg-gradient-to-b from-orange-50 to-orange-100 border-2 border-orange-300 rounded-xl p-6 mb-4">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-orange-600 mb-2">🔒 {data.totalInquiries} Lead{data.totalInquiries !== 1 ? 's' : ''} Waiting</div>
+                <p className="text-gray-700 mb-4">Customers are looking for your services! Upgrade to Pro to see their contact info and respond directly.</p>
+                <Link href="/pricing" className="inline-block bg-blue-800 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                  Upgrade to Pro — $49/mo
+                </Link>
+                <p className="text-xs text-gray-500 mt-2">See who&apos;s looking for you. Respond to leads. Grow your business.</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              {data.inquiries.map((inq) => (
+                <div key={inq.id} className="bg-white rounded-xl border border-gray-200 p-5 relative overflow-hidden">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="font-medium text-gray-900">New Inquiry</div>
+                    <div className="text-xs text-gray-400">
+                      {new Date(inq.created_at).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <div className="blur-sm select-none pointer-events-none" aria-hidden="true">
+                    <div className="text-sm text-gray-500 mb-1">customer@email.com</div>
+                    <div className="text-sm text-gray-700">I need help with a project at my home in Miami. Can you provide a quote for...</div>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/60">
+                    <Link href="/pricing" className="bg-blue-800 text-white px-5 py-2 rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors shadow-lg">
+                      🔓 Upgrade to See This Lead
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         ) : (
+          /* PAID TIER: Show full inquiry details */
           <div className="space-y-3">
             {data.inquiries.map((inq) => (
               <div key={inq.id} className="bg-white rounded-xl border border-gray-200 p-5">
