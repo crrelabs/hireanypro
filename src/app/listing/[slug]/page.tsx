@@ -202,7 +202,7 @@ export default async function ListingPage({ params }: Props) {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Contact Card */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-24">
+            <div className="bg-white rounded-xl border border-gray-200 p-6 lg:sticky lg:top-24">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-semibold text-gray-900">Contact Info</h2>
                 {isPaid && (
@@ -303,7 +303,9 @@ export default async function ListingPage({ params }: Props) {
             </div>
 
             {/* Quote Request Form */}
-            <QuoteRequestForm listingId={listing.id} businessName={listing.name} tier={listing.tier} businessEmail={listing.email} />
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <QuoteRequestForm listingId={listing.id} businessName={listing.name} tier={listing.tier} businessEmail={listing.email} />
+            </div>
           </div>
         </div>
       </div>
