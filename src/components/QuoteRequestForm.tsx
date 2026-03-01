@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import TurnstileWidget from '@/components/TurnstileWidget';
 
 interface QuoteRequestFormProps {
   listingId: string;
@@ -12,7 +12,10 @@ interface QuoteRequestFormProps {
 
 export default function QuoteRequestForm({ listingId, businessName, tier = 'free', businessEmail }: QuoteRequestFormProps) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
+  const [honeypot, setHoneypot] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
 
   const isPaid = tier === 'pro' || tier === 'featured';
   const routedTo = isPaid && businessEmail ? businessEmail : 'iris@hireanypro.com';
@@ -24,20 +27,39 @@ export default function QuoteRequestForm({ listingId, businessName, tier = 'free
       alert('Please enter a valid email address.');
       return;
     }
+    if (!turnstileToken) {
+      setErrorMsg('Please complete the CAPTCHA.');
+      return;
+    }
     setStatus('submitting');
-    const { error } = await supabase.from('inquiries').insert({
-      listing_id: listingId,
-      name: form.name,
-      email: form.email,
-      phone: form.phone || null,
-      message: form.message,
-      routed_to: routedTo,
-    });
-    if (error) {
+    setErrorMsg('');
+
+    try {
+      const res = await fetch('/api/quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          listingId,
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          message: form.message,
+          routedTo,
+          turnstileToken,
+          website: honeypot, // honeypot field
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setStatus('success');
+        setForm({ name: '', email: '', phone: '', message: '' });
+      } else {
+        setErrorMsg(data.error || 'Something went wrong.');
+        setStatus('error');
+      }
+    } catch {
+      setErrorMsg('Something went wrong. Please try again.');
       setStatus('error');
-    } else {
-      setStatus('success');
-      setForm({ name: '', email: '', phone: '', message: '' });
     }
   };
 
@@ -65,6 +87,20 @@ export default function QuoteRequestForm({ listingId, businessName, tier = 'free
           : 'Your request will be forwarded to this business'}
       </p>
       <form onSubmit={handleSubmit} className="space-y-3">
+        {/* Honeypot - hidden from humans */}
+        <div className="hidden" aria-hidden="true">
+          <label htmlFor="website">Website</label>
+          <input
+            type="text"
+            id="website"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+          />
+        </div>
+
         <input
           type="text" placeholder="Your Name *" required value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -85,7 +121,10 @@ export default function QuoteRequestForm({ listingId, businessName, tier = 'free
           onChange={(e) => setForm({ ...form, message: e.target.value })}
           className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-800 focus:border-transparent outline-none resize-none"
         />
-        {status === 'error' && <p className="text-red-600 text-sm">Something went wrong. Please try again.</p>}
+
+        <TurnstileWidget onSuccess={setTurnstileToken} />
+
+        {errorMsg && <p className="text-red-600 text-sm">{errorMsg}</p>}
         <button
           type="submit" disabled={status === 'submitting'}
           className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold py-3 rounded-lg transition-colors text-sm"

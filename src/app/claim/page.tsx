@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
+import TurnstileWidget from '@/components/TurnstileWidget';
 
 type ListingResult = {
   id: string;
@@ -32,8 +33,11 @@ function ClaimPage() {
   const [results, setResults] = useState<ListingResult[]>([]);
   const [selected, setSelected] = useState<ListingResult | null>(null);
   const [email, setEmail] = useState('');
+  const [honeypot, setHoneypot] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [pendingVerification, setPendingVerification] = useState(false);
   const [error, setError] = useState('');
 
   const loadPreselected = useCallback(async () => {
@@ -65,6 +69,10 @@ function ClaimPage() {
 
   async function handleClaim() {
     if (!selected || !email) return;
+    if (!turnstileToken) {
+      setError('Please complete the CAPTCHA.');
+      return;
+    }
     setLoading(true);
     setError('');
 
@@ -72,12 +80,21 @@ function ClaimPage() {
       const res = await fetch('/api/claim', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ listingId: selected.id, email }),
+        body: JSON.stringify({
+          listingId: selected.id,
+          email,
+          turnstileToken,
+          website: honeypot,
+        }),
       });
       const data = await res.json();
       if (data.success) {
-        setSuccess(true);
-        setTimeout(() => router.push(`/dashboard?email=${encodeURIComponent(email)}`), 2000);
+        if (data.pendingVerification) {
+          setPendingVerification(true);
+        } else {
+          setSuccess(true);
+          setTimeout(() => router.push(`/dashboard?email=${encodeURIComponent(email)}`), 2000);
+        }
       } else {
         setError(data.error || 'Failed to claim listing');
       }
@@ -86,6 +103,19 @@ function ClaimPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (pendingVerification) {
+    return (
+      <div className="max-w-lg mx-auto py-20 px-4 text-center">
+        <div className="text-6xl mb-4">📧</div>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Check Your Email</h1>
+        <p className="text-gray-600 mb-6">
+          We&apos;ve sent a verification email to <strong>{email}</strong>. Click the link to complete your claim.
+        </p>
+        <p className="text-sm text-gray-500">The link expires in 24 hours.</p>
+      </div>
+    );
   }
 
   if (success) {
@@ -152,6 +182,13 @@ function ClaimPage() {
             </div>
           </div>
 
+          {/* Honeypot */}
+          <div className="hidden" aria-hidden="true">
+            <label htmlFor="website">Website</label>
+            <input type="text" id="website" name="website" tabIndex={-1} autoComplete="off"
+              value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
+          </div>
+
           <label className="block text-sm font-medium text-gray-700 mb-2">Your email address</label>
           <input
             type="email"
@@ -160,6 +197,10 @@ function ClaimPage() {
             placeholder="you@yourbusiness.com"
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800 focus:border-transparent mb-4 text-gray-900"
           />
+
+          <div className="mb-4">
+            <TurnstileWidget onSuccess={setTurnstileToken} />
+          </div>
 
           {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
 

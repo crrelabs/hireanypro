@@ -1,12 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import TurnstileWidget from '@/components/TurnstileWidget';
 
 function StarSelector({ rating, hovered, onHover, onSelect }: {
   rating: number;
@@ -42,6 +37,8 @@ export default function ReviewForm({ listingId, businessName }: { listingId: str
   const [rating, setRating] = useState(0);
   const [hovered, setHovered] = useState(0);
   const [comment, setComment] = useState('');
+  const [honeypot, setHoneypot] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -49,20 +46,34 @@ export default function ReviewForm({ listingId, businessName }: { listingId: str
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (rating === 0) { setError('Please select a rating'); return; }
+    if (!turnstileToken) { setError('Please complete the CAPTCHA'); return; }
     setSubmitting(true);
     setError('');
 
-    const { error: err } = await supabase.from('reviews').insert({
-      listing_id: listingId,
-      author_name: name.trim(),
-      rating,
-      comment: comment.trim(),
-      created_at: new Date().toISOString(),
-    });
-
-    setSubmitting(false);
-    if (err) { setError('Something went wrong. Please try again.'); return; }
-    setSuccess(true);
+    try {
+      const res = await fetch('/api/review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          listingId,
+          authorName: name.trim(),
+          rating,
+          comment: comment.trim(),
+          turnstileToken,
+          website: honeypot,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setSuccess(true);
+      } else {
+        setError(data.error || 'Something went wrong. Please try again.');
+      }
+    } catch {
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (success) {
@@ -76,6 +87,13 @@ export default function ReviewForm({ listingId, businessName }: { listingId: str
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Honeypot */}
+      <div className="hidden" aria-hidden="true">
+        <label htmlFor="company">Company</label>
+        <input type="text" id="company" name="company" tabIndex={-1} autoComplete="off"
+          value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
+      </div>
+
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Your Name *</label>
         <input type="text" required value={name} onChange={(e) => setName(e.target.value)}
@@ -95,6 +113,9 @@ export default function ReviewForm({ listingId, businessName }: { listingId: str
         <textarea required rows={4} value={comment} onChange={(e) => setComment(e.target.value)}
           className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none" />
       </div>
+
+      <TurnstileWidget onSuccess={setTurnstileToken} />
+
       {error && <p className="text-red-600 text-sm">{error}</p>}
       <button type="submit" disabled={submitting}
         className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold py-2.5 rounded-lg transition-colors text-sm">

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { isRateLimited, getClientIp } from '@/lib/rate-limit';
 
 const PRICE_IDS = {
   pro: 'price_1T5t8s2V06RCYNRQv5YPjbfs',
@@ -7,6 +8,11 @@ const PRICE_IDS = {
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIp(req);
+    if (isRateLimited(ip, 5)) {
+      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
+
     const { plan, listingId, email } = await req.json();
 
     if (!plan || !['pro', 'featured'].includes(plan)) {
