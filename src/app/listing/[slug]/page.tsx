@@ -180,48 +180,6 @@ export default async function ListingPage({ params }: Props) {
               </div>
             )}
 
-            {/* Reviews */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              {listing.rating && listing.review_count > 0 && (
-                <div className="flex items-center gap-2 mb-4 pb-4 border-b border-gray-100">
-                  <StarRating rating={listing.rating} size="md" />
-                  <span className="font-semibold text-gray-900">{listing.rating}</span>
-                  <span className="text-gray-500 text-sm">on Google · {listing.review_count} reviews</span>
-                </div>
-              )}
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                HireAnyPro Reviews {reviews && reviews.length > 0 ? `(${reviews.length})` : ''}
-              </h2>
-              {reviews && reviews.length > 0 ? (
-                <div className="space-y-4 mb-6">
-                  {reviews.map((review) => (
-                    <div key={review.id} className="border-b border-gray-100 last:border-0 pb-4 last:pb-0">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                          <span className="text-blue-800 font-semibold text-sm">{review.author_name.charAt(0)}</span>
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900 text-sm">{review.author_name}</p>
-                          <div className="flex items-center gap-2">
-                            <StarRating rating={review.rating} />
-                            <span className="text-xs text-gray-400">
-                              {new Date(review.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <p className="text-gray-600 text-sm pl-11">{review.comment}</p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500 text-sm mb-6">Be the first to review {listing.name}!</p>
-              )}
-              <div className="border-t border-gray-100 pt-6">
-                <h3 className="font-semibold text-gray-900 mb-4">Leave a Review</h3>
-                <ReviewForm listingId={listing.id} businessName={listing.name} />
-              </div>
-            </div>
           </div>
 
           {/* Sidebar */}
@@ -339,6 +297,49 @@ export default async function ListingPage({ params }: Props) {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+
+        {/* Reviews - full width, below sidebar on mobile */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6 mt-8">
+          {listing.rating && listing.review_count > 0 && (
+            <div className="flex items-center gap-2 mb-4 pb-4 border-b border-gray-100">
+              <StarRating rating={listing.rating} size="md" />
+              <span className="font-semibold text-gray-900">{listing.rating}</span>
+              <span className="text-gray-500 text-sm">on Google · {listing.review_count} reviews</span>
+            </div>
+          )}
+          <h2 className="text-xl font-bold text-gray-900 mb-4">
+            HireAnyPro Reviews {reviews && reviews.length > 0 ? `(${reviews.length})` : ''}
+          </h2>
+          {reviews && reviews.length > 0 ? (
+            <div className="space-y-4 mb-6">
+              {reviews.map((review) => (
+                <div key={review.id} className="border-b border-gray-100 last:border-0 pb-4 last:pb-0">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span className="text-blue-800 font-semibold text-sm">{review.author_name.charAt(0)}</span>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900 text-sm">{review.author_name}</p>
+                      <div className="flex items-center gap-2">
+                        <StarRating rating={review.rating} />
+                        <span className="text-xs text-gray-400">
+                          {new Date(review.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-gray-600 text-sm pl-11">{review.comment}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-sm mb-6">Be the first to review {listing.name}!</p>
+          )}
+          <div className="border-t border-gray-100 pt-6">
+            <h3 className="font-semibold text-gray-900 mb-4">Leave a Review</h3>
+            <ReviewForm listingId={listing.id} businessName={listing.name} />
           </div>
         </div>
       </div>
