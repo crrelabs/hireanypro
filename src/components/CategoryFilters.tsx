@@ -80,6 +80,17 @@ export default function CategoryFilters({ listings, cities }: Props) {
     return result;
   }, [listings, cityFilter, ratingFilter, sortBy, userLat, userLng]);
 
+  const PAGE_SIZE = 24;
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [cityFilter, ratingFilter, sortBy]);
+
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
+
   return (
     <div>
       {/* Filters bar */}
@@ -124,12 +135,24 @@ export default function CategoryFilters({ listings, cities }: Props) {
       </div>
 
       {/* Results */}
-      {filtered.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((listing) => (
-            <ListingCard key={listing.id} listing={listing} />
-          ))}
-        </div>
+      {visible.length > 0 ? (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {visible.map((listing) => (
+              <ListingCard key={listing.id} listing={listing} />
+            ))}
+          </div>
+          {hasMore && (
+            <div className="text-center mt-8">
+              <button
+                onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                className="px-8 py-3 bg-blue-800 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
+              >
+                Load More ({filtered.length - visibleCount} remaining)
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         <div className="text-center py-16">
           <h3 className="text-lg font-semibold text-gray-900 mb-2">No matches</h3>
