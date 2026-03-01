@@ -10,15 +10,20 @@ export const metadata: Metadata = {
 export const revalidate = 300;
 
 export default async function CategoriesPage() {
-  const [{ data: categories }, { data: listings }] = await Promise.all([
-    supabase.from('categories').select('*').order('name'),
-    supabase.from('listings').select('id, category_id'),
-  ]);
+  const { data: categories } = await supabase.from('categories').select('*').order('name');
 
+  // Count listings per category using individual count queries to avoid 1000-row limit
   const countMap: Record<string, number> = {};
-  listings?.forEach((l) => {
-    countMap[l.category_id] = (countMap[l.category_id] || 0) + 1;
-  });
+  if (categories) {
+    const counts = await Promise.all(
+      categories.map((cat) =>
+        supabase.from('listings').select('id', { count: 'exact', head: true }).eq('category_id', cat.id)
+      )
+    );
+    categories.forEach((cat, i) => {
+      countMap[cat.id] = counts[i].count || 0;
+    });
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

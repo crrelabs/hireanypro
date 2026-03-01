@@ -7,17 +7,23 @@ import Link from 'next/link';
 export const revalidate = 300; // ISR every 5 min
 
 export default async function HomePage() {
-  const [{ data: categories }, { data: featuredListings }, { data: allListings }] = await Promise.all([
+  const [{ data: categories }, { data: featuredListings }] = await Promise.all([
     supabase.from('categories').select('*').order('name'),
     supabase.from('listings').select('*, categories(name, slug, icon)').eq('featured', true).order('rating', { ascending: false }).limit(6),
-    supabase.from('listings').select('id, category_id'),
   ]);
 
-  // Count listings per category
+  // Count listings per category using exact counts to avoid 1000-row limit
   const countMap: Record<string, number> = {};
-  allListings?.forEach((l) => {
-    countMap[l.category_id] = (countMap[l.category_id] || 0) + 1;
-  });
+  if (categories) {
+    const counts = await Promise.all(
+      categories.map((cat) =>
+        supabase.from('listings').select('id', { count: 'exact', head: true }).eq('category_id', cat.id)
+      )
+    );
+    categories.forEach((cat, i) => {
+      countMap[cat.id] = counts[i].count || 0;
+    });
+  }
 
   return (
     <>
