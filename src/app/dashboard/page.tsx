@@ -199,7 +199,7 @@ function DashboardPage() {
                   {l.tier}
                 </span>
                 {l.tier === 'free' && (
-                  <Link href="/pricing" className="text-sm bg-blue-800 text-white px-4 py-1.5 rounded-lg hover:bg-blue-700 font-medium">
+                  <Link href={`/pricing?listing=${l.id}`} className="text-sm bg-blue-800 text-white px-4 py-1.5 rounded-lg hover:bg-blue-700 font-medium">
                     Upgrade
                   </Link>
                 )}

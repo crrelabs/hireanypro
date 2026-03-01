@@ -36,25 +36,29 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Profile creation failed' }, { status: 500 });
       }
 
-      // If no listingId, find the user's claimed listing via their profile
+      // If no listingId, find the user's FREE claimed listing (most recently claimed)
       if (!listingId) {
-        const { data: existingSub } = await supabase
+        // First try: find a free-tier listing owned by this user (most likely what they're upgrading)
+        const { data: freeSub } = await supabase
           .from('subscriptions')
           .select('listing_id')
           .eq('profile_id', profile.id)
+          .eq('plan', 'free')
           .eq('status', 'active')
+          .order('created_at', { ascending: false })
           .limit(1)
           .single();
 
-        if (existingSub?.listing_id) {
-          listingId = existingSub.listing_id;
+        if (freeSub?.listing_id) {
+          listingId = freeSub.listing_id;
         } else {
-          // Try finding via claims table
+          // Fallback: most recent verified claim
           const { data: claim } = await supabase
             .from('claims')
             .select('listing_id')
             .eq('email', email)
             .eq('verified', true)
+            .order('created_at', { ascending: false })
             .limit(1)
             .single();
 

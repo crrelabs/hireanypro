@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 const plans = [
@@ -64,6 +65,8 @@ const plans = [
 ];
 
 export default function PricingPage() {
+  const searchParams = useSearchParams();
+  const listingId = searchParams.get('listing') || '';
   const [loading, setLoading] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<'pro' | 'featured' | null>(null);
   const [email, setEmail] = useState('');
@@ -79,7 +82,7 @@ export default function PricingPage() {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: selectedPlan, email, listingId: '' }),
+        body: JSON.stringify({ plan: selectedPlan, email, listingId }),
       });
       const data = await res.json();
       if (data.url) {
