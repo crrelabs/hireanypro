@@ -35,6 +35,7 @@ function ClaimPage() {
   const [email, setEmail] = useState('');
   const [honeypot, setHoneypot] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');
+  const [emailOptIn, setEmailOptIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [pendingVerification, setPendingVerification] = useState(false);
@@ -84,6 +85,7 @@ function ClaimPage() {
           listingId: selected.id,
           email,
           turnstileToken,
+          emailOptIn,
           website: honeypot,
         }),
       });
@@ -197,6 +199,18 @@ function ClaimPage() {
             placeholder="you@yourbusiness.com"
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800 focus:border-transparent mb-4 text-gray-900"
           />
+
+          <label className="flex items-start gap-3 mb-4 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={emailOptIn}
+              onChange={(e) => setEmailOptIn(e.target.checked)}
+              className="mt-1 w-4 h-4 text-blue-800 border-gray-300 rounded focus:ring-blue-800"
+            />
+            <span className="text-sm text-gray-600">
+              I agree to receive emails from HireAnyPro about leads, tips, and promotions. You can unsubscribe at any time.
+            </span>
+          </label>
 
           <div className="mb-4">
             <TurnstileWidget onSuccess={setTurnstileToken} />

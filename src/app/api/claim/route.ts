@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
     }
 
-    const { listingId, email, turnstileToken, website } = await req.json();
+    const { listingId, email, turnstileToken, website, emailOptIn } = await req.json();
 
     // Honeypot check
     if (isBot(website)) {
@@ -60,6 +60,11 @@ export async function POST(req: NextRequest) {
       .upsert({ email }, { onConflict: 'email' })
       .select('id')
       .single();
+
+    // Store email opt-in on profile
+    if (emailOptIn && profile?.id) {
+      await supabase.from('profiles').update({ email_opt_in: true, opted_in_at: new Date().toISOString() }).eq('id', profile.id).then(() => {});
+    }
 
     // Create claim — NOT auto-verified; pending email verification
     const { error: claimError } = await supabase.from('claims').insert({

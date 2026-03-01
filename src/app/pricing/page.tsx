@@ -23,7 +23,7 @@ const plans = [
   },
   {
     name: 'Pro',
-    price: '$49',
+    price: '$9',
     period: '/mo',
     description: 'Stand out and get more leads with premium features.',
     features: [
@@ -43,7 +43,7 @@ const plans = [
   },
   {
     name: 'Featured',
-    price: '$99',
+    price: '$49.99',
     period: '/mo',
     description: 'Maximum visibility and premium placement everywhere.',
     features: [
@@ -165,7 +165,7 @@ export default function PricingPage() {
                 Upgrade to {selectedPlan === 'pro' ? 'Pro' : 'Featured'}
               </h2>
               <p className="text-gray-600 mb-6">
-                {selectedPlan === 'pro' ? '$49/month — get direct leads and verified status.' : '$99/month — maximum visibility and top placement.'}
+                {selectedPlan === 'pro' ? '$9/month — get direct leads and verified status.' : '$49.99/month — maximum visibility and top placement.'}
               </p>
 
               <form onSubmit={handleCheckout}>
