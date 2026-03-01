@@ -46,7 +46,7 @@ export default function ReviewForm({ listingId, businessName }: { listingId: str
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (rating === 0) { setError('Please select a rating'); return; }
-    if (!turnstileToken) { setError('Please complete the CAPTCHA'); return; }
+    // CAPTCHA is optional until Cloudflare activates
     setSubmitting(true);
     setError('');
 

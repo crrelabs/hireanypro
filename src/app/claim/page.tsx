@@ -70,10 +70,6 @@ function ClaimPage() {
 
   async function handleClaim() {
     if (!selected || !email) return;
-    if (!turnstileToken) {
-      setError('Please complete the CAPTCHA.');
-      return;
-    }
     setLoading(true);
     setError('');
 

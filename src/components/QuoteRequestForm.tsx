@@ -27,10 +27,6 @@ export default function QuoteRequestForm({ listingId, businessName, tier = 'free
       alert('Please enter a valid email address.');
       return;
     }
-    if (!turnstileToken) {
-      setErrorMsg('Please complete the CAPTCHA.');
-      return;
-    }
     setStatus('submitting');
     setErrorMsg('');
 

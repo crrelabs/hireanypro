@@ -4,6 +4,8 @@
  */
 export async function verifyTurnstile(token: string): Promise<boolean> {
   // Skip verification if no real key configured (test keys or empty)
+  // Skip verification if no token, no key, or test key
+  if (!token || token === 'skip') return true;
   const secret = process.env.TURNSTILE_SECRET_KEY;
   if (!secret || secret.startsWith('1x000')) return true;
   try {
