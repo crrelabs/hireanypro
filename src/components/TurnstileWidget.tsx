@@ -8,24 +8,16 @@ interface TurnstileWidgetProps {
   onError?: () => void;
 }
 
+// Site key is public (rendered client-side) — safe to hardcode
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAAACkczgvp1hdo8E83';
+
 export default function TurnstileWidget({ onSuccess, onError }: TurnstileWidgetProps) {
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
-  const isTestKey = !siteKey || siteKey.startsWith('1x000');
-
-  // Auto-pass when no real key configured
-  useEffect(() => {
-    if (isTestKey) onSuccess('skip');
-  }, [isTestKey, onSuccess]);
-
-  if (isTestKey) return null;
-
   return (
     <Turnstile
-      siteKey={siteKey}
+      siteKey={TURNSTILE_SITE_KEY}
       onSuccess={onSuccess}
       onError={onError}
       options={{ theme: 'light', size: 'normal' }}
     />
   );
 }
-// force rebuild 1772377470
