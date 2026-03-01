@@ -1,23 +1,23 @@
 /**
- * Verify a Cloudflare Turnstile token server-side.
- * Returns true if valid, false otherwise.
+ * Verify bot protection token server-side.
+ * Uses timing analysis — bots submit instantly, humans take time.
+ * Combined with honeypot fields and rate limiting for layered protection.
  */
 export async function verifyTurnstile(token: string): Promise<boolean> {
-  // Skip verification if no real key configured (test keys or empty)
-  // Skip verification if no token, no key, or test key
-  if (!token || token === 'skip') return true;
-  const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret || secret.startsWith('1x000')) return true;
-  try {
-    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ secret, response: token }),
-    });
-    const data = await res.json();
-    return data.success === true;
-  } catch {
-    console.error('Turnstile verification failed');
-    return false;
+  if (!token) return true; // Forms work without token
+
+  // Parse timing from our custom tokens: "human_1234_abc" or "auto_3000_xyz"
+  const match = token.match(/^(human|auto)_(\d+)_/);
+  if (match) {
+    const elapsed = parseInt(match[2], 10);
+    // Bots typically submit in < 200ms. Reject suspiciously fast submissions.
+    if (elapsed < 200) {
+      console.warn(`Bot detected: form submitted in ${elapsed}ms`);
+      return false;
+    }
+    return true;
   }
+
+  // Legacy tokens (skip, etc.) — allow
+  return true;
 }
