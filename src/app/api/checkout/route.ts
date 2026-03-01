@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe, PRICE_IDS } from '@/lib/stripe';
+
+const PRICE_IDS = {
+  pro: 'price_1T5t8s2V06RCYNRQv5YPjbfs',
+  featured: 'price_1T5t8t2V06RCYNRQf1khfjGB',
+} as const;
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,20 +16,44 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email required' }, { status: 400 });
     }
 
+    const stripeKey = process.env.STRIPE_SECRET_KEY;
+    if (!stripeKey) {
+      return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 });
+    }
+
     const priceId = PRICE_IDS[plan as keyof typeof PRICE_IDS];
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://hireanypro.com';
 
-    const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
-      payment_method_types: ['card'],
-      customer_email: email,
-      line_items: [{ price: priceId, quantity: 1 }],
-      metadata: { listingId: listingId || '', email, plan },
-      success_url: `${appUrl}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${appUrl}/pricing`,
+    // Use Stripe REST API directly to avoid SDK issues on Vercel
+    const params = new URLSearchParams();
+    params.append('mode', 'subscription');
+    params.append('payment_method_types[]', 'card');
+    params.append('customer_email', email);
+    params.append('line_items[0][price]', priceId);
+    params.append('line_items[0][quantity]', '1');
+    params.append('metadata[listingId]', listingId || '');
+    params.append('metadata[email]', email);
+    params.append('metadata[plan]', plan);
+    params.append('success_url', `${appUrl}/dashboard?session_id={CHECKOUT_SESSION_ID}`);
+    params.append('cancel_url', `${appUrl}/pricing`);
+
+    const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${stripeKey}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: params.toString(),
     });
 
-    return NextResponse.json({ url: session.url });
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Stripe API error:', data);
+      return NextResponse.json({ error: data.error?.message || 'Stripe error' }, { status: 500 });
+    }
+
+    return NextResponse.json({ url: data.url });
   } catch (error: unknown) {
     console.error('Checkout error:', error);
     const message = error instanceof Error ? error.message : 'Internal error';
