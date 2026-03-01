@@ -3,6 +3,7 @@ import SearchBar from '@/components/SearchBar';
 import CategoryCard from '@/components/CategoryCard';
 import ListingCard from '@/components/ListingCard';
 import Link from 'next/link';
+import { getAllCounties, countySlug, getCitiesInCounty, citySlug } from '@/lib/geo';
 
 export const revalidate = 300; // ISR every 5 min
 
@@ -100,6 +101,82 @@ export default async function HomePage() {
               <p className="text-gray-500 text-sm">{item.desc}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Browse by City */}
+      <section className="bg-gray-50 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Browse by Location</h2>
+            <p className="text-gray-500 mt-2">Find home service professionals in your area</p>
+          </div>
+
+          {/* Region cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {getAllCounties().map(county => {
+              const cities = getCitiesInCounty(county);
+              const topCities = cities.slice(0, 8);
+              return (
+                <div key={county} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                  <Link href={`/region/${countySlug(county)}`} className="text-lg font-bold text-blue-800 hover:text-blue-600">
+                    {county} County →
+                  </Link>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {topCities.map(city => (
+                      <Link
+                        key={city}
+                        href={`/services/plumbing/${citySlug(city)}`}
+                        className="text-sm text-gray-600 hover:text-blue-800 hover:bg-blue-50 px-2 py-1 rounded transition-colors"
+                      >
+                        {city}
+                      </Link>
+                    ))}
+                    {cities.length > 8 && (
+                      <Link href={`/region/${countySlug(county)}`} className="text-sm text-blue-800 font-medium px-2 py-1">
+                        +{cities.length - 8} more
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Popular service+city combos for SEO */}
+          <div className="mt-12">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Popular Services by City</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+              {[
+                { cat: 'plumbing', city: 'Miami', label: 'Plumbers in Miami' },
+                { cat: 'electrical', city: 'Miami', label: 'Electricians in Miami' },
+                { cat: 'roofing', city: 'Miami', label: 'Roofers in Miami' },
+                { cat: 'hvac', city: 'Miami', label: 'HVAC in Miami' },
+                { cat: 'plumbing', city: 'Fort Lauderdale', label: 'Plumbers in Ft. Lauderdale' },
+                { cat: 'electrical', city: 'Fort Lauderdale', label: 'Electricians in Ft. Lauderdale' },
+                { cat: 'roofing', city: 'Fort Lauderdale', label: 'Roofers in Ft. Lauderdale' },
+                { cat: 'plumbing', city: 'Orlando', label: 'Plumbers in Orlando' },
+                { cat: 'electrical', city: 'Orlando', label: 'Electricians in Orlando' },
+                { cat: 'hvac', city: 'Orlando', label: 'HVAC in Orlando' },
+                { cat: 'plumbing', city: 'West Palm Beach', label: 'Plumbers in West Palm Beach' },
+                { cat: 'roofing', city: 'West Palm Beach', label: 'Roofers in West Palm Beach' },
+                { cat: 'plumbing', city: 'Coral Gables', label: 'Plumbers in Coral Gables' },
+                { cat: 'landscaping', city: 'Miami', label: 'Landscaping in Miami' },
+                { cat: 'painting', city: 'Miami', label: 'Painters in Miami' },
+                { cat: 'general-contractor', city: 'Miami', label: 'Contractors in Miami' },
+                { cat: 'pool-service', city: 'Miami', label: 'Pool Service in Miami' },
+                { cat: 'cleaning', city: 'Miami', label: 'Cleaning in Miami' },
+              ].map(({ cat, city, label }) => (
+                <Link
+                  key={`${cat}-${city}`}
+                  href={`/services/${cat}/${citySlug(city)}`}
+                  className="text-sm text-gray-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-2 rounded-lg border border-gray-100 transition-colors text-center"
+                >
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 

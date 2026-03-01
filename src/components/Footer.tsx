@@ -43,7 +43,65 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
+        {/* SEO: City + Service links */}
+        <div className="border-t border-gray-800 mt-8 pt-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div>
+              <h3 className="text-white font-semibold mb-3 text-sm">Top Cities</h3>
+              <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
+                {[
+                  { name: 'Miami', slug: 'miami' },
+                  { name: 'Fort Lauderdale', slug: 'fort-lauderdale' },
+                  { name: 'Orlando', slug: 'orlando' },
+                  { name: 'West Palm Beach', slug: 'west-palm-beach' },
+                  { name: 'Coral Gables', slug: 'coral-gables' },
+                  { name: 'Hollywood', slug: 'hollywood' },
+                  { name: 'Boca Raton', slug: 'boca-raton' },
+                  { name: 'Hialeah', slug: 'hialeah' },
+                  { name: 'Pembroke Pines', slug: 'pembroke-pines' },
+                  { name: 'Kissimmee', slug: 'kissimmee' },
+                ].map(c => (
+                  <Link key={c.slug} href={`/services/plumbing/${c.slug}`} className="hover:text-white transition-colors">{c.name}</Link>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h3 className="text-white font-semibold mb-3 text-sm">Regions</h3>
+              <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
+                {[
+                  { name: 'Miami-Dade County', slug: 'miami-dade' },
+                  { name: 'Broward County', slug: 'broward' },
+                  { name: 'Palm Beach County', slug: 'palm-beach' },
+                  { name: 'Orange County', slug: 'orange' },
+                  { name: 'Seminole County', slug: 'seminole' },
+                  { name: 'Osceola County', slug: 'osceola' },
+                ].map(r => (
+                  <Link key={r.slug} href={`/region/${r.slug}`} className="hover:text-white transition-colors">{r.name}</Link>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h3 className="text-white font-semibold mb-3 text-sm">Services in Miami</h3>
+              <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
+                {[
+                  { name: 'Plumbers', cat: 'plumbing' },
+                  { name: 'Electricians', cat: 'electrical' },
+                  { name: 'Roofers', cat: 'roofing' },
+                  { name: 'HVAC', cat: 'hvac' },
+                  { name: 'Painters', cat: 'painting' },
+                  { name: 'Landscaping', cat: 'landscaping' },
+                  { name: 'Contractors', cat: 'general-contractor' },
+                  { name: 'Pool Service', cat: 'pool-service' },
+                  { name: 'Cleaning', cat: 'cleaning' },
+                  { name: 'Pest Control', cat: 'pest-control' },
+                ].map(s => (
+                  <Link key={s.cat} href={`/services/${s.cat}/miami`} className="hover:text-white transition-colors">{s.name}</Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="border-t border-gray-800 pt-8 text-center text-sm">
           <p>&copy; {new Date().getFullYear()} HireAnyPro. All rights reserved.</p>
         </div>
       </div>
