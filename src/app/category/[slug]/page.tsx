@@ -33,7 +33,8 @@ export default async function CategoryPage({ params }: Props) {
     .select('*, categories(name, slug, icon)')
     .eq('category_id', category.id)
     .order('featured', { ascending: false })
-    .order('rating', { ascending: false });
+    .order('review_count', { ascending: false, nullsFirst: false })
+    .order('rating', { ascending: false, nullsFirst: false });
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
