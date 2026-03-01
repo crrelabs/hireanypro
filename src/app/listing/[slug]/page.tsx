@@ -280,6 +280,11 @@ export default async function ListingPage({ params }: Props) {
                 </div>
               )}
 
+              {/* Quote Request Form - right after contact info */}
+              <div className="mt-6 pt-4 border-t border-gray-100">
+                <QuoteRequestForm listingId={listing.id} businessName={listing.name} tier={listing.tier} businessEmail={listing.email} />
+              </div>
+
               {/* Hours */}
               {hours && (
                 <div className="mt-6 pt-4 border-t border-gray-100">
@@ -304,11 +309,6 @@ export default async function ListingPage({ params }: Props) {
                   <p className="text-xs text-gray-400 text-center mt-2">Are you the owner? Claim to manage this page.</p>
                 </div>
               )}
-            </div>
-
-            {/* Quote Request Form */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <QuoteRequestForm listingId={listing.id} businessName={listing.name} tier={listing.tier} businessEmail={listing.email} />
             </div>
           </div>
         </div>
