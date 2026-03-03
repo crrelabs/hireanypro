@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 
 type DashboardData = {
@@ -45,58 +44,23 @@ function DashboardPage() {
   const loadDashboard = useCallback(async (e: string) => {
     setLoading(true);
     try {
-      // Get profile
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', e)
-        .single();
-
-      if (!profile) {
+      const res = await fetch('/api/dashboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: e }),
+      });
+      if (!res.ok) {
         setData(null);
         setLoading(false);
         return;
       }
-
-      // Get claimed listings via subscriptions
-      const { data: subs } = await supabase
-        .from('subscriptions')
-        .select('listing_id, plan')
-        .eq('profile_id', profile.id)
-        .eq('status', 'active');
-
-      const listingIds = (subs || []).map((s) => s.listing_id).filter(Boolean);
-      const planMap = Object.fromEntries((subs || []).map((s) => [s.listing_id, s.plan]));
-
-      let listings: DashboardData['listings'] = [];
-      if (listingIds.length > 0) {
-        const { data: listingData } = await supabase
-          .from('listings')
-          .select('id, name, slug, tier, rating, review_count')
-          .in('id', listingIds);
-        listings = (listingData || []).map((l) => ({ ...l, tier: planMap[l.id] || l.tier }));
-      }
-
-      // Get inquiries
-      let inquiries: DashboardData['inquiries'] = [];
-      let totalInquiries = 0;
-      let monthInquiries = 0;
-      if (listingIds.length > 0) {
-        const { data: inqData } = await supabase
-          .from('inquiries')
-          .select('id, name, email, message, created_at, listing_id')
-          .in('listing_id', listingIds)
-          .order('created_at', { ascending: false })
-          .limit(20);
-        inquiries = inqData || [];
-        totalInquiries = inquiries.length;
-
-        const monthAgo = new Date();
-        monthAgo.setMonth(monthAgo.getMonth() - 1);
-        monthInquiries = inquiries.filter((i) => new Date(i.created_at) > monthAgo).length;
-      }
-
-      setData({ listings, inquiries, totalInquiries, monthInquiries });
+      const result = await res.json();
+      setData({
+        listings: result.listings || [],
+        inquiries: result.inquiries || [],
+        totalInquiries: result.totalInquiries || 0,
+        monthInquiries: result.monthInquiries || 0,
+      });
     } catch (err) {
       console.error('Dashboard error:', err);
     } finally {
