@@ -4,19 +4,27 @@ import { verifyTurnstile } from '@/lib/turnstile';
 import { isRateLimited, getClientIp } from '@/lib/rate-limit';
 import { isBot } from '@/lib/honeypot';
 import { notifyNewClaim } from '@/lib/notify';
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 import crypto from 'crypto';
-
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+function getTransporter() {
+  const pass = process.env.HIREANYPRO_APP_PASSWORD;
+  if (!pass) return null;
+  return nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: { user: 'iris@hireanypro.com', pass },
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
-    // Rate limit: 5 per minute
     const ip = getClientIp(req);
     if (isRateLimited(ip, 5)) {
       return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
@@ -24,13 +32,10 @@ export async function POST(req: NextRequest) {
 
     const { listingId, email, turnstileToken, website, emailOptIn } = await req.json();
 
-    // Honeypot check
     if (isBot(website)) {
-      // Silently "succeed" to not tip off bots
       return NextResponse.json({ success: true });
     }
 
-    // Turnstile verification
     if (!turnstileToken || !(await verifyTurnstile(turnstileToken))) {
       return NextResponse.json({ error: 'CAPTCHA verification failed. Please try again.' }, { status: 400 });
     }
@@ -39,7 +44,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Listing ID and email required' }, { status: 400 });
     }
 
-    // Check listing exists
     const { data: listing } = await supabase
       .from('listings')
       .select('id, claimed, name, slug')
@@ -54,9 +58,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'This listing has already been claimed' }, { status: 400 });
     }
 
-    // Generate verification token
+    // Check for existing pending claim
+    const { data: existingClaim } = await supabase
+      .from('claims')
+      .select('id')
+      .eq('listing_id', listingId)
+      .eq('email', email)
+      .eq('verified', false)
+      .single();
+
+    if (existingClaim) {
+      return NextResponse.json({ error: 'A verification email was already sent. Check your inbox (and spam folder).' }, { status: 400 });
+    }
+
     const verificationToken = crypto.randomUUID();
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24h
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
 
     // Create/get profile
     const { data: profile } = await supabase
@@ -65,13 +81,12 @@ export async function POST(req: NextRequest) {
       .select('id')
       .single();
 
-    // Store email opt-in on profile
     if (emailOptIn && profile?.id) {
-      await supabase.from('profiles').update({ email_opt_in: true, opted_in_at: new Date().toISOString() }).eq('id', profile.id).then(() => {});
+      await supabase.from('profiles').update({ email_opt_in: true, opted_in_at: new Date().toISOString() }).eq('id', profile.id);
     }
 
-    // Create claim — NOT auto-verified; pending email verification
-    const { error: claimError } = await supabase.from('claims').insert({
+    // Create unverified claim
+    await supabase.from('claims').insert({
       listing_id: listingId,
       email,
       verified: false,
@@ -79,42 +94,14 @@ export async function POST(req: NextRequest) {
       expires_at: expiresAt,
     });
 
-    // If columns don't exist, fall back to simple insert
-    if (claimError && claimError.message?.includes('column')) {
-      console.warn('Verification columns missing, falling back to auto-verify:', claimError.message);
-      await supabase.from('claims').insert({
-        listing_id: listingId,
-        email,
-        verified: true,
-      });
+    // Send verification email
+    const verifyUrl = `https://hireanypro.com/verify-claim?token=${verificationToken}`;
+    const transporter = getTransporter();
 
-      // Auto-verify path: update listing immediately
-      await supabase
-        .from('listings')
-        .update({ claimed: true, owner_id: profile?.id })
-        .eq('id', listingId);
-
-      if (profile) {
-        await supabase.from('subscriptions').insert({
-          listing_id: listingId,
-          profile_id: profile.id,
-          plan: 'free',
-          status: 'active',
-        });
-      }
-
-      // Notify Carlos
-      notifyNewClaim(listing.name || 'Unknown Business', email, listing.slug || '').catch(() => {});
-      return NextResponse.json({ success: true, profileId: profile?.id, autoVerified: true });
-    }
-
-    // Send verification email via Resend
-    const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://hireanypro.com'}/verify-claim?token=${verificationToken}&claim_id=${listingId}`;
-
-    if (resend) {
+    if (transporter) {
       try {
-        await resend.emails.send({
-          from: process.env.RESEND_FROM_EMAIL || 'HireAnyPro <onboarding@resend.dev>',
+        await transporter.sendMail({
+          from: 'HireAnyPro <iris@hireanypro.com>',
           to: email,
           subject: `Verify your claim for ${listing.name} on HireAnyPro`,
           html: `
@@ -135,14 +122,13 @@ export async function POST(req: NextRequest) {
           `,
         });
       } catch (e) {
-        console.error('Resend email failed:', e);
-        console.log(`📧 CLAIM VERIFICATION URL (send to ${email}): ${verifyUrl}`);
+        console.error('Verification email failed:', e);
       }
     } else {
-      console.log(`📧 CLAIM VERIFICATION URL (no RESEND_API_KEY): ${verifyUrl}`);
+      console.log(`📧 VERIFY URL (no SMTP): ${verifyUrl}`);
     }
 
-    // Notify about the claim
+    // Notify Carlos about the claim attempt
     notifyNewClaim(listing.name || 'Unknown Business', email, listing.slug || '').catch(() => {});
 
     return NextResponse.json({

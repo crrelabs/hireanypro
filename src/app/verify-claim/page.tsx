@@ -7,12 +7,12 @@ import Link from 'next/link';
 function VerifyClaimContent() {
   const params = useSearchParams();
   const token = params.get('token');
-  const claimId = params.get('claim_id');
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
-    if (!token || !claimId) {
+    if (!token) {
       setStatus('error');
       setMessage('Invalid verification link.');
       return;
@@ -21,12 +21,13 @@ function VerifyClaimContent() {
     fetch('/api/verify-claim', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token, listingId: claimId }),
+      body: JSON.stringify({ token }),
     })
       .then((r) => r.json())
       .then((data) => {
         if (data.success) {
           setStatus('success');
+          setEmail(data.email || '');
           setMessage('Your claim has been verified! You can now manage your listing.');
         } else {
           setStatus('error');
@@ -47,7 +48,7 @@ function VerifyClaimContent() {
           <div className="text-6xl mb-4">✅</div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Claim Verified!</h1>
           <p className="text-gray-600 mb-6">{message}</p>
-          <Link href="/dashboard" className="text-blue-800 hover:underline font-medium">
+          <Link href={email ? `/dashboard?email=${encodeURIComponent(email)}` : '/dashboard'} className="inline-block bg-blue-800 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium transition-colors">
             Go to Dashboard →
           </Link>
         </>

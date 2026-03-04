@@ -8,9 +8,9 @@ const supabase = createClient(
 
 export async function POST(req: NextRequest) {
   try {
-    const { token, listingId } = await req.json();
+    const { token } = await req.json();
 
-    if (!token || !listingId) {
+    if (!token) {
       return NextResponse.json({ error: 'Invalid verification link' }, { status: 400 });
     }
 
@@ -19,7 +19,6 @@ export async function POST(req: NextRequest) {
       .from('claims')
       .select('*')
       .eq('verification_token', token)
-      .eq('listing_id', listingId)
       .single();
 
     if (claimError || !claim) {
@@ -27,7 +26,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (claim.verified) {
-      return NextResponse.json({ success: true, message: 'Already verified' });
+      return NextResponse.json({ success: true, email: claim.email, message: 'Already verified' });
     }
 
     // Check expiration
@@ -35,12 +34,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Verification link has expired. Please claim again.' }, { status: 400 });
     }
 
+    // Check listing isn't already claimed by someone else
+    const { data: listing } = await supabase
+      .from('listings')
+      .select('id, claimed')
+      .eq('id', claim.listing_id)
+      .single();
+
+    if (listing?.claimed) {
+      return NextResponse.json({ error: 'This listing has already been claimed by someone else.' }, { status: 400 });
+    }
+
     // Mark as verified
     await supabase
       .from('claims')
       .update({ verified: true })
-      .eq('verification_token', token)
-      .eq('listing_id', listingId);
+      .eq('id', claim.id);
 
     // Get/create profile
     const { data: profile } = await supabase
@@ -53,19 +62,19 @@ export async function POST(req: NextRequest) {
     await supabase
       .from('listings')
       .update({ claimed: true, owner_id: profile?.id })
-      .eq('id', listingId);
+      .eq('id', claim.listing_id);
 
     // Create free subscription
     if (profile) {
       await supabase.from('subscriptions').insert({
-        listing_id: listingId,
+        listing_id: claim.listing_id,
         profile_id: profile.id,
         plan: 'free',
         status: 'active',
       });
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, email: claim.email });
   } catch (error: unknown) {
     console.error('Verify claim error:', error);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
