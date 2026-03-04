@@ -4,7 +4,10 @@ import { verifyTurnstile } from '@/lib/turnstile';
 import { isRateLimited, getClientIp } from '@/lib/rate-limit';
 import { isBot } from '@/lib/honeypot';
 import { notifyNewClaim } from '@/lib/notify';
+import { Resend } from 'resend';
 import crypto from 'crypto';
+
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -105,9 +108,42 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, profileId: profile?.id, autoVerified: true });
     }
 
-    // Log verification URL for testing (will be emailed later via Resend/SendGrid)
+    // Send verification email via Resend
     const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://hireanypro.com'}/verify-claim?token=${verificationToken}&claim_id=${listingId}`;
-    console.log(`📧 CLAIM VERIFICATION URL (send to ${email}): ${verifyUrl}`);
+
+    if (resend) {
+      try {
+        await resend.emails.send({
+          from: process.env.RESEND_FROM_EMAIL || 'HireAnyPro <onboarding@resend.dev>',
+          to: email,
+          subject: `Verify your claim for ${listing.name} on HireAnyPro`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <h2 style="color: #1e40af;">Verify Your Business Claim</h2>
+              <p>You requested to claim <strong>${listing.name}</strong> on HireAnyPro.</p>
+              <p>Click the button below to verify your email and complete your claim:</p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${verifyUrl}" style="background: #1e40af; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
+                  Verify &amp; Claim Your Listing
+                </a>
+              </div>
+              <p style="color: #666; font-size: 14px;">This link expires in 24 hours.</p>
+              <p style="color: #666; font-size: 14px;">If you didn't request this, you can safely ignore this email.</p>
+              <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+              <p style="color: #999; font-size: 12px;">HireAnyPro — Find Trusted Home Service Professionals</p>
+            </div>
+          `,
+        });
+      } catch (e) {
+        console.error('Resend email failed:', e);
+        console.log(`📧 CLAIM VERIFICATION URL (send to ${email}): ${verifyUrl}`);
+      }
+    } else {
+      console.log(`📧 CLAIM VERIFICATION URL (no RESEND_API_KEY): ${verifyUrl}`);
+    }
+
+    // Notify about the claim
+    notifyNewClaim(listing.name || 'Unknown Business', email, listing.slug || '').catch(() => {});
 
     return NextResponse.json({
       success: true,
