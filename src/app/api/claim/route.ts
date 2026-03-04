@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
     if (transporter) {
       try {
         await transporter.sendMail({
-          from: 'HireAnyPro <iris@hireanypro.com>',
+          from: process.env.RESEND_FROM_EMAIL || 'HireAnyPro <noreply@hireanypro.com>',
           to: email,
           subject: `Verify your claim for ${listing.name} on HireAnyPro`,
           html: `
