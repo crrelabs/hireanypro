@@ -38,7 +38,7 @@ function VerifyClaimContent() {
         setStatus('error');
         setMessage('Something went wrong.');
       });
-  }, [token, claimId]);
+  }, [token]);
 
   return (
     <div className="max-w-lg mx-auto py-20 px-4 text-center">
