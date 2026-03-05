@@ -26,6 +26,17 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'No email in metadata' }, { status: 400 });
       }
 
+      // If listingId is a slug (not UUID), look up the real ID
+      if (listingId && !listingId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-/)) {
+        const { data: listingBySlug } = await supabase
+          .from('listings')
+          .select('id')
+          .eq('slug', listingId)
+          .single();
+        if (listingBySlug) listingId = listingBySlug.id;
+        else listingId = ''; // slug not found, fall through to email-based lookup
+      }
+
       // Upsert profile
       const { data: profile } = await supabase
         .from('profiles')
