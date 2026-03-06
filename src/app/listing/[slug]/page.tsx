@@ -111,6 +111,8 @@ export default async function ListingPage({ params }: Props) {
     .eq('listing_id', listing.id)
     .order('created_at', { ascending: false });
 
+  const listingCounty = listing.city ? await getCountyForCity(listing.city) : null;
+
   const hours = listing.hours as Record<string, string> | null;
   const dayLabels: Record<string, string> = { monday: 'Monday', tuesday: 'Tuesday', wednesday: 'Wednesday', thursday: 'Thursday', friday: 'Friday', saturday: 'Saturday', sunday: 'Sunday' };
   const jsonLdItems = buildJsonLd(listing);
@@ -357,16 +359,13 @@ export default async function ListingPage({ params }: Props) {
               </Link>
             </p>
           )}
-          {listing.city && (() => {
-            const county = getCountyForCity(listing.city);
-            return county ? (
-              <p className="text-sm text-gray-600">
-                <Link href={`/region/${countySlug(county)}`} className="text-blue-800 hover:underline font-medium">
-                  All home services in {county} County →
-                </Link>
-              </p>
-            ) : null;
-          })()}
+          {listing.city && listingCounty && (
+            <p className="text-sm text-gray-600">
+              <Link href={`/region/${countySlug(listingCounty)}`} className="text-blue-800 hover:underline font-medium">
+                All home services in {listingCounty} County →
+              </Link>
+            </p>
+          )}
         </div>
       </div>
     </>

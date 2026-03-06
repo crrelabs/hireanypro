@@ -1,76 +1,76 @@
-// City-to-county mapping for Florida counties covered by HireAnyPro
-const COUNTY_MAP: Record<string, string[]> = {
-  'Miami-Dade': [
-    'Aventura', 'Bal Harbour', 'Bay Harbor Islands', 'Biscayne Park', 'Coconut Grove',
-    'Coral Gables', 'Coral Way', 'Cutler Bay', 'Doral', 'El Portal', 'Florida City',
-    'Hialeah', 'Hialeah Gardens', 'Homestead', 'Kendall', 'Key Biscayne',
-    'Medley', 'Miami', 'Miami Beach', 'Miami Gardens', 'Miami Lakes', 'Miami Shores',
-    'Miami Springs', 'Naranja', 'North Bay Village', 'North Miami', 'North Miami Beach',
-    'Olympia Heights', 'Opa-locka', 'Palmetto Bay', 'Pinecrest', 'Princeton',
-    'South Miami', 'Sunny Isles Beach', 'Surfside', 'Virginia Gardens', 'West Miami',
-    'Brownsville', 'Carol City', 'HALNDLE BCH', 'Hollywood Beach',
-  ],
-  'Broward': [
-    'Coconut Creek', 'Cooper City', 'Coral Springs', 'Dania Beach', 'Davie',
-    'Deerfield Beach', 'Fort Lauderdale', 'Hallandale Beach', 'Hillsboro Beach',
-    'Hollywood', 'Lauderdale Lakes', 'Lauderdale-By-The-Sea', 'Lauderhill',
-    'Margate', 'Miramar', 'North Lauderdale', 'Oakland Park', 'Parkland',
-    'Pembroke Park', 'Pembroke Pines', 'Plantation', 'Pompano Beach',
-    'Southwest Ranches', 'Sunrise', 'Tamarac', 'West Park', 'Weston', 'Wilton Manors',
-    'Lighthouse Point',
-  ],
-  'Palm Beach': [
-    'Atlantis', 'Belle Glade', 'Boca Raton', 'Boynton Beach', 'Delray Beach',
-    'Golf', 'Greenacres', 'Gulf Stream', 'Haverhill', 'Highland Beach',
-    'Hypoluxo', 'Juno Beach', 'Jupiter', 'Jupiter Inlet Colony', 'Lake Clarke Shores',
-    'Lake Park', 'Lake Worth', 'Lake Worth Beach', 'Lake Worth Corridor', 'Lantana',
-    'Loxahatchee', 'Manalapan', 'Mangonia Park', 'North Palm Beach', 'Ocean Ridge',
-    'Pahokee', 'Palm Beach', 'Palm Beach Gardens', 'Palm Springs', 'Riviera Beach',
-    'Royal Palm Beach', 'South Bay', 'South Palm Beach', 'Tequesta',
-    'Wellington', 'West Palm Beach',
-  ],
-  'Orange': [
-    'Alafaya', 'Apopka', 'Azalea Park', 'Belle Isle', 'Christmas', 'Eatonville',
-    'Edgewood', 'Gotha', 'Lockhart', 'Maitland', 'Oakland', 'Ocoee', 'Orlando',
-    'Pine Castle', 'Sand Lake', 'Windermere', 'Winter Garden', 'Winter Park',
-    'BVL', 'Forest City',
-  ],
-  'Seminole': [
-    'Altamonte Springs', 'Casselberry', 'Chuluota', 'Fern Park', 'Geneva',
-    'Lake Mary', 'Longwood', 'Oviedo', 'Sanford', 'Winter Springs',
-  ],
-  'Osceola': [
-    'Celebration', 'Davenport', 'Harmony', 'Kissimmee', 'Poinciana',
-    'St. Cloud',
-  ],
-};
+import { supabase } from './supabase';
 
-// Build reverse lookup
-const cityToCounty: Record<string, string> = {};
-for (const [county, cities] of Object.entries(COUNTY_MAP)) {
-  for (const city of cities) {
-    cityToCounty[city] = county;
+// Cache for county/city data (refreshes every 5 min via ISR)
+let _countyCache: Record<string, string[]> | null = null;
+let _cacheTime = 0;
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+async function loadCountyMap(): Promise<Record<string, string[]>> {
+  if (_countyCache && Date.now() - _cacheTime < CACHE_TTL) return _countyCache;
+
+  const map: Record<string, string[]> = {};
+
+  // Paginate through all listings with county data
+  let offset = 0;
+  const seen = new Set<string>();
+  while (true) {
+    const { data } = await supabase
+      .from('listings')
+      .select('city, county')
+      .not('county', 'is', null)
+      .not('city', 'is', null)
+      .range(offset, offset + 999);
+
+    if (!data || data.length === 0) break;
+    for (const row of data) {
+      const key = `${row.county}|${row.city}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      if (!map[row.county]) map[row.county] = [];
+      if (!map[row.county].includes(row.city)) map[row.county].push(row.city);
+    }
+    offset += 1000;
+    if (data.length < 1000) break;
   }
+
+  // Sort cities alphabetically
+  for (const county of Object.keys(map)) {
+    map[county].sort();
+  }
+
+  _countyCache = map;
+  _cacheTime = Date.now();
+  return map;
 }
 
-export function getCountyForCity(city: string): string | null {
-  return cityToCounty[city] || null;
+export async function getCountyMap(): Promise<Record<string, string[]>> {
+  return loadCountyMap();
 }
 
-export function getCitiesInCounty(county: string): string[] {
-  return COUNTY_MAP[county] || [];
+export async function getCountyForCity(city: string): Promise<string | null> {
+  const map = await loadCountyMap();
+  for (const [county, cities] of Object.entries(map)) {
+    if (cities.some(c => c.toLowerCase() === city.toLowerCase())) return county;
+  }
+  return null;
 }
 
-export function getAllCounties(): string[] {
-  return Object.keys(COUNTY_MAP);
+export async function getCitiesInCounty(county: string): Promise<string[]> {
+  const map = await loadCountyMap();
+  return map[county] || [];
+}
+
+export async function getAllCounties(): Promise<string[]> {
+  const map = await loadCountyMap();
+  return Object.keys(map).sort();
 }
 
 export function countySlug(county: string): string {
   return county.toLowerCase().replace(/\s+/g, '-');
 }
 
-export function countyFromSlug(slug: string): string | null {
-  return Object.keys(COUNTY_MAP).find(c => countySlug(c) === slug) || null;
+export function countyFromSlug(slug: string, counties: string[]): string | null {
+  return counties.find(c => countySlug(c) === slug) || null;
 }
 
 export function citySlug(city: string): string {

@@ -3,13 +3,14 @@ import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { countyFromSlug, getCitiesInCounty, citySlug, countySlug } from '@/lib/geo';
+import { getAllCounties, countyFromSlug, getCitiesInCounty, citySlug, countySlug } from '@/lib/geo';
 
 type Props = { params: Promise<{ county: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { county: slug } = await params;
-  const countyName = countyFromSlug(slug);
+  const counties = await getAllCounties();
+  const countyName = countyFromSlug(slug, counties);
   if (!countyName) return { title: 'Not Found' };
 
   const title = `Home Services in ${countyName} County, FL | HireAnyPro`;
@@ -27,10 +28,11 @@ export const revalidate = 300;
 
 export default async function CountyPage({ params }: Props) {
   const { county: slug } = await params;
-  const countyName = countyFromSlug(slug);
+  const counties = await getAllCounties();
+  const countyName = countyFromSlug(slug, counties);
   if (!countyName) notFound();
 
-  const knownCities = getCitiesInCounty(countyName);
+  const knownCities = await getCitiesInCounty(countyName);
 
   // Get all listings in these cities
   const { data: listings } = await supabase

@@ -65,7 +65,7 @@ export default async function CityLandingPage({ params }: Props) {
   if (!cityName) notFound();
 
   const listings = (allListings || []).filter(l => l.city === cityName);
-  const county = getCountyForCity(cityName);
+  const county = await getCountyForCity(cityName);
 
   // Related services: other categories in this city
   const { data: otherCatRows } = await supabase

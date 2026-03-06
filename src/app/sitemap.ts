@@ -69,7 +69,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // County/region pages
-  const countyPages: MetadataRoute.Sitemap = getAllCounties().map((county) => ({
+  const countyPages: MetadataRoute.Sitemap = (await getAllCounties()).map((county) => ({
     url: `${BASE_URL}/region/${countySlug(county)}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,

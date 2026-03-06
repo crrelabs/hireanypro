@@ -114,33 +114,36 @@ export default async function HomePage() {
 
           {/* Region cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {getAllCounties().map(county => {
-              const cities = getCitiesInCounty(county);
-              const topCities = cities.slice(0, 8);
-              return (
-                <div key={county} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                  <Link href={`/region/${countySlug(county)}`} className="text-lg font-bold text-blue-800 hover:text-blue-600">
-                    {county} County →
-                  </Link>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {topCities.map(city => (
-                      <Link
-                        key={city}
-                        href={`/services/plumbing/${citySlug(city)}`}
-                        className="text-sm text-gray-600 hover:text-blue-800 hover:bg-blue-50 px-2 py-1 rounded transition-colors"
-                      >
-                        {city}
-                      </Link>
-                    ))}
-                    {cities.length > 8 && (
-                      <Link href={`/region/${countySlug(county)}`} className="text-sm text-blue-800 font-medium px-2 py-1">
-                        +{cities.length - 8} more
-                      </Link>
-                    )}
+            {await (async () => {
+              const counties = await getAllCounties();
+              return Promise.all(counties.map(async (county) => {
+                const cities = await getCitiesInCounty(county);
+                const topCities = cities.slice(0, 8);
+                return (
+                  <div key={county} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <Link href={`/region/${countySlug(county)}`} className="text-lg font-bold text-blue-800 hover:text-blue-600">
+                      {county} County →
+                    </Link>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {topCities.map(city => (
+                        <Link
+                          key={city}
+                          href={`/services/plumbing/${citySlug(city)}`}
+                          className="text-sm text-gray-600 hover:text-blue-800 hover:bg-blue-50 px-2 py-1 rounded transition-colors"
+                        >
+                          {city}
+                        </Link>
+                      ))}
+                      {cities.length > 8 && (
+                        <Link href={`/region/${countySlug(county)}`} className="text-sm text-blue-800 font-medium px-2 py-1">
+                          +{cities.length - 8} more
+                        </Link>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              }));
+            })()}
           </div>
 
           {/* Popular service+city combos for SEO */}
