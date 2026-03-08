@@ -40,6 +40,9 @@ export default function Footer() {
               <li><Link href="/claim" className="hover:text-white transition-colors">Claim Your Listing</Link></li>
               <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
               <li><Link href="/dashboard" className="hover:text-white transition-colors">Business Dashboard</Link></li>
+              <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
+              <li><Link href="/sms-policy" className="hover:text-white transition-colors">SMS Policy</Link></li>
             </ul>
           </div>
         </div>
@@ -101,8 +104,9 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div className="border-t border-gray-800 pt-8 text-center text-sm">
-          <p>&copy; {new Date().getFullYear()} HireAnyPro. All rights reserved.</p>
+        <div className="border-t border-gray-800 pt-8 text-center text-sm space-y-2">
+          <p>CRRE Labs LLC · 12394 SW 82 Ave, Pinecrest, FL 33156 · <a href="tel:+17866996091" className="hover:text-white transition-colors">(786) 699-6091</a> · <a href="mailto:iris@hireanypro.com" className="hover:text-white transition-colors">iris@hireanypro.com</a></p>
+          <p>&copy; {new Date().getFullYear()} HireAnyPro. All rights reserved. · <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link> · <Link href="/terms" className="hover:text-white transition-colors">Terms</Link> · <Link href="/sms-policy" className="hover:text-white transition-colors">SMS Policy</Link></p>
         </div>
       </div>
     </footer>
