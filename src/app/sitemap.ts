@@ -37,8 +37,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/search`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
   ];
 
+  // Filter out listings with problematic slugs (special characters cause 404s)
+  const safeListings = allListings.filter(l => /^[a-z0-9-]+$/.test(l.slug));
+
   // Listing pages
-  const listingPages: MetadataRoute.Sitemap = allListings.map((l) => ({
+  const listingPages: MetadataRoute.Sitemap = safeListings.map((l) => ({
     url: `${BASE_URL}/listing/${l.slug}`,
     lastModified: l.updated_at ? new Date(l.updated_at) : new Date(),
     changeFrequency: 'weekly' as const,
@@ -55,7 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // City landing pages (distinct category+city combos)
   const cityComboSet = new Set<string>();
-  for (const l of allListings) {
+  for (const l of safeListings) {
     if (l.city && l.category_id) {
       const catS = catIdToSlug.get(l.category_id);
       if (catS) cityComboSet.add(`${catS}/${citySlug(l.city)}`);
