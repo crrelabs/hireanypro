@@ -38,8 +38,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    alternates: { canonical: `https://hireanypro.com/${catSlug}/${cSlug}` },
-    openGraph: { title, description, url: `https://hireanypro.com/${catSlug}/${cSlug}`, siteName: 'HireAnyPro' },
+    alternates: { canonical: `https://hireanypro.com/services/${catSlug}/${cSlug}` },
+    openGraph: { title, description, url: `https://hireanypro.com/services/${catSlug}/${cSlug}`, siteName: 'HireAnyPro' },
   };
 }
 
