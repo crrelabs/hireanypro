@@ -41,8 +41,15 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold text-gray-900 mb-3">4. SMS Communications</h2>
-          <p>If you opt in to receive SMS messages, we may send text notifications about new leads, service requests in your area, account updates, and promotional offers. You may opt out at any time by replying STOP. Message and data rates may apply. See our <Link href="/sms-policy" className="text-blue-800 hover:underline">SMS Policy</Link> for full details.</p>
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">4. SMS/Text Messaging</h2>
+          <p>By providing your phone number and checking the SMS consent box on our claim form or contact form at hireanypro.com, you expressly consent to receive SMS text messages from HireAnyPro (operated by CRRE Labs LLC). Messages may include notifications about new leads, service requests in your area, account updates, and promotional offers.</p>
+          <p className="mt-2"><strong>Consent:</strong> You opt in by submitting our claim form or contact form with the SMS consent checkbox checked. Consent is not a condition of purchase.</p>
+          <p className="mt-2"><strong>Message Frequency:</strong> Message frequency varies based on lead volume in your area. You may receive up to 10 messages per month.</p>
+          <p className="mt-2"><strong>Costs:</strong> Message and data rates may apply. HireAnyPro does not charge for text messages, but your mobile carrier may apply standard messaging fees.</p>
+          <p className="mt-2"><strong>Opt-Out:</strong> Reply <strong>STOP</strong> to any message to opt out. You will receive one final confirmation message.</p>
+          <p className="mt-2"><strong>Help:</strong> Reply <strong>HELP</strong> for assistance, or contact us at <a href="mailto:iris@hireanypro.com" className="text-blue-800 hover:underline">iris@hireanypro.com</a> or <a href="tel:+17866996091" className="text-blue-800 hover:underline">(786) 699-6091</a>.</p>
+          <p className="mt-2"><strong>Carriers:</strong> Compatible with all major U.S. carriers including AT&amp;T, Verizon, T-Mobile, and others. Carriers are not liable for delayed or undelivered messages.</p>
+          <p className="mt-2">For complete details, see our <Link href="/sms-policy" className="text-blue-800 hover:underline">SMS &amp; Messaging Policy</Link>.</p>
         </section>
 
         <section>
