@@ -1,8 +1,14 @@
+import type { Metadata } from 'next';
 import { supabase, type Listing } from '@/lib/supabase';
 import SearchBar from '@/components/SearchBar';
 import ListingCard from '@/components/ListingCard';
 import FilterSidebar from '@/components/FilterSidebar';
 import MapViewWrapper from '@/components/MapViewWrapper';
+
+export const metadata: Metadata = {
+  title: 'Search Home Service Pros | HireAnyPro',
+  robots: { index: false, follow: true },
+};
 import { Suspense } from 'react';
 
 export const revalidate = 60;
