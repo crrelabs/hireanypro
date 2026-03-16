@@ -15,14 +15,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { data: cat } = await supabase.from('categories').select('name, slug').eq('slug', catSlug).single();
   if (!cat) return { title: 'Not Found' };
 
-  // Find the actual city name
-  const { data: cityRows } = await supabase
-    .from('listings')
-    .select('city')
-    .eq('category_id', (await supabase.from('categories').select('id').eq('slug', catSlug).single()).data?.id || '')
-    .limit(5000);
+  // Find the actual city name (paginated to handle large categories)
+  const catId = (await supabase.from('categories').select('id').eq('slug', catSlug).single()).data?.id || '';
+  const metaCityRows: { city: string }[] = [];
+  let metaOffset = 0;
+  while (true) {
+    const { data } = await supabase
+      .from('listings')
+      .select('city')
+      .eq('category_id', catId)
+      .not('city', 'is', null)
+      .range(metaOffset, metaOffset + 999);
+    if (!data || data.length === 0) break;
+    metaCityRows.push(...data);
+    if (data.length < 1000) break;
+    metaOffset += 1000;
+  }
 
-  const cities = [...new Set((cityRows || []).map(l => l.city).filter(Boolean))];
+  const cities = [...new Set(metaCityRows.map(l => l.city).filter(Boolean))];
   const cityName = cityFromSlug(cSlug, cities);
   if (!cityName) return { title: 'Not Found' };
 
@@ -51,7 +61,26 @@ export default async function CityLandingPage({ params }: Props) {
   const { data: category } = await supabase.from('categories').select('*').eq('slug', catSlug).single();
   if (!category) notFound();
 
-  // Get all listings for this category to find the city
+  // First, resolve city name from slug using ALL cities in this category
+  const allCityRows: { city: string }[] = [];
+  let cityOffset = 0;
+  while (true) {
+    const { data } = await supabase
+      .from('listings')
+      .select('city')
+      .eq('category_id', category.id)
+      .not('city', 'is', null)
+      .range(cityOffset, cityOffset + 999);
+    if (!data || data.length === 0) break;
+    allCityRows.push(...data);
+    if (data.length < 1000) break;
+    cityOffset += 1000;
+  }
+  const allCities = [...new Set(allCityRows.map(r => r.city).filter(Boolean))].sort();
+  const cityName = cityFromSlug(cSlug, allCities);
+  if (!cityName) notFound();
+
+  // Now get listings for this specific city (with full data)
   const { data: allListings } = await supabase
     .from('listings')
     .select('*, categories(name, slug, icon)')
@@ -59,10 +88,6 @@ export default async function CityLandingPage({ params }: Props) {
     .order('featured', { ascending: false })
     .order('review_count', { ascending: false, nullsFirst: false })
     .order('rating', { ascending: false, nullsFirst: false });
-
-  const allCities = [...new Set((allListings || []).map(l => l.city).filter(Boolean))].sort();
-  const cityName = cityFromSlug(cSlug, allCities);
-  if (!cityName) notFound();
 
   const listings = (allListings || []).filter(l => l.city === cityName);
   const county = await getCountyForCity(cityName);
