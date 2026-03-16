@@ -4,6 +4,11 @@ import CategoryCard from '@/components/CategoryCard';
 import ListingCard from '@/components/ListingCard';
 import Link from 'next/link';
 import { getAllCounties, countySlug, getCitiesInCounty, citySlug } from '@/lib/geo';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  alternates: { canonical: 'https://hireanypro.com' },
+};
 
 export const revalidate = 300; // ISR every 5 min
 

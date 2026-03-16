@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'SMS & Messaging Policy — HireAnyPro',
   description: 'HireAnyPro SMS opt-in, opt-out, and messaging policy.',
+  alternates: { canonical: 'https://hireanypro.com/sms-policy' },
 };
 
 export default function SmsPolicyPage() {

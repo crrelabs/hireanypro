@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Browse Categories — HireAnyPro',
   description: 'Browse home service categories including plumbing, electrical, HVAC, roofing, painting, and more.',
+  alternates: { canonical: 'https://hireanypro.com/categories' },
 };
 
 export const revalidate = 300;

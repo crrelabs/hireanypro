@@ -10,6 +10,7 @@ const GA_ID = "G-25DF5DE9QJ";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://hireanypro.com"),
   title: "HireAnyPro — Find Trusted Home Service Pros in Miami",
   description: "Find and hire the best plumbers, electricians, roofers, HVAC technicians, and more in Florida. Read reviews, compare ratings, and get quotes.",
   openGraph: {

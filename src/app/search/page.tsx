@@ -4,6 +4,13 @@ import ListingCard from '@/components/ListingCard';
 import FilterSidebar from '@/components/FilterSidebar';
 import MapViewWrapper from '@/components/MapViewWrapper';
 import { Suspense } from 'react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Search Home Service Pros — HireAnyPro',
+  alternates: { canonical: 'https://hireanypro.com/search' },
+  robots: { index: false, follow: true },
+};
 
 export const revalidate = 60;
 

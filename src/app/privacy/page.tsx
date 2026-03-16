@@ -4,6 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Privacy Policy — HireAnyPro',
   description: 'How HireAnyPro collects, uses, and protects your information.',
+  alternates: { canonical: 'https://hireanypro.com/privacy' },
 };
 
 export default function PrivacyPage() {

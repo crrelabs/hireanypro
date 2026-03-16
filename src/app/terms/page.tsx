@@ -4,6 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Terms of Service — HireAnyPro',
   description: 'Terms and conditions for using HireAnyPro services.',
+  alternates: { canonical: 'https://hireanypro.com/terms' },
 };
 
 export default function TermsPage() {
