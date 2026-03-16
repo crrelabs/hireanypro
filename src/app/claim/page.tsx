@@ -36,6 +36,7 @@ function ClaimPage() {
   const [honeypot, setHoneypot] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');
   const [emailOptIn, setEmailOptIn] = useState(false);
+  const [smsOptIn, setSmsOptIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [pendingVerification, setPendingVerification] = useState(false);
@@ -205,6 +206,20 @@ function ClaimPage() {
             />
             <span className="text-sm text-gray-600">
               I agree to receive emails from HireAnyPro about leads, tips, and promotions. You can unsubscribe at any time.
+            </span>
+          </label>
+
+          <label className="flex items-start gap-3 mb-4 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={smsOptIn}
+              onChange={(e) => setSmsOptIn(e.target.checked)}
+              className="mt-1 w-4 h-4 text-blue-800 border-gray-300 rounded focus:ring-blue-800"
+            />
+            <span className="text-sm text-gray-600">
+              I consent to receive SMS text messages from HireAnyPro about new leads and service requests in my area. Message &amp; data rates may apply. Reply STOP to opt out. See our{' '}
+              <a href="/sms-policy" className="text-blue-800 hover:underline">SMS Policy</a> and{' '}
+              <a href="/privacy" className="text-blue-800 hover:underline">Privacy Policy</a>.
             </span>
           </label>
 

@@ -30,16 +30,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { data: catRows } = await supabase.from('categories').select('id, slug');
   const catIdToSlug = new Map((catRows || []).map(c => [c.id, c.slug]));
 
-  // Static pages
+  // Static pages (search excluded — noindex)
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE_URL, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
     { url: `${BASE_URL}/categories`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${BASE_URL}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
-    { url: `${BASE_URL}/pricing`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${BASE_URL}/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
+    { url: `${BASE_URL}/pricing`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
   ];
 
+  // Filter out listings with problematic slugs (special characters cause 404s)
+  const safeListings = allListings.filter(l => /^[a-z0-9-]+$/.test(l.slug));
+
   // Listing pages
-  const listingPages: MetadataRoute.Sitemap = allListings.map((l) => ({
+  const listingPages: MetadataRoute.Sitemap = safeListings.map((l) => ({
     url: `${BASE_URL}/listing/${l.slug}`,
     lastModified: l.updated_at ? new Date(l.updated_at) : new Date(),
     changeFrequency: 'weekly' as const,
@@ -56,7 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // City landing pages (distinct category+city combos)
   const cityComboSet = new Set<string>();
-  for (const l of allListings) {
+  for (const l of safeListings) {
     if (l.city && l.category_id) {
       const catS = catIdToSlug.get(l.category_id);
       if (catS) cityComboSet.add(`${catS}/${citySlug(l.city)}`);
