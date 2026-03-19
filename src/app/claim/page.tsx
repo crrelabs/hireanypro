@@ -33,6 +33,7 @@ function ClaimPage() {
   const [results, setResults] = useState<ListingResult[]>([]);
   const [selected, setSelected] = useState<ListingResult | null>(null);
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [honeypot, setHoneypot] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');
   const [emailOptIn, setEmailOptIn] = useState(false);
@@ -81,8 +82,10 @@ function ClaimPage() {
         body: JSON.stringify({
           listingId: selected.id,
           email,
+          phone,
           turnstileToken,
           emailOptIn,
+          smsOptIn,
           website: honeypot,
         }),
       });
@@ -197,6 +200,15 @@ function ClaimPage() {
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800 focus:border-transparent mb-4 text-gray-900"
           />
 
+          <label className="block text-sm font-medium text-gray-700 mb-2">Phone number</label>
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="(555) 123-4567"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800 focus:border-transparent mb-4 text-gray-900"
+          />
+
           <label className="flex items-start gap-3 mb-4 cursor-pointer">
             <input
               type="checkbox"
@@ -217,7 +229,7 @@ function ClaimPage() {
               className="mt-1 w-4 h-4 text-blue-800 border-gray-300 rounded focus:ring-blue-800"
             />
             <span className="text-sm text-gray-600">
-              I consent to receive SMS text messages from HireAnyPro about new leads and service requests in my area. Message &amp; data rates may apply. Reply STOP to opt out. See our{' '}
+              I consent to receive SMS text messages from HireAnyPro at the phone number provided above. Message &amp; data rates may apply. Reply STOP to opt out. See our{' '}
               <a href="/sms-policy" className="text-blue-800 hover:underline">SMS Policy</a> and{' '}
               <a href="/privacy" className="text-blue-800 hover:underline">Privacy Policy</a>.
             </span>
