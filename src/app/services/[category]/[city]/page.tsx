@@ -40,6 +40,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description,
     alternates: { canonical: `https://hireanypro.com/services/${catSlug}/${cSlug}` },
     openGraph: { title, description, url: `https://hireanypro.com/services/${catSlug}/${cSlug}`, siteName: 'HireAnyPro' },
+    // Noindex empty city pages to avoid thin content
+    ...((count || 0) === 0 ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
