@@ -50,8 +50,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description,
     alternates: { canonical: `https://hireanypro.com/services/${catSlug}/${cSlug}` },
     openGraph: { title, description, url: `https://hireanypro.com/services/${catSlug}/${cSlug}`, siteName: 'HireAnyPro' },
-    // Noindex empty city pages to avoid thin content
-    ...((count || 0) === 0 ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
@@ -92,6 +90,7 @@ export default async function CityLandingPage({ params }: Props) {
     .order('rating', { ascending: false, nullsFirst: false });
 
   const listings = (allListings || []).filter(l => l.city === cityName);
+  if (listings.length === 0) notFound();
   const county = await getCountyForCity(cityName);
 
   // Related services: other categories in this city

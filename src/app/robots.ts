@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/_next/', '/search?', '/claim', '/dashboard/', '/verify-claim'],
+        disallow: ['/api/', '/_next/'],
       },
     ],
     sitemap: 'https://hireanypro.com/sitemap.xml',
