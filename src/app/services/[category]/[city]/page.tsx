@@ -162,18 +162,10 @@ export default async function CityLandingPage({ params }: Props) {
           </div>
         </div>
 
-        {listings.length > 0 ? (
-          <CategoryFilters
-            listings={listings}
-            cities={[cityName]}
-          />
-        ) : (
-          <div className="text-center py-16">
-            <span className="text-5xl mb-4 block">{category.icon}</span>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No {category.name.toLowerCase()} found in {cityName}</h3>
-            <p className="text-gray-500 text-sm">Try browsing all <Link href={`/category/${category.slug}`} className="text-blue-800 hover:underline">{category.name}</Link> in Florida.</p>
-          </div>
-        )}
+        <CategoryFilters
+          listings={listings}
+          cities={[cityName]}
+        />
 
         {/* Related Services in this City */}
         {relatedCategories.length > 0 && (
