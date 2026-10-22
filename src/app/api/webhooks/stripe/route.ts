@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { notifyUpgrade } from '@/lib/notify';
+import Stripe from 'stripe';
+
+export const runtime = 'nodejs';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -8,12 +11,32 @@ const supabase = createClient(
 );
 
 export async function POST(req: NextRequest) {
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET?.trim();
+  if (!webhookSecret) {
+    console.error('Webhook error: STRIPE_WEBHOOK_SECRET is not set');
+    return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 });
+  }
+
+  const signature = req.headers.get('stripe-signature');
+  if (!signature) {
+    return NextResponse.json({ error: 'Missing Stripe-Signature header' }, { status: 400 });
+  }
+
+  // Verify against the raw body (must not be JSON-parsed first). Default tolerance is 300s.
+  const rawBody = await req.text();
+  let event: Stripe.Event;
   try {
-    const body = await req.json();
-    const event = body;
+    event = Stripe.webhooks.constructEvent(rawBody, signature, webhookSecret, 300);
+  } catch (err) {
+    console.error('Webhook signature verification failed:', err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+  }
+
+  try {
 
     if (event.type === 'checkout.session.completed') {
-      const session = event.data.object;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const session = event.data.object as any;
       let { listingId, email, plan } = session.metadata || {};
       const customerId = session.customer;
       const subscriptionId = session.subscription;
@@ -125,7 +148,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (event.type === 'customer.subscription.deleted') {
-      const subscription = event.data.object;
+      const subscription = event.data.object as Stripe.Subscription;
       const subId = subscription.id;
 
       const { data: sub } = await supabase
