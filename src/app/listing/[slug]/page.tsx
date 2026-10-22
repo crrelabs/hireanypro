@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const { data: listing } = await supabase
     .from('listings')
-    .select('name, description, city, state, phone, rating, review_count, tier, claimed, categories(name)')
+    .select('name, description, city, state, phone, email, website, address, rating, review_count, tier, claimed, categories(name)')
     .eq('slug', slug)
     .single();
 
@@ -27,9 +27,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = `${listing.name} - ${cat} in ${listing.city}, FL | HireAnyPro`;
   const description = `${listing.name} is a trusted ${cat.toLowerCase()} in ${listing.city}, FL. Rated ${listing.rating}/5 from ${listing.review_count} reviews.${metaIsPaid && listing.phone ? ` Call ${listing.phone} for a free quote.` : ''}`;
 
+  // Thin listings (no description and no contact info beyond a name) are kept
+  // out of Google's index to avoid soft-404 / thin-content signals.
+  const isThin =
+    !listing.claimed &&
+    !(listing.description && String(listing.description).trim()) &&
+    !listing.phone && !listing.email && !listing.website && !listing.address;
+
   return {
     title,
     description,
+    ...(isThin ? { robots: { index: false, follow: true } } : {}),
     alternates: { canonical: `https://hireanypro.com/listing/${slug}` },
     openGraph: {
       title,
