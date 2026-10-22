@@ -1,35 +1,12 @@
-import nodemailer from 'nodemailer';
+import { sendMail } from '@/lib/mailer';
 
 const NOTIFY_EMAIL = 'carlos@crrelabs.com';
-const FROM_EMAIL = 'iris@hireanypro.com';
-
-function getTransporter() {
-  const pass = process.env.HIREANYPRO_APP_PASSWORD;
-  if (!pass) return null;
-  return nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
-    auth: { user: FROM_EMAIL, pass },
-  });
-}
 
 async function sendNotification(subject: string, body: string) {
-  const transporter = getTransporter();
-  if (transporter) {
-    try {
-      await transporter.sendMail({
-        from: `HireAnyPro <${FROM_EMAIL}>`,
-        to: NOTIFY_EMAIL,
-        subject,
-        text: body,
-      });
-    } catch (e) {
-      console.error('Email notification failed:', e);
-    }
-  } else {
-    console.log(`📧 NOTIFICATION (no SMTP) → ${NOTIFY_EMAIL}\nSubject: ${subject}\n${body}`);
-  }
+  const ok = await sendMail({ to: NOTIFY_EMAIL, subject, text: body });
+  if (!ok) console.log(`📧 NOTIFICATION (send failed) → ${NOTIFY_EMAIL}
+Subject: ${subject}
+${body}`);
 }
 
 export async function notifyNewClaim(businessName: string, claimerEmail: string, listingSlug: string) {

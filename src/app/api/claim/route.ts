@@ -4,24 +4,13 @@ import { verifyTurnstile } from '@/lib/turnstile';
 import { isRateLimited, getClientIp } from '@/lib/rate-limit';
 import { isBot } from '@/lib/honeypot';
 import { notifyNewClaim } from '@/lib/notify';
-import nodemailer from 'nodemailer';
+import { sendMail } from '@/lib/mailer';
 import crypto from 'crypto';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
-
-function getTransporter() {
-  const pass = process.env.HIREANYPRO_APP_PASSWORD;
-  if (!pass) return null;
-  return nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
-    auth: { user: 'iris@hireanypro.com', pass },
-  });
-}
 
 export async function POST(req: NextRequest) {
   try {
@@ -96,12 +85,9 @@ export async function POST(req: NextRequest) {
 
     // Send verification email
     const verifyUrl = `https://hireanypro.com/verify-claim?token=${verificationToken}`;
-    const transporter = getTransporter();
-
-    if (transporter) {
+    {
       try {
-        await transporter.sendMail({
-          from: process.env.RESEND_FROM_EMAIL || 'HireAnyPro <noreply@hireanypro.com>',
+        const ok = await sendMail({
           to: email,
           subject: `Verify your claim for ${listing.name} on HireAnyPro`,
           html: `
@@ -121,11 +107,10 @@ export async function POST(req: NextRequest) {
             </div>
           `,
         });
+        if (!ok) console.error('Verification email failed for claim', verificationToken.slice(0, 8));
       } catch (e) {
         console.error('Verification email failed:', e);
       }
-    } else {
-      console.log(`📧 VERIFY URL (no SMTP): ${verifyUrl}`);
     }
 
     // Notify Carlos about the claim attempt
