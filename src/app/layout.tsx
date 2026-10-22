@@ -7,6 +7,30 @@ import Footer from "@/components/Footer";
 
 const GA_ID = "G-25DF5DE9QJ";
 
+const siteJsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "HireAnyPro",
+    alternateName: ["Hire Any Pro", "HireAnyPro.com"],
+    url: "https://hireanypro.com/",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: { "@type": "EntryPoint", urlTemplate: "https://hireanypro.com/search?q={search_term_string}" },
+      "query-input": "required name=search_term_string",
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "HireAnyPro",
+    alternateName: "Hire Any Pro",
+    url: "https://hireanypro.com/",
+    logo: "https://hireanypro.com/logo.png",
+    areaServed: "Florida",
+  },
+];
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -18,6 +42,7 @@ export const metadata: Metadata = {
     title: "HireAnyPro — Find Trusted Home Service Pros",
     description: "Find and hire the best home service professionals in Florida.",
     type: "website",
+    siteName: "HireAnyPro",
     url: 'https://hireanypro.com',
   },
 };
@@ -30,6 +55,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }} />
         <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
         <Script id="ga-init" strategy="afterInteractive">
           {`window.dataLayer = window.dataLayer || [];
