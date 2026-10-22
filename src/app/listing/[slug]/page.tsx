@@ -119,6 +119,17 @@ export default async function ListingPage({ params }: Props) {
     .eq('listing_id', listing.id)
     .order('created_at', { ascending: false });
 
+  const { data: nearby } = listing.category_id && listing.city
+    ? await supabase
+        .from('listings')
+        .select('slug, name, rating, review_count')
+        .eq('category_id', listing.category_id)
+        .eq('city', listing.city)
+        .neq('id', listing.id)
+        .order('rating', { ascending: false, nullsFirst: false })
+        .limit(8)
+    : { data: null };
+
   const listingCounty = listing.city ? await getCountyForCity(listing.city) : null;
 
   const hours = listing.hours as Record<string, string> | null;
@@ -350,6 +361,26 @@ export default async function ListingPage({ params }: Props) {
             <ReviewForm listingId={listing.id} businessName={listing.name} />
           </div>
         </div>
+
+        {nearby && nearby.length > 0 && listing.categories && (
+          <div className="mt-8 bg-white rounded-xl border border-gray-200 p-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">
+              Other {listing.categories.name.toLowerCase()} pros in {listing.city}
+            </h2>
+            <ul className="grid sm:grid-cols-2 gap-3">
+              {nearby.map((n: { slug: string; name: string; rating: number | null; review_count: number | null }) => (
+                <li key={n.slug}>
+                  <Link href={`/listing/${n.slug}`} className="text-blue-800 hover:underline font-medium">
+                    {n.name}
+                  </Link>
+                  {n.rating ? (
+                    <span className="text-xs text-gray-500 ml-2">{n.rating}★ ({n.review_count || 0})</span>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* Internal Linking */}
         <div className="mt-8 p-6 bg-gray-50 rounded-xl space-y-3">
