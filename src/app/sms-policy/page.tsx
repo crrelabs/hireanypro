@@ -42,7 +42,7 @@ export default function SmsPolicyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-3">4. Message Frequency</h2>
-          <p>Message frequency varies based on lead volume in your area and your subscription plan. You may receive up to 10 messages per month for promotional communications and additional messages for lead alerts and transactional updates.</p>
+          <p>Message frequency varies. Message and data rates may apply.</p>
         </section>
 
         <section>

@@ -49,9 +49,9 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-3">4. SMS/Text Messaging</h2>
-          <p>By providing your phone number and checking the SMS consent box on our claim form or quote request form at hireanypro.com, you expressly consent to receive SMS text messages from HireAnyPro (operated by CRRE Labs LLC). Messages may include notifications about new leads, service requests in your area, account updates, and promotional offers.</p>
+          <p>By providing your phone number and checking the SMS consent box on our claim form or quote request form at hireanypro.com, you expressly consent to receive SMS text messages from HireAnyPro Alerts (operated by CRRE Labs LLC). Messages may include notifications about new leads, service requests in your area, account updates, and promotional offers.</p>
           <p className="mt-2"><strong>Consent:</strong> You opt in by submitting our claim form or quote request form with the SMS consent checkbox checked. Consent is not a condition of purchase.</p>
-          <p className="mt-2"><strong>Message Frequency:</strong> Message frequency varies based on lead volume in your area. You may receive up to 10 messages per month.</p>
+          <p className="mt-2"><strong>Message Frequency:</strong> Message frequency varies.</p>
           <p className="mt-2"><strong>Costs:</strong> Message and data rates may apply. HireAnyPro does not charge for text messages, but your mobile carrier may apply standard messaging fees.</p>
           <p className="mt-2"><strong>Opt-Out:</strong> Reply <strong>STOP</strong> to any message to opt out. You will receive one final confirmation message.</p>
           <p className="mt-2"><strong>Help:</strong> Reply <strong>HELP</strong> for assistance, or contact us at <a href="mailto:iris@hireanypro.com" className="text-blue-800 hover:underline">iris@hireanypro.com</a> or <a href="tel:+17866996091" className="text-blue-800 hover:underline">(786) 699-6091</a>.</p>
