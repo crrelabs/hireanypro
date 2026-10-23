@@ -4,6 +4,7 @@ import CategoryCard from '@/components/CategoryCard';
 import ListingCard from '@/components/ListingCard';
 import Link from 'next/link';
 import { getAllCounties, countySlug, getCitiesInCounty, citySlug } from '@/lib/geo';
+import { getCategoryCities, getCategoryBySlug } from '@/lib/listings';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -121,9 +122,15 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {await (async () => {
               const counties = await getAllCounties();
+              // Only link cities that actually have a plumbing page (linking every city produced ~175 broken links).
+              const plumbing = await getCategoryBySlug('plumbing');
+              const plumbingCities = new Map((plumbing ? await getCategoryCities(plumbing.id) : []).map((g) => [g.slug, g.count]));
               return Promise.all(counties.map(async (county) => {
                 const cities = await getCitiesInCounty(county);
-                const topCities = cities.slice(0, 8);
+                const topCities = cities
+                  .filter((c) => plumbingCities.has(citySlug(c)))
+                  .sort((a, b) => (plumbingCities.get(citySlug(b)) || 0) - (plumbingCities.get(citySlug(a)) || 0))
+                  .slice(0, 8);
                 return (
                   <div key={county} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                     <Link href={`/region/${countySlug(county)}`} className="text-lg font-bold text-blue-800 hover:text-blue-600">
@@ -139,9 +146,9 @@ export default async function HomePage() {
                           {city}
                         </Link>
                       ))}
-                      {cities.length > 8 && (
+                      {cities.length > topCities.length && (
                         <Link href={`/region/${countySlug(county)}`} className="text-sm text-blue-800 font-medium px-2 py-1">
-                          +{cities.length - 8} more
+                          +{cities.length - topCities.length} more
                         </Link>
                       )}
                     </div>
