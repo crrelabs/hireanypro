@@ -45,3 +45,13 @@ export async function suppress(email: string, reason: string): Promise<{ supabas
   }
   return { supabase: sb, resend: rs };
 }
+
+/** True if this address unsubscribed, bounced, or complained (checked in Supabase). Fails closed. */
+export async function isSuppressed(email: string): Promise<boolean> {
+  try {
+    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!.trim(), process.env.SUPABASE_SERVICE_ROLE_KEY!.trim());
+    const { data, error } = await supabase.from('email_suppression').select('email').eq('email', email.trim().toLowerCase()).limit(1);
+    if (error) return true;
+    return (data || []).length > 0;
+  } catch { return true; }
+}
