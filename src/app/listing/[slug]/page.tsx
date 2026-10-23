@@ -25,7 +25,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cat = categories?.name || 'Service Provider';
   const metaIsPaid = listing.tier === 'pro' || listing.tier === 'featured';
   const title = `${listing.name} - ${cat} in ${listing.city}, FL | HireAnyPro`;
-  const description = `${listing.name} is a trusted ${cat.toLowerCase()} in ${listing.city}, FL. Rated ${listing.rating}/5 from ${listing.review_count} reviews.${metaIsPaid && listing.phone ? ` Call ${listing.phone} for a free quote.` : ''}`;
+  const ratingText = listing.rating && listing.review_count
+    ? ` Rated ${listing.rating}/5 from ${listing.review_count} ${listing.review_count === 1 ? 'review' : 'reviews'}.`
+    : '';
+  const description = `${listing.name} is listed under ${cat} in ${listing.city}, FL.${ratingText}${metaIsPaid && listing.phone ? ` Call ${listing.phone} for a free quote.` : ' Request a free quote on HireAnyPro.'}`;
 
   // Thin listings (no description and no contact info beyond a name) are kept
   // out of Google's index to avoid soft-404 / thin-content signals.
