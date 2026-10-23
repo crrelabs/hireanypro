@@ -7,10 +7,9 @@ interface QuoteRequestFormProps {
   listingId: string;
   businessName: string;
   tier?: string;
-  businessEmail?: string | null;
 }
 
-export default function QuoteRequestForm({ listingId, businessName, tier = 'free', businessEmail }: QuoteRequestFormProps) {
+export default function QuoteRequestForm({ listingId, businessName, tier = 'free' }: QuoteRequestFormProps) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
   const [honeypot, setHoneypot] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');
@@ -18,7 +17,6 @@ export default function QuoteRequestForm({ listingId, businessName, tier = 'free
   const [errorMsg, setErrorMsg] = useState('');
 
   const isPaid = tier === 'pro' || tier === 'featured';
-  const routedTo = isPaid && businessEmail ? businessEmail : 'iris@hireanypro.com';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +38,6 @@ export default function QuoteRequestForm({ listingId, businessName, tier = 'free
           email: form.email,
           phone: form.phone,
           message: form.message,
-          routedTo,
           turnstileToken,
           website: honeypot, // honeypot field
         }),

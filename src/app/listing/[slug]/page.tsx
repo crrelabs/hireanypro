@@ -249,7 +249,7 @@ export default async function ListingPage({ params }: Props) {
                   </div>
                   {/* Quote form for paid listings */}
                   <div className="mt-4 pt-4 border-t border-gray-100">
-                    <QuoteRequestForm listingId={listing.id} businessName={listing.name} tier={listing.tier} businessEmail={listing.email} />
+                    <QuoteRequestForm listingId={listing.id} businessName={listing.name} tier={listing.tier} />
                   </div>
                 </div>
               ) : (
@@ -277,7 +277,7 @@ export default async function ListingPage({ params }: Props) {
                   </div>
                   {/* Quote form right here for free/unclaimed */}
                   <div className="mt-4 pt-4 border-t border-gray-100">
-                    <QuoteRequestForm listingId={listing.id} businessName={listing.name} tier={listing.tier} businessEmail={listing.email} />
+                    <QuoteRequestForm listingId={listing.id} businessName={listing.name} tier={listing.tier} />
                   </div>
 
                   {!listing.claimed && (

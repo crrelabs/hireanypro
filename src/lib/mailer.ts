@@ -5,13 +5,14 @@ const FROM = (process.env.RESEND_FROM_EMAIL || 'HireAnyPro <iris@hireanypro.com>
 const REPLY_TO = 'iris@hireanypro.com';
 
 /** Transactional mail: Resend (hireanypro.com is verified) first, Gmail SMTP as fallback. */
-export async function sendMail(opts: { to: string; subject: string; html?: string; text?: string }): Promise<boolean> {
+export async function sendMail(opts: { to: string; subject: string; html?: string; text?: string; replyTo?: string; headers?: Record<string, string> }): Promise<boolean> {
   const key = (process.env.RESEND_API_KEY || '').trim();
   if (key) {
     try {
       const resend = new Resend(key);
       const { error } = await resend.emails.send({
-        from: FROM, to: [opts.to], replyTo: REPLY_TO, subject: opts.subject,
+        from: FROM, to: [opts.to], replyTo: opts.replyTo || REPLY_TO, subject: opts.subject,
+        ...(opts.headers ? { headers: opts.headers } : {}),
         ...(opts.html ? { html: opts.html } : {}), ...(opts.text ? { text: opts.text } : {}),
       } as Parameters<typeof resend.emails.send>[0]);
       if (!error) return true;
