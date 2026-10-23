@@ -5,45 +5,24 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { citySlug, cityFromSlug, getCountyForCity, countySlug } from '@/lib/geo';
+import { citySlug, getCountyForCity, countySlug } from '@/lib/geo';
+import { CARD_COLUMNS, toCard, getCategoryCities, getCategoryBySlug, type CardListing } from '@/lib/listings';
 
 type Props = { params: Promise<{ category: string; city: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category: catSlug, city: cSlug } = await params;
 
-  const { data: cat } = await supabase.from('categories').select('name, slug').eq('slug', catSlug).single();
+  const cat = await getCategoryBySlug(catSlug);
   if (!cat) return { title: 'Not Found' };
 
-  // Find the actual city name (paginated to handle large categories)
-  const catId = (await supabase.from('categories').select('id').eq('slug', catSlug).single()).data?.id || '';
-  const metaCityRows: { city: string }[] = [];
-  let metaOffset = 0;
-  while (true) {
-    const { data } = await supabase
-      .from('listings')
-      .select('city')
-      .eq('category_id', catId)
-      .not('city', 'is', null)
-      .range(metaOffset, metaOffset + 999);
-    if (!data || data.length === 0) break;
-    metaCityRows.push(...data);
-    if (data.length < 1000) break;
-    metaOffset += 1000;
-  }
-
-  const cities = [...new Set(metaCityRows.map(l => l.city).filter(Boolean))];
-  const cityName = cityFromSlug(cSlug, cities);
-  if (!cityName) return { title: 'Not Found' };
-
-  const { count } = await supabase
-    .from('listings')
-    .select('id', { count: 'exact', head: true })
-    .eq('category_id', (await supabase.from('categories').select('id').eq('slug', catSlug).single()).data?.id || '')
-    .eq('city', cityName);
+  const group = (await getCategoryCities(cat.id)).find((g) => g.slug === cSlug);
+  if (!group) return { title: 'Not Found' };
+  const cityName = group.name;
+  const count = group.count;
 
   const title = `Best ${cat.name} in ${cityName}, FL | HireAnyPro`;
-  const description = `Find top-rated ${cat.name.toLowerCase()} professionals in ${cityName}, Florida. Compare ${count || 0} verified pros, read reviews, and get free quotes.`;
+  const description = `Find top-rated ${cat.name.toLowerCase()} professionals in ${cityName}, Florida. Compare ${count} local ${count === 1 ? 'pro' : 'pros'}, read reviews, and get free quotes.`;
 
   return {
     title,
@@ -58,38 +37,28 @@ export const revalidate = 300;
 export default async function CityLandingPage({ params }: Props) {
   const { category: catSlug, city: cSlug } = await params;
 
-  const { data: category } = await supabase.from('categories').select('*').eq('slug', catSlug).single();
+  const category = await getCategoryBySlug(catSlug);
   if (!category) notFound();
 
-  // First, resolve city name from slug using ALL cities in this category
-  const allCityRows: { city: string }[] = [];
-  let cityOffset = 0;
-  while (true) {
-    const { data } = await supabase
-      .from('listings')
-      .select('city')
-      .eq('category_id', category.id)
-      .not('city', 'is', null)
-      .range(cityOffset, cityOffset + 999);
-    if (!data || data.length === 0) break;
-    allCityRows.push(...data);
-    if (data.length < 1000) break;
-    cityOffset += 1000;
-  }
-  const allCities = [...new Set(allCityRows.map(r => r.city).filter(Boolean))].sort();
-  const cityName = cityFromSlug(cSlug, allCities);
-  if (!cityName) notFound();
+  // Resolve the city from ALL cities in this category (grouped by slug, so spelling variants share one page).
+  const cityGroups = await getCategoryCities(category.id);
+  const group = cityGroups.find((g) => g.slug === cSlug);
+  if (!group) notFound();
+  const cityName = group.name;
 
-  // Now get listings for this specific city (with full data)
-  const { data: allListings } = await supabase
+  // Query this city's listings directly. (Previously this loaded only the category's top 1,000 listings and
+  // filtered by city, so ~15% of city pages in the sitemap returned 404.)
+  const { data: cityListings } = await supabase
     .from('listings')
-    .select('*, categories(name, slug, icon)')
+    .select(CARD_COLUMNS)
     .eq('category_id', category.id)
+    .in('city', group.variants)
     .order('featured', { ascending: false })
     .order('review_count', { ascending: false, nullsFirst: false })
-    .order('rating', { ascending: false, nullsFirst: false });
+    .order('rating', { ascending: false, nullsFirst: false })
+    .limit(500);
 
-  const listings = (allListings || []).filter(l => l.city === cityName);
+  const listings = ((cityListings || []) as unknown as CardListing[]).map(toCard);
   if (listings.length === 0) notFound();
   const county = await getCountyForCity(cityName);
 
@@ -111,14 +80,14 @@ export default async function CityLandingPage({ params }: Props) {
   ).values()].slice(0, 12);
 
   // Nearby cities (same category, different city)
-  const nearbyCities = allCities.filter(c => c !== cityName).slice(0, 12);
+  const nearbyCities = [...cityGroups].filter(g => g.slug !== cSlug).sort((a, b) => b.count - a.count).slice(0, 12).map(g => g.name);
 
   // JSON-LD
   const itemListJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: `${category.name} in ${cityName}, Florida`,
-    numberOfItems: listings.length,
+    numberOfItems: group.count,
     itemListElement: listings.slice(0, 50).map((l, i) => ({
       '@type': 'ListItem',
       position: i + 1,
@@ -157,7 +126,7 @@ export default async function CityLandingPage({ params }: Props) {
             <div>
               <span className="text-4xl mb-2 block">{category.icon}</span>
               <h1 className="text-2xl md:text-3xl font-bold text-white">{category.name} in {cityName}, Florida</h1>
-              <p className="text-blue-100 text-sm mt-1">{listings.length} professionals found</p>
+              <p className="text-blue-100 text-sm mt-1">{group.count} {group.count === 1 ? 'professional' : 'professionals'} found</p>
             </div>
           </div>
         </div>
