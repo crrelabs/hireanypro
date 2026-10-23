@@ -15,6 +15,12 @@ export default function PrivacyPage() {
 
       <div className="prose prose-gray max-w-none space-y-8 text-gray-700 leading-relaxed">
 
+        <section id="sms" className="border border-gray-300 rounded-lg p-5 bg-gray-50">
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">SMS / Text Messaging</h2>
+          <p><strong>No mobile information will be shared with third parties or affiliates for marketing or promotional purposes. All the above categories exclude text messaging originator opt-in data and consent; this information will not be shared with any third parties.</strong></p>
+          <p className="mt-2">This applies to every section of this policy, including Sharing of Information below. SMS program details: see Section 4 and our <Link href="/terms#sms-terms" className="text-blue-800 hover:underline">SMS Terms</Link>.</p>
+        </section>
+
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-3">1. Introduction</h2>
           <p>HireAnyPro is operated by CRRE Labs LLC (&quot;Company,&quot; &quot;we,&quot; &quot;us&quot;), located at 12394 SW 82 Ave, Pinecrest, FL 33156. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit hireanypro.com or use our services.</p>
@@ -55,12 +61,12 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-3">5. Sharing of Information</h2>
-          <p>We do not sell your personal information. <strong>No mobile information will be shared with third parties or affiliates for marketing or promotional purposes. Text messaging originator opt-in data and consent will not be shared with any third parties.</strong> The categories below exclude SMS opt-in data and consent. We may share other information with:</p>
+          <p>We do not sell your personal information. <strong>No mobile information will be shared with third parties or affiliates for marketing or promotional purposes. All the above categories exclude text messaging originator opt-in data and consent; this information will not be shared with any third parties.</strong> We may share other (non-SMS) information only with:</p>
           <ul className="list-disc list-inside space-y-1 mt-2">
             <li><strong>Service Providers:</strong> Payment processors (Stripe), hosting, analytics, and email delivery services</li>
             <li><strong>Public Listings:</strong> Business name, address, phone, and reviews are displayed publicly as part of the directory</li>
             <li><strong>Legal Requirements:</strong> When required by law, regulation, or legal process</li>
-            <li><strong>Business Transfers:</strong> In connection with a merger, acquisition, or sale of assets</li>
+            <li><strong>Business Transfers:</strong> In connection with a merger, acquisition, or sale of assets (SMS opt-in data and consent are never shared for marketing)</li>
           </ul>
         </section>
 

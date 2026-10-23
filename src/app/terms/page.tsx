@@ -11,7 +11,7 @@ export default function TermsPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-16">
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Terms of Service</h1>
-      <p className="text-gray-500 mb-10">Last updated: March 8, 2026</p>
+      <p className="text-gray-500 mb-10">Last updated: October 23, 2026</p>
 
       <div className="prose prose-gray max-w-none space-y-8 text-gray-700 leading-relaxed">
 
@@ -63,15 +63,19 @@ export default function TermsPage() {
           <p>Users may submit reviews of listed businesses. Reviews must be honest and based on genuine experiences. We reserve the right to remove reviews that are fraudulent, abusive, or violate these terms. Businesses may respond to reviews through their dashboard.</p>
         </section>
 
-        <section>
-          <h2 className="text-xl font-semibold text-gray-900 mb-3">7. SMS and Email Communications</h2>
-          <p><strong>Program name:</strong> HireAnyPro Alerts, operated by CRRE Labs LLC.</p>
-          <p className="mt-2"><strong>Messages you may receive:</strong> new lead and quote-request notifications (for businesses), quote request confirmations (for homeowners), account and claim verification updates, and occasional offers about HireAnyPro plans.</p>
-          <p className="mt-2"><strong>Opt-in:</strong> SMS is optional. You opt in by checking the unchecked SMS consent box on our claim form or quote request form. Consent is not a condition of any purchase.</p>
-          <p className="mt-2"><strong>Frequency:</strong> Message frequency varies. <strong>Msg &amp; data rates may apply.</strong></p>
-          <p className="mt-2"><strong>Opt-out:</strong> Reply <strong>STOP</strong> to any message to stop receiving texts. You will get one confirmation message and no further texts. Reply <strong>START</strong> to resubscribe.</p>
-          <p className="mt-2"><strong>Help:</strong> Reply <strong>HELP</strong> for help, or contact iris@hireanypro.com or (786) 699-6091.</p>
-          <p className="mt-2">Carriers are not liable for delayed or undelivered messages. Email: you may unsubscribe at any time using the link in any email. See our <Link href="/sms-policy" className="text-blue-800 hover:underline">SMS Policy</Link> and <Link href="/privacy" className="text-blue-800 hover:underline">Privacy Policy</Link>.</p>
+        <section id="sms-terms">
+          <h2 className="text-xl font-semibold text-gray-900 mb-3">7. SMS Terms</h2>
+          <ol className="list-decimal list-inside space-y-2">
+            <li><strong>Program name:</strong> HireAnyPro Alerts, operated by CRRE Labs LLC.</li>
+            <li><strong>Program description:</strong> HireAnyPro Alerts sends text messages to business owners who claim a listing on hireanypro.com and to homeowners who request a quote. Messages include new lead and quote-request notifications, quote request confirmations, claim verification and account updates, and occasional offers about HireAnyPro plans. You opt in only by checking the unchecked SMS consent box on our <Link href="/sms-opt-in" className="text-blue-800 hover:underline">opt-in form</Link>. Consent is not a condition of any purchase.</li>
+            <li><strong>Message frequency:</strong> Message frequency varies.</li>
+            <li><strong>Costs:</strong> Message and data rates may apply.</li>
+            <li><strong>Opt out:</strong> You can cancel the SMS service at any time. Reply <strong>STOP</strong> to any message. After you send STOP, we will send one confirmation message and you will no longer receive messages from us. To rejoin, reply START or sign up again.</li>
+            <li><strong>Help:</strong> Reply <strong>HELP</strong> to any message, or contact us at <a href="mailto:iris@hireanypro.com" className="text-blue-800 hover:underline">iris@hireanypro.com</a> or <a href="tel:+17866996091" className="text-blue-800 hover:underline">(786) 699-6091</a>.</li>
+            <li><strong>Carriers:</strong> Carriers are not liable for delayed or undelivered messages.</li>
+            <li><strong>Privacy:</strong> See our <Link href="/privacy" className="text-blue-800 hover:underline">Privacy Policy</Link> (https://hireanypro.com/privacy). No mobile information will be shared with third parties or affiliates for marketing or promotional purposes.</li>
+          </ol>
+          <p className="mt-4"><strong>Email:</strong> you may unsubscribe from emails at any time using the link in any email.</p>
         </section>
 
         <section>
