@@ -10,7 +10,7 @@ export default function SmsPolicyPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-16">
       <h1 className="text-3xl font-bold text-gray-900 mb-2">SMS &amp; Messaging Policy</h1>
-      <p className="text-gray-500 mb-10">Last updated: March 8, 2026</p>
+      <p className="text-gray-500 mb-10">Last updated: October 23, 2026</p>
 
       <div className="prose prose-gray max-w-none space-y-8 text-gray-700 leading-relaxed">
 
@@ -24,7 +24,7 @@ export default function SmsPolicyPage() {
           <p>By providing your phone number and checking the SMS consent box on our website, you expressly consent to receive text messages from HireAnyPro. Consent is not a condition of purchase or use of our services. You may opt in by:</p>
           <ul className="list-disc list-inside space-y-1 mt-2">
             <li>Claiming your business listing on hireanypro.com with SMS consent checked</li>
-            <li>Submitting an inquiry or contact form with SMS consent checked</li>
+            <li>Submitting a quote request form with the optional SMS consent box checked</li>
             <li>Signing up for a paid subscription that includes SMS notifications</li>
             <li>Texting START or INFO to our designated number</li>
           </ul>
@@ -73,7 +73,7 @@ export default function SmsPolicyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-3">9. Privacy</h2>
-          <p>Your phone number is handled per our <a href="/privacy" className="text-blue-800 hover:underline">Privacy Policy</a>. We do not sell or share your phone number with third parties for their marketing purposes.</p>
+          <p>Your phone number is handled per our <a href="/privacy" className="text-blue-800 hover:underline">Privacy Policy</a>. No mobile information will be shared with third parties or affiliates for marketing or promotional purposes. Text messaging opt-in data and consent will not be shared with any third parties.</p>
         </section>
 
         <section>

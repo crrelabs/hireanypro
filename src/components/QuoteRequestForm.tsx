@@ -11,6 +11,7 @@ interface QuoteRequestFormProps {
 
 export default function QuoteRequestForm({ listingId, businessName, tier = 'free' }: QuoteRequestFormProps) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
+  const [smsOptIn, setSmsOptIn] = useState(false);
   const [honeypot, setHoneypot] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
@@ -37,6 +38,7 @@ export default function QuoteRequestForm({ listingId, businessName, tier = 'free
           name: form.name,
           email: form.email,
           phone: form.phone,
+          smsOptIn: smsOptIn && !!form.phone,
           message: form.message,
           turnstileToken,
           website: honeypot, // honeypot field
@@ -46,6 +48,7 @@ export default function QuoteRequestForm({ listingId, businessName, tier = 'free
       if (res.ok && data.success) {
         setStatus('success');
         setForm({ name: '', email: '', phone: '', message: '' });
+        setSmsOptIn(false);
       } else {
         setErrorMsg(data.error || 'Something went wrong.');
         setStatus('error');
@@ -109,6 +112,16 @@ export default function QuoteRequestForm({ listingId, businessName, tier = 'free
           onChange={(e) => setForm({ ...form, phone: e.target.value })}
           className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-800 focus:border-transparent outline-none"
         />
+        <label className="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" checked={smsOptIn} onChange={(e) => setSmsOptIn(e.target.checked)}
+            className="mt-1 w-4 h-4 text-blue-800 border-gray-300 rounded" />
+          <span className="text-xs text-gray-600">
+            Optional: text me about my quote request. I agree to receive SMS from HireAnyPro at the number above. Msg frequency varies. Msg &amp; data rates may apply. Reply STOP to opt out, HELP for help. Consent is not required to submit. See our{' '}
+            <a href="/sms-policy" className="text-blue-800 hover:underline">SMS Policy</a>,{' '}
+            <a href="/terms" className="text-blue-800 hover:underline">Terms</a> and{' '}
+            <a href="/privacy" className="text-blue-800 hover:underline">Privacy Policy</a>.
+          </span>
+        </label>
         <textarea
           placeholder="Describe the work you need done *" required rows={4} value={form.message}
           onChange={(e) => setForm({ ...form, message: e.target.value })}
