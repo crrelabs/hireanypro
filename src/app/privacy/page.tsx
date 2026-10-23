@@ -40,7 +40,7 @@ export default function PrivacyPage() {
             <li>Display business listings and connect service providers with customers</li>
             <li>Process claims, subscriptions, and payments</li>
             <li>Send service notifications, lead alerts, and account updates</li>
-            <li>Send promotional offers and marketing communications (with your consent)</li>
+            <li>Send promotional emails (with your consent; never by SMS)</li>
             <li>Send SMS text messages about leads and service requests (with your consent)</li>
             <li>Improve our platform and user experience</li>
             <li>Comply with legal obligations and prevent fraud</li>
@@ -49,7 +49,7 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-3">4. SMS/Text Messaging</h2>
-          <p>By providing your phone number and checking the SMS consent box on our claim form or quote request form at hireanypro.com, you expressly consent to receive SMS text messages from HireAnyPro Alerts (operated by CRRE Labs LLC). Messages may include notifications about new leads, service requests in your area, account updates, and promotional offers.</p>
+          <p>By providing your phone number and checking the SMS consent box on our claim form or quote request form at hireanypro.com, you expressly consent to receive SMS text messages from HireAnyPro Alerts (operated by CRRE Labs LLC). Messages may include notifications about new leads, service requests in your area, and account updates. We do not send marketing or promotional text messages.</p>
           <p className="mt-2"><strong>Consent:</strong> You opt in by submitting our claim form or quote request form with the SMS consent checkbox checked. Consent is not a condition of purchase.</p>
           <p className="mt-2"><strong>Message Frequency:</strong> Message frequency varies.</p>
           <p className="mt-2"><strong>Costs:</strong> Message and data rates may apply. HireAnyPro does not charge for text messages, but your mobile carrier may apply standard messaging fees.</p>

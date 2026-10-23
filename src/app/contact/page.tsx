@@ -11,7 +11,7 @@ export default function ContactPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-12 text-gray-700">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Contact HireAnyPro</h1>
-      <p className="mb-6">HireAnyPro is a Florida home-services directory operated by CRRE Labs LLC. We&apos;re happy to help homeowners and businesses.</p>
+      <p className="mb-6">HireAnyPro is a Florida home-services directory operated by CRRE Labs LLC (https://crrelabs.com). We&apos;re happy to help homeowners and businesses.</p>
       <ul className="space-y-2 mb-8">
         <li><strong>Email:</strong> <a href="mailto:iris@hireanypro.com" className="text-blue-800 hover:underline">iris@hireanypro.com</a></li>
         <li><strong>Phone / text:</strong> <a href="tel:+17866996091" className="text-blue-800 hover:underline">(786) 699-6091</a></li>

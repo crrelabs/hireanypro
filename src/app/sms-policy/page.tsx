@@ -36,7 +36,6 @@ export default function SmsPolicyPage() {
             <li><strong>Lead alerts:</strong> Notifications when a homeowner requests a quote or contacts your business</li>
             <li><strong>Service requests:</strong> Alerts about service requests in your area matching your category</li>
             <li><strong>Account updates:</strong> Subscription confirmations, payment reminders, claim verifications</li>
-            <li><strong>Promotional messages:</strong> Information about new features, upgraded plans, and special offers</li>
           </ul>
         </section>
 

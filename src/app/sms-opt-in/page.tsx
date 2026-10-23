@@ -23,7 +23,7 @@ export default function SmsOptInPage() {
         <label className="flex items-start gap-3 mb-4">
           <input type="checkbox" name="sms" className="mt-1 w-4 h-4" />
           <span className="text-sm text-gray-600">
-            (Optional) I consent to receive SMS text messages from HireAnyPro Alerts (CRRE Labs LLC) at the phone number provided above, including new lead notifications, quote request updates, account updates, and occasional offers. Message frequency varies. Message and data rates may apply. Reply STOP to opt out, HELP for help. Consent is not a condition of purchase. See our{' '}
+            (Optional) I consent to receive SMS text messages from HireAnyPro Alerts (CRRE Labs LLC) at the phone number provided above, including new lead notifications, quote request updates, and account updates. No marketing or promotional texts are sent. Message frequency varies. Message and data rates may apply. Reply STOP to opt out, HELP for help. Consent is not a condition of purchase. See our{' '}
             <Link href="/terms#sms-terms" className="text-blue-800 hover:underline">SMS Terms</Link> and{' '}
             <Link href="/privacy" className="text-blue-800 hover:underline">Privacy Policy</Link>.
           </span>
