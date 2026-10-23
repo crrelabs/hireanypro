@@ -229,8 +229,8 @@ function ClaimPage() {
               className="mt-1 w-4 h-4 text-blue-800 border-gray-300 rounded focus:ring-blue-800"
             />
             <span className="text-sm text-gray-600">
-              I consent to receive SMS text messages from HireAnyPro at the phone number provided above. Message &amp; data rates may apply. Reply STOP to opt out. See our{' '}
-              <a href="/sms-policy" className="text-blue-800 hover:underline">SMS Policy</a> and{' '}
+              (Optional) I consent to receive SMS text messages from HireAnyPro Alerts (CRRE Labs LLC) at the phone number provided above, including new lead notifications, quote request updates, account updates, and occasional offers. Message frequency varies. Message and data rates may apply. Reply STOP to opt out, HELP for help. Consent is not a condition of purchase. See our{' '}
+              <a href="/terms#sms-terms" className="text-blue-800 hover:underline">SMS Terms</a> and{' '}
               <a href="/privacy" className="text-blue-800 hover:underline">Privacy Policy</a>.
             </span>
           </label>
