@@ -73,6 +73,8 @@ export default function PricingPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setListingId(params.get('listing') || '');
+    const plan = params.get('plan');
+    if (plan === 'pro' || plan === 'featured') setSelectedPlan(plan);
   }, []);
 
   async function handleCheckout(e: React.FormEvent) {

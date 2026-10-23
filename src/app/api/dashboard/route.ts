@@ -59,14 +59,20 @@ export async function POST(req: NextRequest) {
         .from('inquiries')
         .select('*')
         .in('listing_id', listingIds)
+        .neq('status', 'internal')
         .order('created_at', { ascending: false })
         .limit(20);
-      inquiries = inqData || [];
+      // Free listings only get a teaser: never send homeowner contact details to the browser.
+      const paid = new Set(listings.filter((l) => l.tier === 'pro' || l.tier === 'featured').map((l) => l.id));
+      inquiries = (inqData || []).map((q) => paid.has(q.listing_id)
+        ? q
+        : { id: q.id, listing_id: q.listing_id, created_at: q.created_at, name: 'Locked lead', email: '', phone: null, message: '' });
 
       const { count: total } = await supabase
         .from('inquiries')
         .select('id', { count: 'exact', head: true })
-        .in('listing_id', listingIds);
+        .in('listing_id', listingIds)
+        .neq('status', 'internal');
       totalInquiries = total || 0;
 
       const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString();
@@ -74,6 +80,7 @@ export async function POST(req: NextRequest) {
         .from('inquiries')
         .select('id', { count: 'exact', head: true })
         .in('listing_id', listingIds)
+        .neq('status', 'internal')
         .gte('created_at', thirtyDaysAgo);
       monthInquiries = monthCount || 0;
     }
