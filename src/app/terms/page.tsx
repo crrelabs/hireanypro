@@ -65,7 +65,13 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-3">7. SMS and Email Communications</h2>
-          <p>By opting in, you consent to receive SMS and email communications including lead notifications, service requests, account updates, and promotional offers. You may opt out at any time by replying STOP to SMS or clicking unsubscribe in emails. See our <Link href="/sms-policy" className="text-blue-800 hover:underline">SMS Policy</Link> for full details.</p>
+          <p><strong>Program name:</strong> HireAnyPro Alerts, operated by CRRE Labs LLC.</p>
+          <p className="mt-2"><strong>Messages you may receive:</strong> new lead and quote-request notifications (for businesses), quote request confirmations (for homeowners), account and claim verification updates, and occasional offers about HireAnyPro plans.</p>
+          <p className="mt-2"><strong>Opt-in:</strong> SMS is optional. You opt in by checking the unchecked SMS consent box on our claim form or quote request form. Consent is not a condition of any purchase.</p>
+          <p className="mt-2"><strong>Frequency:</strong> Message frequency varies. <strong>Msg &amp; data rates may apply.</strong></p>
+          <p className="mt-2"><strong>Opt-out:</strong> Reply <strong>STOP</strong> to any message to stop receiving texts. You will get one confirmation message and no further texts. Reply <strong>START</strong> to resubscribe.</p>
+          <p className="mt-2"><strong>Help:</strong> Reply <strong>HELP</strong> for help, or contact iris@hireanypro.com or (786) 699-6091.</p>
+          <p className="mt-2">Carriers are not liable for delayed or undelivered messages. Email: you may unsubscribe at any time using the link in any email. See our <Link href="/sms-policy" className="text-blue-800 hover:underline">SMS Policy</Link> and <Link href="/privacy" className="text-blue-800 hover:underline">Privacy Policy</Link>.</p>
         </section>
 
         <section>

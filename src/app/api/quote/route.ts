@@ -76,6 +76,7 @@ export async function POST(req: NextRequest) {
       name,
       email,
       phone: phone || null,
+      sms_opt_in: !!(phone && body.smsOptIn === true),
       message,
       routed_to: routedTo,
     }).select('id').single();

@@ -11,7 +11,7 @@ export default function PrivacyPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-16">
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Privacy Policy</h1>
-      <p className="text-gray-500 mb-10">Last updated: March 8, 2026</p>
+      <p className="text-gray-500 mb-10">Last updated: October 23, 2026</p>
 
       <div className="prose prose-gray max-w-none space-y-8 text-gray-700 leading-relaxed">
 
@@ -43,8 +43,8 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-3">4. SMS/Text Messaging</h2>
-          <p>By providing your phone number and checking the SMS consent box on our claim form or contact form at hireanypro.com, you expressly consent to receive SMS text messages from HireAnyPro (operated by CRRE Labs LLC). Messages may include notifications about new leads, service requests in your area, account updates, and promotional offers.</p>
-          <p className="mt-2"><strong>Consent:</strong> You opt in by submitting our claim form or contact form with the SMS consent checkbox checked. Consent is not a condition of purchase.</p>
+          <p>By providing your phone number and checking the SMS consent box on our claim form or quote request form at hireanypro.com, you expressly consent to receive SMS text messages from HireAnyPro (operated by CRRE Labs LLC). Messages may include notifications about new leads, service requests in your area, account updates, and promotional offers.</p>
+          <p className="mt-2"><strong>Consent:</strong> You opt in by submitting our claim form or quote request form with the SMS consent checkbox checked. Consent is not a condition of purchase.</p>
           <p className="mt-2"><strong>Message Frequency:</strong> Message frequency varies based on lead volume in your area. You may receive up to 10 messages per month.</p>
           <p className="mt-2"><strong>Costs:</strong> Message and data rates may apply. HireAnyPro does not charge for text messages, but your mobile carrier may apply standard messaging fees.</p>
           <p className="mt-2"><strong>Opt-Out:</strong> Reply <strong>STOP</strong> to any message to opt out. You will receive one final confirmation message.</p>
@@ -55,7 +55,7 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-3">5. Sharing of Information</h2>
-          <p>We do not sell your personal information. We may share your information with:</p>
+          <p>We do not sell your personal information. <strong>No mobile information will be shared with third parties or affiliates for marketing or promotional purposes. Text messaging originator opt-in data and consent will not be shared with any third parties.</strong> The categories below exclude SMS opt-in data and consent. We may share other information with:</p>
           <ul className="list-disc list-inside space-y-1 mt-2">
             <li><strong>Service Providers:</strong> Payment processors (Stripe), hosting, analytics, and email delivery services</li>
             <li><strong>Public Listings:</strong> Business name, address, phone, and reviews are displayed publicly as part of the directory</li>
