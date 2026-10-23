@@ -6,6 +6,7 @@ import { isBot } from '@/lib/honeypot';
 import { sendMail } from '@/lib/mailer';
 import { isSuppressed } from '@/lib/suppression';
 import { leadTeaser } from '@/lib/lead-upsell';
+import { queueLeadSms, teaserBody, smsEnabled } from '@/lib/sms-leads';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!.trim(),
@@ -20,7 +21,7 @@ const clip = (s: unknown, n: number) => String(s ?? '').trim().slice(0, n);
 const firstName = (n: string) => n.split(/\s+/)[0] || 'there';
 
 type ListingRow = {
-  id: string; name: string; slug: string; email: string | null; tier: string | null; claimed: boolean | null;
+  id: string; name: string; slug: string; email: string | null; phone: string | null; tier: string | null; claimed: boolean | null;
   city: string | null; categories: { name: string; slug: string } | null;
 };
 
@@ -60,7 +61,7 @@ export async function POST(req: NextRequest) {
     // Look the listing up server-side; never trust the browser to say where a lead goes.
     const { data: listing } = await supabase
       .from('listings')
-      .select('id, name, slug, email, tier, claimed, city, categories(name, slug)')
+      .select('id, name, slug, email, phone, tier, claimed, city, categories(name, slug)')
       .eq('id', listingId)
       .single<ListingRow>();
     if (!listing) {
@@ -102,12 +103,20 @@ export async function POST(req: NextRequest) {
         `<p>Questions? Just reply to this email.</p><p>The HireAnyPro team</p>`),
     }));
 
+    // Free listing with a phone but no email: SMS teaser (held until SMS_LEADS_ENABLED=true).
+    let smsNote = '';
+    if (!isPaid && !bizEmail && listing.phone) {
+      const st = await queueLeadSms(supabase, { inquiryId: saved?.id, listingId: listing.id, phone: listing.phone,
+        body: teaserBody({ listingId: listing.id, slug: listing.slug, claimed: listing.claimed, cat, city }) }).catch(() => 'error');
+      smsNote = `\nSMS teaser to business phone ${listing.phone}: ${st}${smsEnabled() ? '' : ' (SMS is off until A2P is approved; call or text them manually)'}`;
+    }
+
     // 2) Team copy with full details, so every lead gets followed up.
     sends.push(sendMail({
       to: TEAM_INBOX,
       replyTo: email,
       subject: `New quote request: ${listing.name} (${listing.tier || 'free'}${listing.claimed ? ', claimed' : ', unclaimed'})`,
-      text: `Listing: ${listing.name} (${cat}, ${city})\n${listingUrl}\nRouted to: ${routedTo}\n\nFrom: ${name} <${email}>${phone ? `\nPhone: ${phone}` : ''}\n\n${message}`,
+      text: `Listing: ${listing.name} (${cat}, ${city})\n${listingUrl}\nRouted to: ${routedTo}${smsNote}\n\nFrom: ${name} <${email}>${phone ? `\nPhone: ${phone}` : ''}\n\n${message}`,
     }));
 
     if (isPaid && bizEmail) {

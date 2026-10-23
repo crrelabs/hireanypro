@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { sendMail } from '@/lib/mailer';
 import { isSuppressed } from '@/lib/suppression';
 import { leadTeaser } from '@/lib/lead-upsell';
+import { smsEnabled, processRow } from '@/lib/sms-leads';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,5 +41,11 @@ export async function GET(req: NextRequest) {
     const ok = await sendMail(leadTeaser({ listing: l, cat: l.categories?.name || 'home service', city: l.city || 'your area', when: new Date(r.created_at), followUp: true }).mail(to));
     if (ok) { sent++; mailedToday.add(to); } else skipped++;
   }
-  return NextResponse.json({ checked: rows?.length || 0, sent, skipped });
+  // SMS teasers waiting for business hours (only when SMS is switched on).
+  let sms = 0;
+  if (smsEnabled()) {
+    const { data: q } = await supabase.from('sms_queue').select('id, to_phone, body').eq('status', 'queued').gte('created_at', new Date(now - 3 * 86400e3).toISOString()).limit(100);
+    for (const r of q || []) { await processRow(supabase, r); sms++; }
+  }
+  return NextResponse.json({ checked: rows?.length || 0, sent, skipped, smsProcessed: sms });
 }
