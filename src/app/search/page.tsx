@@ -8,6 +8,7 @@ import MapViewWrapper from '@/components/MapViewWrapper';
 
 export const metadata: Metadata = {
   title: 'Search Home Service Pros — HireAnyPro',
+  description: 'Search 29,000+ Florida plumbers, electricians, roofers, HVAC techs and other home service pros by name, city or zip code.',
   robots: { index: false, follow: true },
 };
 
@@ -35,7 +36,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     if (isZip) {
       query = query.eq('zip', q.trim());
     } else {
-      query = query.or(`name.ilike.%${q}%,description.ilike.%${q}%,city.ilike.%${q}%,address.ilike.%${q}%`);
+      // Strip characters that break PostgREST's or() filter syntax (a comma or parenthesis made search error out).
+      const safe = q.replace(/[,()*%\\:"]/g, ' ').replace(/\s+/g, ' ').trim();
+      if (safe) query = query.or(`name.ilike.%${safe}%,description.ilike.%${safe}%,city.ilike.%${safe}%,address.ilike.%${safe}%`);
     }
   }
   if (category) {
