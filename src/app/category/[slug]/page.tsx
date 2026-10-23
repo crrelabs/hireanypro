@@ -5,7 +5,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { citySlug } from '@/lib/geo';
+import { CARD_COLUMNS, toCard, getCategoryCities, getCategoryBySlug, type CardListing } from '@/lib/listings';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -28,35 +28,35 @@ export const revalidate = 300;
 export default async function CategoryPage({ params }: Props) {
   const { slug } = await params;
 
-  const { data: category } = await supabase.from('categories').select('*').eq('slug', slug).single();
+  const category = await getCategoryBySlug(slug);
   if (!category) notFound();
 
-  const { data: listings } = await supabase
+  // Every city in the category with counts (complete, not capped at 1,000 rows).
+  const cityGroups = await getCategoryCities(category.id);
+  const totalCount = cityGroups.reduce((n, g) => n + g.count, 0);
+
+  // Top listings only, with card fields only. (This page used to ship ~1,000 full listing records: 2.2 MB of HTML.)
+  const { data: topRows } = await supabase
     .from('listings')
-    .select('*, categories(name, slug, icon)')
+    .select(CARD_COLUMNS)
     .eq('category_id', category.id)
     .order('featured', { ascending: false })
     .order('review_count', { ascending: false, nullsFirst: false })
-    .order('rating', { ascending: false, nullsFirst: false });
+    .order('rating', { ascending: false, nullsFirst: false })
+    .limit(120);
+  const listings = ((topRows || []) as unknown as CardListing[]).map(toCard);
 
-  const cities = [...new Set((listings || []).map((l) => l.city).filter(Boolean))].sort();
-
-  // Popular cities by listing count
-  const cityCounts = new Map<string, number>();
-  for (const l of listings || []) {
-    if (l.city) cityCounts.set(l.city, (cityCounts.get(l.city) || 0) + 1);
-  }
-  const popularCities = [...cityCounts.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 20);
+  const cities = [...new Set(listings.map((l) => l.city).filter(Boolean))].sort();
+  const popularCities = [...cityGroups].sort((a, b) => b.count - a.count).slice(0, 20);
+  const allCities = [...cityGroups].sort((a, b) => a.name.localeCompare(b.name));
 
   // JSON-LD
   const itemListJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: `${category.name} in Florida`,
-    numberOfItems: listings?.length || 0,
-    itemListElement: (listings || []).slice(0, 50).map((l, i) => ({
+    numberOfItems: totalCount,
+    itemListElement: listings.slice(0, 50).map((l, i) => ({
       '@type': 'ListItem',
       position: i + 1,
       url: `https://hireanypro.com/listing/${l.slug}`,
@@ -93,16 +93,23 @@ export default async function CategoryPage({ params }: Props) {
             <div>
               <span className="text-4xl mb-2 block">{category.icon}</span>
               <h1 className="text-2xl md:text-3xl font-bold text-white">{category.name}</h1>
-              <p className="text-blue-100 text-sm mt-1">{listings?.length || 0} professionals in Florida</p>
+              <p className="text-blue-100 text-sm mt-1">{totalCount.toLocaleString('en-US')} professionals in {cityGroups.length} Florida cities</p>
             </div>
           </div>
         </div>
 
-        {listings && listings.length > 0 ? (
-          <CategoryFilters
-            listings={listings}
-            cities={cities}
-          />
+        {listings.length > 0 ? (
+          <>
+            <CategoryFilters
+              listings={listings}
+              cities={cities}
+            />
+            {totalCount > listings.length && (
+              <p className="mt-6 text-sm text-gray-500 text-center">
+                Showing the {listings.length} most-reviewed {category.name.toLowerCase()} pros statewide. Pick your city below to see all {totalCount.toLocaleString('en-US')}.
+              </p>
+            )}
+          </>
         ) : (
           <div className="text-center py-16">
             <span className="text-5xl mb-4 block">{category.icon}</span>
@@ -116,16 +123,32 @@ export default async function CategoryPage({ params }: Props) {
           <section className="mt-16">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Popular Cities for {category.name}</h2>
             <div className="flex flex-wrap gap-2">
-              {popularCities.map(([city, count]) => (
+              {popularCities.map(({ name: city, slug: cSlug, count }) => (
                 <Link
-                  key={city}
-                  href={`/services/${slug}/${citySlug(city)}`}
+                  key={cSlug}
+                  href={`/services/${slug}/${cSlug}`}
                   className="px-4 py-2 bg-gray-100 hover:bg-blue-50 text-gray-700 hover:text-blue-800 rounded-lg text-sm font-medium transition-colors"
                 >
                   {city} ({count})
                 </Link>
               ))}
             </div>
+          </section>
+        )}
+
+        {/* Every city, so each city page is one click from the category hub */}
+        {allCities.length > popularCities.length && (
+          <section className="mt-12">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">{category.name} in Every Florida City We Cover</h2>
+            <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-1 text-sm">
+              {allCities.map(({ name, slug: cSlug, count }) => (
+                <li key={cSlug}>
+                  <Link href={`/services/${slug}/${cSlug}`} className="text-gray-600 hover:text-blue-800 hover:underline">
+                    {name} <span className="text-gray-400">({count})</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </section>
         )}
       </div>
