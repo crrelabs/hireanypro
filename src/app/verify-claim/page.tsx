@@ -10,6 +10,7 @@ function VerifyClaimContent() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
   const [email, setEmail] = useState('');
+  const [reissued, setReissued] = useState(false);
 
   useEffect(() => {
     if (!token) {
@@ -25,11 +26,14 @@ function VerifyClaimContent() {
     })
       .then((r) => r.json())
       .then((data) => {
+        const w = window as unknown as { gtag?: (...args: unknown[]) => void };
         if (data.success) {
+          w.gtag?.('event', 'claim_verified', { page_path: '/verify-claim' });
           setStatus('success');
           setEmail(data.email || '');
           setMessage('Your claim has been verified! You can now manage your listing.');
         } else {
+          if (data.reissued) { w.gtag?.('event', 'claim_link_reissued', { page_path: '/verify-claim' }); setReissued(true); }
           setStatus('error');
           setMessage(data.error || 'Verification failed.');
         }
@@ -55,8 +59,8 @@ function VerifyClaimContent() {
       )}
       {status === 'error' && (
         <>
-          <div className="text-6xl mb-4">❌</div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Verification Failed</h1>
+          <div className="text-6xl mb-4">{reissued ? '📧' : '❌'}</div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{reissued ? 'Check Your Email' : 'Verification Failed'}</h1>
           <p className="text-gray-600 mb-6">{message}</p>
           <Link href="/claim" className="text-blue-800 hover:underline font-medium">
             Try claiming again →

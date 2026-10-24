@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import crypto from 'crypto';
+import { sendClaimVerification } from '@/lib/claim-email';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -31,6 +33,19 @@ export async function POST(req: NextRequest) {
 
     // Check expiration
     if (claim.expires_at && new Date(claim.expires_at) < new Date()) {
+      // Don't make the owner start over: issue a fresh link to the same address automatically.
+      const { data: l } = await supabase.from('listings').select('name, claimed').eq('id', claim.listing_id).single();
+      if (l && !l.claimed && claim.email) {
+        const fresh = crypto.randomUUID();
+        await supabase.from('claims').update({
+          verification_token: fresh,
+          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        }).eq('id', claim.id);
+        const sent = await sendClaimVerification(claim.email, l.name || 'your business', fresh, { reissued: true });
+        if (sent) {
+          return NextResponse.json({ error: 'That link had expired, so we just emailed you a fresh one. Check your inbox (and spam folder).', reissued: true }, { status: 400 });
+        }
+      }
       return NextResponse.json({ error: 'Verification link has expired. Please claim again.' }, { status: 400 });
     }
 
@@ -74,7 +89,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    return NextResponse.json({ success: true, email: claim.email });
+    return NextResponse.json({ success: true, email: claim.email, listingId: claim.listing_id });
   } catch (error: unknown) {
     console.error('Verify claim error:', error);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
