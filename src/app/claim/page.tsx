@@ -263,7 +263,10 @@ function ClaimPage() {
             </span>
           </label>
 
-          <label className="flex items-start gap-3 mb-4 cursor-pointer">
+          <div className="mb-4 rounded-lg border-2 border-blue-200 bg-blue-50 p-4">
+          <p className="font-semibold text-gray-900 mb-1">📱 Get new quote requests by text (optional)</p>
+          <p className="text-sm text-gray-700 mb-3">Pros who answer first win more jobs. Tick the box to get a short text alert when a homeowner requests a quote. Alerts only, never marketing.</p>
+          <label className="flex items-start gap-3 cursor-pointer">
             <input
               type="checkbox"
               checked={smsOptIn}
@@ -276,6 +279,7 @@ function ClaimPage() {
               <a href="/privacy" className="text-blue-800 hover:underline">Privacy Policy</a>.
             </span>
           </label>
+          </div>
 
           <div className="mb-4">
             <TurnstileWidget onSuccess={setTurnstileToken} />

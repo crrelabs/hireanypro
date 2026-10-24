@@ -1,0 +1,2 @@
+// Shared by server and client. Must match the consent wording approved in the Twilio A2P campaign.
+export const SMS_CONSENT_TEXT = '(Optional) I consent to receive SMS text messages from HireAnyPro Alerts (CRRE Labs LLC) at the phone number provided above, including new lead notifications, quote request updates, and account updates. No marketing or promotional texts are sent. Message frequency varies. Message and data rates may apply. Reply STOP to opt out, HELP for help. Consent is not a condition of purchase.';

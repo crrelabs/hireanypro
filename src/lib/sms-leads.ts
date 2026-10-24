@@ -14,7 +14,8 @@ const SITE = 'https://hireanypro.com';
 const FROM = (process.env.TWILIO_FROM_NUMBER || '+17866996091').trim();
 // Send through the A2P-registered "HireAnyPro Alerts" messaging service (CRRE Labs LLC brand).
 const MSG_SERVICE = (process.env.TWILIO_MESSAGING_SERVICE_SID || 'MG42086a25a6170a50889083e0ff5e5409').trim();
-export const SMS_CONSENT_TEXT = '(Optional) I consent to receive SMS text messages from HireAnyPro Alerts (CRRE Labs LLC) at the phone number provided above, including new lead notifications, quote request updates, and account updates. No marketing or promotional texts are sent. Message frequency varies. Message and data rates may apply. Reply STOP to opt out, HELP for help. Consent is not a condition of purchase.';
+import { SMS_CONSENT_TEXT } from './sms-consent-text';
+export { SMS_CONSENT_TEXT };
 export const smsEnabled = () => (process.env.SMS_LEADS_ENABLED || '').trim().toLowerCase() === 'true';
 const dryRun = () => (process.env.SMS_DRY_RUN || '').trim().toLowerCase() === 'true';
 

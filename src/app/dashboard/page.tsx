@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import SmsToggle from './SmsToggle';
 
 type DashboardData = {
   listings: Array<{
@@ -12,6 +13,7 @@ type DashboardData = {
     tier: string;
     rating: number;
     review_count: number;
+    smsPhone?: string | null;
   }>;
   inquiries: Array<{
     id: string;
@@ -184,6 +186,7 @@ function DashboardPage() {
                 <div className="text-sm text-gray-500 mt-1">
                   ⭐ {l.rating.toFixed(1)} ({l.review_count} reviews)
                 </div>
+                <SmsToggle listingId={l.id} initialPhone={l.smsPhone || null} />
               </div>
               <div className="flex items-center gap-3">
                 <span className={`text-xs font-bold px-3 py-1 rounded-full uppercase ${
