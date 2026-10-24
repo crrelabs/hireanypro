@@ -18,7 +18,7 @@ type ListingResult = {
 
 export default function ClaimPageWrapper() {
   return (
-    <Suspense fallback={<div className="max-w-2xl mx-auto py-16 px-4 text-center text-gray-500">Loading...</div>}>
+    <Suspense fallback={<div className="max-w-2xl mx-auto py-16 px-4 text-center"><h1 className="text-3xl font-bold text-gray-900 mb-3">Claim Your Business Listing</h1><p className="text-gray-500">Loading...</p></div>}>
       <ClaimPage />
     </Suspense>
   );
@@ -42,6 +42,8 @@ function ClaimPage() {
   const [success, setSuccess] = useState(false);
   const [pendingVerification, setPendingVerification] = useState(false);
   const [error, setError] = useState('');
+  const [resent, setResent] = useState(false);
+  const [preselectMissing, setPreselectMissing] = useState(false);
 
   const loadPreselected = useCallback(async () => {
     if (!preselectedSlug) return;
@@ -52,8 +54,15 @@ function ClaimPage() {
       .single();
     if (data) {
       setSelected(data as unknown as ListingResult);
+    } else {
+      setPreselectMissing(true);
     }
   }, [preselectedSlug]);
+
+  function track(name: string, params: Record<string, unknown> = {}) {
+    const w = window as unknown as { gtag?: (...args: unknown[]) => void };
+    w.gtag?.('event', name, { page_path: window.location.pathname, ...params });
+  }
 
   useEffect(() => {
     loadPreselected();
@@ -91,6 +100,8 @@ function ClaimPage() {
       });
       const data = await res.json();
       if (data.success) {
+        track('claim_submit', { listing_slug: selected.slug, resent: !!data.resent });
+        setResent(!!data.resent);
         if (data.pendingVerification) {
           setPendingVerification(true);
         } else {
@@ -98,6 +109,7 @@ function ClaimPage() {
           setTimeout(() => router.push(`/dashboard?email=${encodeURIComponent(email)}`), 2000);
         }
       } else {
+        track('claim_error', { listing_slug: selected.slug, reason: String(data.error || '').slice(0, 80) });
         setError(data.error || 'Failed to claim listing');
       }
     } catch {
@@ -113,9 +125,10 @@ function ClaimPage() {
         <div className="text-6xl mb-4">📧</div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Check Your Email</h1>
         <p className="text-gray-600 mb-6">
-          We&apos;ve sent a verification email to <strong>{email}</strong>. Click the link to complete your claim.
+          {resent ? 'We sent you a fresh verification link' : 'We\u2019ve sent a verification email'} to <strong>{email}</strong>. Click the link to complete your claim.
         </p>
-        <p className="text-sm text-gray-500">The link expires in 24 hours.</p>
+        <p className="text-sm text-gray-500 mb-2">The link expires in 24 hours. It usually arrives within a minute; check your spam or promotions folder if you don&apos;t see it.</p>
+        <p className="text-sm text-gray-500">Wrong address? <button onClick={() => { setPendingVerification(false); setEmail(''); }} className="text-blue-800 hover:underline">Use a different email</button>. Need help? Email <a href="mailto:iris@hireanypro.com" className="text-blue-800 hover:underline">iris@hireanypro.com</a>.</p>
       </div>
     );
   }
@@ -137,8 +150,29 @@ function ClaimPage() {
     <div className="max-w-2xl mx-auto py-16 px-4">
       <div className="text-center mb-10">
         <h1 className="text-3xl font-bold text-gray-900 mb-3">Claim Your Business Listing</h1>
-        <p className="text-gray-600">Search for your business below and claim it to manage your profile, respond to inquiries, and upgrade your plan.</p>
+        <p className="text-gray-600">Free forever. No credit card. Takes about a minute.</p>
       </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10 text-sm">
+        {[
+          ['📨', 'Get customer quote requests', 'Homeowners already request quotes from listings like yours. Claim to receive them.'],
+          ['✏️', 'Fix your info', 'Update your phone, hours, services, website and description.'],
+          ['✅', 'Show as a claimed business', 'Claimed profiles look trustworthy and stand out from unclaimed ones.'],
+          ['🔒', 'Stay in control', 'Only you can edit your listing after you verify your email.'],
+        ].map(([icon, title, text]) => (
+          <div key={title} className="flex gap-3 bg-white border border-gray-200 rounded-lg p-4">
+            <span className="text-xl" aria-hidden="true">{icon}</span>
+            <div>
+              <div className="font-semibold text-gray-900">{title}</div>
+              <div className="text-gray-600">{text}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {preselectMissing && !selected && (
+        <p className="mb-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3">We couldn&apos;t find that listing link. Search for your business name below.</p>
+      )}
 
       {!selected ? (
         <div>
@@ -172,6 +206,14 @@ function ClaimPage() {
         </div>
       ) : (
         <div>
+          {selected.claimed ? (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 text-sm text-gray-700">
+              <div className="font-semibold text-gray-900 mb-1">{selected.name} has already been claimed.</div>
+              If you manage this business, <Link href="/dashboard" className="text-blue-800 hover:underline">sign in to your dashboard</Link>.
+              If someone else claimed it, email <a href="mailto:iris@hireanypro.com" className="text-blue-800 hover:underline">iris@hireanypro.com</a> and we&apos;ll sort it out.
+              <div className="mt-3"><button onClick={() => setSelected(null)} className="text-blue-800 hover:underline">Search for a different business</button></div>
+            </div>
+          ) : (<>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <div className="flex justify-between items-start">
               <div>
@@ -200,7 +242,7 @@ function ClaimPage() {
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800 focus:border-transparent mb-4 text-gray-900"
           />
 
-          <label className="block text-sm font-medium text-gray-700 mb-2">Phone number</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Phone number <span className="text-gray-400 font-normal">(optional)</span></label>
           <input
             type="tel"
             value={phone}
@@ -246,12 +288,13 @@ function ClaimPage() {
             disabled={loading || !email}
             className="w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50"
           >
-            {loading ? 'Claiming...' : 'Claim This Listing'}
+            {loading ? 'Sending link...' : 'Claim This Listing — Free'}
           </button>
 
           <p className="text-xs text-gray-500 text-center mt-3">
-            By claiming, you confirm you are authorized to manage this business listing.
+            By claiming, you confirm you are authorized to manage this business listing. We&apos;ll email you a one-click verification link.
           </p>
+          </>)}
         </div>
       )}
     </div>

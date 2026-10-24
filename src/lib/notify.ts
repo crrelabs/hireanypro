@@ -11,8 +11,8 @@ ${body}`);
 
 export async function notifyNewClaim(businessName: string, claimerEmail: string, listingSlug: string) {
   await sendNotification(
-    `New HireAnyPro Claim: ${businessName}`,
-    `${businessName} was claimed by ${claimerEmail}\n\nListing: https://hireanypro.com/listing/${listingSlug}\nDashboard: https://hireanypro.com/dashboard`
+    `HireAnyPro claim started: ${businessName}`,
+    `${claimerEmail} started claiming ${businessName} (pending email verification)\n\nListing: https://hireanypro.com/listing/${listingSlug}\nDashboard: https://hireanypro.com/dashboard`
   );
 }
 
