@@ -13,7 +13,7 @@ function stats(listings: L[]) {
     .filter((l) => (l.review_count || 0) >= 5)
     .sort((a, b) => (b.rating || 0) - (a.rating || 0) || (b.review_count || 0) - (a.review_count || 0))
     .slice(0, 3);
-  const zips = [...new Set(listings.map((l) => (l.zip || '').slice(0, 5)).filter((z) => /^\d{5}$/.test(z)))].sort().slice(0, 12);
+  const zips = [...new Set(listings.map((l) => (l.zip || '').slice(0, 5)).filter((z) => /^3[234]\d{3}$/.test(z)))].sort().slice(0, 12);
   return { rated: rated.length, totalReviews, avg, top, zips };
 }
 
