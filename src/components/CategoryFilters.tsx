@@ -27,22 +27,32 @@ export default function CategoryFilters({ listings, cities }: Props) {
   const [userLng, setUserLng] = useState<number | null>(null);
   const [locationStatus, setLocationStatus] = useState<string>('');
 
-  // Auto-detect location
+  // Ask for location only when the visitor picks "Nearest to Me" (an unprompted permission pop-up on page load
+  // drives people away). If they already granted it before, use it silently.
+  const requestLocation = () => {
+    if (!('geolocation' in navigator)) { setLocationStatus('Location not available'); return; }
+    setLocationStatus('📍 Finding your location…');
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLat(pos.coords.latitude);
+        setUserLng(pos.coords.longitude);
+        setSortBy('distance');
+        setLocationStatus('📍 Sorted by distance from you');
+      },
+      () => {
+        setSortBy('reviews');
+        setLocationStatus('');
+      },
+      { timeout: 8000, maximumAge: 300000 }
+    );
+  };
+
   useEffect(() => {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setUserLat(pos.coords.latitude);
-          setUserLng(pos.coords.longitude);
-          setSortBy('distance');
-          setLocationStatus('📍 Sorted by distance from you');
-        },
-        () => {
-          setLocationStatus('');
-        },
-        { timeout: 5000, maximumAge: 300000 }
-      );
-    }
+    const perms = (navigator as Navigator & { permissions?: Permissions }).permissions;
+    perms?.query({ name: 'geolocation' as PermissionName }).then((p) => {
+      if (p.state === 'granted') requestLocation();
+    }).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filtered = useMemo(() => {
@@ -120,12 +130,12 @@ export default function CategoryFilters({ listings, cities }: Props) {
 
         <select
           value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
+          onChange={(e) => { setSortBy(e.target.value); if (e.target.value === 'distance' && !userLat) requestLocation(); }}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-700 focus:ring-2 focus:ring-blue-800"
         >
           <option value="reviews">Most Reviews</option>
           <option value="rating">Highest Rated</option>
-          {userLat && <option value="distance">Nearest to Me</option>}
+          <option value="distance">Nearest to Me</option>
         </select>
 
         <span className="text-sm text-gray-500">

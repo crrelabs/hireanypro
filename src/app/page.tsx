@@ -3,7 +3,7 @@ import SearchBar from '@/components/SearchBar';
 import CategoryCard from '@/components/CategoryCard';
 import ListingCard from '@/components/ListingCard';
 import Link from 'next/link';
-import { getAllCounties, countySlug, getCitiesInCounty, citySlug } from '@/lib/geo';
+import { getAllCounties, countySlug, getCitiesInCounty, getCountyForCity, citySlug } from '@/lib/geo';
 import { getCategoryCities, getCategoryBySlug } from '@/lib/listings';
 import type { Metadata } from 'next';
 
@@ -97,7 +97,7 @@ export default async function HomePage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
-            { icon: '✅', title: 'Verified Reviews', desc: 'Real reviews from real customers help you make informed decisions.' },
+            { icon: '⭐', title: 'Real Ratings', desc: 'See each pro’s public customer rating and review count before you reach out.' },
             { icon: '🔍', title: 'Easy Search', desc: 'Find the right pro by category, location, or rating in seconds.' },
             { icon: '💰', title: 'Free to Use', desc: 'Browse listings, read reviews, and contact pros — all completely free.' },
           ].map((item) => (
@@ -126,7 +126,11 @@ export default async function HomePage() {
               const plumbing = await getCategoryBySlug('plumbing');
               const plumbingCities = new Map((plumbing ? await getCategoryCities(plumbing.id) : []).map((g) => [g.slug, g.count]));
               return Promise.all(counties.map(async (county) => {
-                const cities = await getCitiesInCounty(county);
+                const allCities = await getCitiesInCounty(county);
+                // A city can show up under several counties in the raw data (Orlando was linked 21 times);
+                // only show it under its primary county, once.
+                const primary = await Promise.all(allCities.map(async (c) => ((await getCountyForCity(c)) === county ? c : null)));
+                const cities = [...new Map(primary.filter((c): c is string => !!c).map((c) => [citySlug(c), c])).values()];
                 const topCities = cities
                   .filter((c) => plumbingCities.has(citySlug(c)))
                   .sort((a, b) => (plumbingCities.get(citySlug(b)) || 0) - (plumbingCities.get(citySlug(a)) || 0))
