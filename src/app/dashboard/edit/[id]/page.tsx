@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import type { Category } from '@/lib/supabase';
@@ -19,9 +19,7 @@ type HoursMap = Record<string, { open: string; close: string } | string>;
 
 function EditForm() {
   const params = useParams();
-  const searchParams = useSearchParams();
   const listingId = params.id as string;
-  const email = searchParams.get('email') || '';
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -91,7 +89,7 @@ function EditForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          listingId, email, name, description, phone, contactEmail, website,
+          listingId, name, description, phone, contactEmail, website,
           address, city, state, zip, hours, category_id: categoryId,
         }),
       });
@@ -116,7 +114,7 @@ function EditForm() {
     <div className="max-w-3xl mx-auto py-12 px-4">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Edit Listing</h1>
-        <Link href={`/dashboard?email=${encodeURIComponent(email)}`} className="text-sm text-blue-800 hover:text-blue-600 font-medium">
+        <Link href="/dashboard" className="text-sm text-blue-800 hover:text-blue-600 font-medium">
           ← Back to Dashboard
         </Link>
       </div>
@@ -232,7 +230,7 @@ function EditForm() {
           <button onClick={handleSave} disabled={saving} className="bg-blue-800 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold px-8 py-3 rounded-lg transition-colors">
             {saving ? 'Saving...' : 'Save Changes'}
           </button>
-          <Link href={`/dashboard?email=${encodeURIComponent(email)}`} className="text-gray-500 hover:text-gray-700 text-sm font-medium">
+          <Link href="/dashboard" className="text-gray-500 hover:text-gray-700 text-sm font-medium">
             Cancel
           </Link>
         </div>

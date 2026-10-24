@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { isRateLimited, getClientIp } from '@/lib/rate-limit';
+import { sessionEmail, likeExact } from '@/lib/session';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,20 +15,22 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { email } = await req.json();
-    if (!email || typeof email !== 'string') {
-      return NextResponse.json({ error: 'Email required' }, { status: 400 });
+    // Identity comes only from the signed session cookie (set by the emailed sign-in link or claim verification).
+    const email = sessionEmail(req);
+    if (!email) {
+      return NextResponse.json({ error: 'Please sign in.' }, { status: 401 });
     }
 
     // Get profile
     const { data: profile } = await supabase
       .from('profiles')
       .select('id')
-      .eq('email', email.toLowerCase().trim())
-      .single();
+      .ilike('email', likeExact(email))
+      .limit(1)
+      .maybeSingle();
 
     if (!profile) {
-      return NextResponse.json({ listings: [], inquiries: [], totalInquiries: 0, monthInquiries: 0 });
+      return NextResponse.json({ email, listings: [], inquiries: [], totalInquiries: 0, monthInquiries: 0 });
     }
 
     // Get claimed listings via subscriptions
@@ -85,7 +88,7 @@ export async function POST(req: NextRequest) {
       monthInquiries = monthCount || 0;
     }
 
-    return NextResponse.json({ listings, inquiries, totalInquiries, monthInquiries });
+    return NextResponse.json({ email, listings, inquiries, totalInquiries, monthInquiries });
   } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }

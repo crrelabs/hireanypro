@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { isRateLimited, getClientIp } from '@/lib/rate-limit';
+import { sessionEmail, likeExact } from '@/lib/session';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -15,9 +16,13 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { listingId, email, name, description, phone, contactEmail, website, address, city, state, zip, hours, category_id } = body;
+    const email = sessionEmail(req);
+    if (!email) {
+      return NextResponse.json({ error: 'Your session expired. Please sign in again from the dashboard.' }, { status: 401 });
+    }
+    const { listingId, name, description, phone, contactEmail, website, address, city, state, zip, hours, category_id } = body;
 
-    if (!listingId || !email) {
+    if (!listingId) {
       return NextResponse.json({ error: 'Missing required fields.' }, { status: 400 });
     }
 
@@ -25,8 +30,9 @@ export async function POST(req: NextRequest) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('id')
-      .eq('email', email)
-      .single();
+      .ilike('email', likeExact(email))
+      .limit(1)
+      .maybeSingle();
 
     if (!profile) {
       return NextResponse.json({ error: 'Profile not found.' }, { status: 403 });

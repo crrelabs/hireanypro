@@ -52,7 +52,7 @@ function VerifyClaimContent() {
           <div className="text-6xl mb-4">✅</div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Claim Verified!</h1>
           <p className="text-gray-600 mb-6">{message}</p>
-          <Link href={email ? `/dashboard?email=${encodeURIComponent(email)}` : '/dashboard'} className="inline-block bg-blue-800 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium transition-colors">
+          <Link href="/dashboard" className="inline-block bg-blue-800 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium transition-colors">
             Go to Dashboard →
           </Link>
         </>
