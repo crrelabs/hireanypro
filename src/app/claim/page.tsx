@@ -106,7 +106,7 @@ function ClaimPage() {
           setPendingVerification(true);
         } else {
           setSuccess(true);
-          setTimeout(() => router.push(`/dashboard?email=${encodeURIComponent(email)}`), 2000);
+          setTimeout(() => router.push('/dashboard'), 2000);
         }
       } else {
         track('claim_error', { listing_slug: selected.slug, reason: String(data.error || '').slice(0, 80) });
@@ -139,7 +139,7 @@ function ClaimPage() {
         <div className="text-6xl mb-4">🎉</div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Listing Claimed!</h1>
         <p className="text-gray-600 mb-6">Redirecting to your dashboard...</p>
-        <Link href={`/dashboard?email=${encodeURIComponent(email)}`} className="text-blue-800 hover:underline">
+        <Link href="/dashboard" className="text-blue-800 hover:underline">
           Go to Dashboard →
         </Link>
       </div>

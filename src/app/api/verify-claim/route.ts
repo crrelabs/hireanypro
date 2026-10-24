@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { sendClaimVerification } from '@/lib/claim-email';
+import { setSessionCookie } from '@/lib/session';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -28,6 +29,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (claim.verified) {
+      // Re-clicking an old verification link no longer signs anyone in; use the dashboard sign-in link instead.
       return NextResponse.json({ success: true, email: claim.email, message: 'Already verified' });
     }
 
@@ -89,7 +91,10 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    return NextResponse.json({ success: true, email: claim.email, listingId: claim.listing_id });
+    // Verified email = proof of ownership: sign the owner straight into their dashboard.
+    const res = NextResponse.json({ success: true, email: claim.email, listingId: claim.listing_id });
+    if (claim.email) setSessionCookie(res, claim.email);
+    return res;
   } catch (error: unknown) {
     console.error('Verify claim error:', error);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });

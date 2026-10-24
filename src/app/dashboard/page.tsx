@@ -35,26 +35,26 @@ export default function DashboardPageWrapper() {
 
 function DashboardPage() {
   const searchParams = useSearchParams();
-  const emailParam = searchParams.get('email');
-  const [email, setEmail] = useState(emailParam || '');
-  const [loggedIn, setLoggedIn] = useState(!!emailParam);
+  const loginState = searchParams.get('login');
+  const paid = !!searchParams.get('session_id');
+  const [email, setEmail] = useState('');
+  const [authed, setAuthed] = useState<boolean | null>(null);
+  const [linkSent, setLinkSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [loginError, setLoginError] = useState('');
   const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const loadDashboard = useCallback(async (e: string) => {
+  const loadDashboard = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/dashboard', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: e }),
-      });
-      if (!res.ok) {
-        setData(null);
-        setLoading(false);
-        return;
-      }
+      // Identity comes from the signed session cookie, never from a URL or form field.
+      const res = await fetch('/api/dashboard', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+      if (res.status === 401) { setAuthed(false); setData(null); return; }
+      if (!res.ok) { setData(null); return; }
       const result = await res.json();
+      setAuthed(true);
+      setEmail(result.email || '');
       setData({
         listings: result.listings || [],
         inquiries: result.inquiries || [],
@@ -68,29 +68,60 @@ function DashboardPage() {
     }
   }, []);
 
-  useEffect(() => {
-    if (loggedIn && email) loadDashboard(email);
-  }, [loggedIn, email, loadDashboard]);
+  useEffect(() => { loadDashboard(); }, [loadDashboard]);
 
-  if (!loggedIn) {
+  async function sendLink() {
+    if (!email) return;
+    setSending(true);
+    setLoginError('');
+    try {
+      const res = await fetch('/api/auth/login-link', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+      const j = await res.json();
+      if (j.success) setLinkSent(true); else setLoginError(j.error || 'Something went wrong.');
+    } catch { setLoginError('Connection error. Please try again.'); }
+    finally { setSending(false); }
+  }
+
+  async function logout() {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    setAuthed(false); setData(null); setEmail(''); setLinkSent(false);
+  }
+
+  if (authed === false) {
+    if (linkSent) {
+      return (
+        <div className="max-w-md mx-auto py-20 px-4 text-center">
+          <div className="text-6xl mb-4">📧</div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Check Your Email</h1>
+          <p className="text-gray-600 mb-4">If <strong>{email}</strong> manages a claimed listing, we just sent it a one-click sign-in link. It works for 24 hours.</p>
+          <p className="text-sm text-gray-500">No email? Check spam, or <button onClick={() => setLinkSent(false)} className="text-blue-800 hover:underline">try another address</button>. Haven&apos;t claimed yet? <Link href="/claim" className="text-blue-800 hover:underline">Claim your listing</Link>.</p>
+        </div>
+      );
+    }
     return (
       <div className="max-w-md mx-auto py-20 px-4">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">Business Dashboard</h1>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Enter your email</label>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2 text-center">Business Dashboard</h1>
+        {paid && <p className="text-green-700 bg-green-50 border border-green-200 rounded-lg p-3 text-sm mb-4 text-center">Payment received, thank you! Sign in below to see your upgraded listing.</p>}
+        {loginState === 'expired' && <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm mb-4 text-center">That sign-in link expired. Enter your email for a new one.</p>}
+        <p className="text-gray-600 text-sm mb-6 text-center">Enter the email you used to claim your listing and we&apos;ll send you a secure one-click sign-in link.</p>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Your email</label>
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@yourbusiness.com"
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800 focus:border-transparent mb-4 text-gray-900"
-          onKeyDown={(e) => e.key === 'Enter' && email && setLoggedIn(true)}
+          onKeyDown={(e) => e.key === 'Enter' && sendLink()}
         />
+        {loginError && <p className="text-red-600 text-sm mb-4">{loginError}</p>}
         <button
-          onClick={() => email && setLoggedIn(true)}
-          className="w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
+          onClick={sendLink}
+          disabled={sending || !email}
+          className="w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50"
         >
-          View Dashboard
+          {sending ? 'Sending...' : 'Email Me a Sign-In Link'}
         </button>
+        <p className="text-sm text-gray-500 text-center mt-4">Not listed yet? <Link href="/claim" className="text-blue-800 hover:underline">Claim your free listing</Link></p>
       </div>
     );
   }
@@ -121,7 +152,7 @@ function DashboardPage() {
     <div className="max-w-5xl mx-auto py-12 px-4">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Business Dashboard</h1>
-        <span className="text-sm text-gray-500">{email}</span>
+        <span className="text-sm text-gray-500">{email} · <button onClick={logout} className="text-blue-800 hover:underline">Sign out</button></span>
       </div>
 
       {/* Stats */}
@@ -163,7 +194,7 @@ function DashboardPage() {
                   {l.tier}
                 </span>
                 {(l.tier === 'pro' || l.tier === 'featured') && (
-                  <Link href={`/dashboard/edit/${l.id}?email=${encodeURIComponent(email)}`} className="text-sm bg-orange-500 text-white px-4 py-1.5 rounded-lg hover:bg-orange-600 font-medium transition-colors">
+                  <Link href={`/dashboard/edit/${l.id}`} className="text-sm bg-orange-500 text-white px-4 py-1.5 rounded-lg hover:bg-orange-600 font-medium transition-colors">
                     Edit
                   </Link>
                 )}
