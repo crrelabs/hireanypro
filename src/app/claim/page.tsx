@@ -259,7 +259,7 @@ function ClaimPage() {
               className="mt-1 w-4 h-4 text-blue-800 border-gray-300 rounded focus:ring-blue-800"
             />
             <span className="text-sm text-gray-600">
-              I agree to receive emails from HireAnyPro about leads, tips, and promotions. You can unsubscribe at any time.
+              (Optional, email only) Send me HireAnyPro emails with listing tips and product news. This is separate from text messages: no marketing is ever sent by SMS. You can unsubscribe at any time.
             </span>
           </label>
 
