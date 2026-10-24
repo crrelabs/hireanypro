@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { getAllBlogSlugs } from '@/lib/blog';
-import { citySlug, countySlug } from '@/lib/geo';
+import { citySlug, countySlug, getAllCounties } from '@/lib/geo';
 import { renderSitemapIndex, renderUrlset } from '@/lib/sitemap-xml';
 import type { SitemapIndexEntry, SitemapUrl } from '@/lib/sitemap-xml';
 
@@ -120,7 +120,7 @@ export async function getListingChunkUrls(chunk: number): Promise<SitemapUrl[]> 
   }
 
   return rows
-    .filter((row) => SAFE_SLUG.test(row.slug))
+    .filter((row) => SAFE_SLUG.test(row.slug) && !row.slug.startsWith('zz-hap-test'))
     .map((row) => ({
       loc: `${BASE_URL}/listing/${row.slug}`,
       lastmod: toLastmod(row.updated_at),
@@ -172,7 +172,13 @@ export async function getPagesSitemapUrls(): Promise<SitemapUrl[]> {
     { loc: `${BASE_URL}/categories`, lastmod: latestCategory, changefreq: 'weekly', priority: 0.8 },
     { loc: `${BASE_URL}/pricing`, changefreq: 'monthly', priority: 0.6 },
     { loc: `${BASE_URL}/blog`, lastmod: latestBlog, changefreq: 'daily', priority: 0.8 },
+    { loc: `${BASE_URL}/contact`, changefreq: 'yearly', priority: 0.3 },
   ];
+
+  // County hub pages (/region/*) were reachable only via internal links; list them so crawlers find them.
+  for (const county of await getAllCounties()) {
+    urls.push({ loc: `${BASE_URL}/region/${countySlug(county)}`, lastmod: latestListing, changefreq: 'weekly', priority: 0.7 });
+  }
 
   for (const category of categories) {
     urls.push({

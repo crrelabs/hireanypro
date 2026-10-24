@@ -34,33 +34,43 @@ export default async function CountyPage({ params }: Props) {
 
   const knownCities = await getCitiesInCounty(countyName);
 
-  // Get all listings in these cities
-  const { data: listings } = await supabase
-    .from('listings')
-    .select('city, category_id, categories(name, slug, icon)')
-    .in('city', knownCities)
-    .limit(5000);
+  // Get all listings in these cities. Paginate: Supabase returns at most 1,000 rows per request,
+  // so the old .limit(5000) silently undercounted big counties.
+  type Row = { city: string | null; categories: unknown };
+  const listings: Row[] = [];
+  for (let from = 0; knownCities.length > 0; from += 1000) {
+    const { data, error } = await supabase
+      .from('listings')
+      .select('city, categories(name, slug, icon)')
+      .in('city', knownCities)
+      .order('id')
+      .range(from, from + 999);
+    if (error || !data || data.length === 0) break;
+    listings.push(...(data as Row[]));
+    if (data.length < 1000) break;
+  }
 
-  // Aggregate: categories with counts
-  const catMap = new Map<string, { name: string; slug: string; icon: string; count: number }>();
-  const citySet = new Set<string>();
+  // Aggregate: categories with counts, and per-category city counts (so we only link pages that exist).
+  const catMap = new Map<string, { name: string; slug: string; icon: string; count: number; cities: Map<string, number> }>();
+  const cityTop = new Map<string, Map<string, number>>();
 
-  for (const l of listings || []) {
-    if (l.city) citySet.add(l.city);
-    const cat = l.categories as unknown as { name: string; slug: string; icon: string } | null;
-    if (cat) {
-      const existing = catMap.get(cat.slug);
-      if (existing) {
-        existing.count++;
-      } else {
-        catMap.set(cat.slug, { ...cat, count: 1 });
-      }
-    }
+  for (const l of listings) {
+    const cat = l.categories as { name: string; slug: string; icon: string } | null;
+    if (!cat || !l.city) continue;
+    const existing = catMap.get(cat.slug) || { ...cat, count: 0, cities: new Map<string, number>() };
+    existing.count++;
+    existing.cities.set(l.city, (existing.cities.get(l.city) || 0) + 1);
+    catMap.set(cat.slug, existing);
+    const ct = cityTop.get(l.city) || new Map<string, number>();
+    ct.set(cat.slug, (ct.get(cat.slug) || 0) + 1);
+    cityTop.set(l.city, ct);
   }
 
   const categories = [...catMap.values()].sort((a, b) => b.count - a.count);
-  const cities = [...citySet].sort();
-  const totalListings = listings?.length || 0;
+  const cities = [...cityTop.keys()].sort();
+  const topCatForCity = (city: string) => [...(cityTop.get(city) || new Map()).entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+  const topCitiesForCat = (c: { cities: Map<string, number> }) => [...c.cities.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([city]) => city);
+  const totalListings = listings.length;
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -106,7 +116,7 @@ export default async function CountyPage({ params }: Props) {
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-1">
-                  {cities.slice(0, 5).map(city => (
+                  {topCitiesForCat(cat).map(city => (
                     <Link
                       key={city}
                       href={`/services/${cat.slug}/${citySlug(city)}`}
@@ -128,7 +138,7 @@ export default async function CountyPage({ params }: Props) {
             {cities.map(city => (
               <Link
                 key={city}
-                href={`/services/${categories[0]?.slug || 'plumbing'}/${citySlug(city)}`}
+                href={`/services/${topCatForCity(city) || categories[0]?.slug || 'plumbing'}/${citySlug(city)}`}
                 className="px-4 py-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all text-gray-700 hover:text-blue-800 font-medium text-sm"
               >
                 {city}
