@@ -6,7 +6,7 @@ import { isBot } from '@/lib/honeypot';
 import { sendMail } from '@/lib/mailer';
 import { isSuppressed } from '@/lib/suppression';
 import { leadTeaser } from '@/lib/lead-upsell';
-import { queueLeadSms, teaserBody, smsEnabled } from '@/lib/sms-leads';
+import { queueLeadSms, teaserBody, smsEnabled, optedInPhone } from '@/lib/sms-leads';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!.trim(),
@@ -103,12 +103,13 @@ export async function POST(req: NextRequest) {
         `<p>Questions? Just reply to this email.</p><p>The HireAnyPro team</p>`),
     }));
 
-    // Free listing with a phone but no email: SMS teaser (held until SMS_LEADS_ENABLED=true).
+    // SMS alert only to a business that opted in to texts on the claim form (transactional, no pitch).
     let smsNote = '';
-    if (!isPaid && !bizEmail && listing.phone) {
-      const st = await queueLeadSms(supabase, { inquiryId: saved?.id, listingId: listing.id, phone: listing.phone,
-        body: teaserBody({ listingId: listing.id, slug: listing.slug, claimed: listing.claimed, cat, city }) }).catch(() => 'error');
-      smsNote = `\nSMS teaser to business phone ${listing.phone}: ${st}${smsEnabled() ? '' : ' (SMS is off until A2P is approved; call or text them manually)'}`;
+    const smsTo = listing.claimed ? await optedInPhone(supabase, listing.id).catch(() => null) : null;
+    if (smsTo) {
+      const st = await queueLeadSms(supabase, { inquiryId: saved?.id, listingId: listing.id, phone: smsTo,
+        body: teaserBody({ name: listing.name, cat, city }) }).catch(() => 'error');
+      smsNote = `\nSMS alert to opted-in business phone: ${st}${smsEnabled() ? '' : ' (SMS is off)'}`;
     }
 
     // 2) Team copy with full details, so every lead gets followed up.

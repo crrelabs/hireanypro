@@ -6,6 +6,7 @@ import { isBot } from '@/lib/honeypot';
 import { notifyNewClaim } from '@/lib/notify';
 import { sendClaimVerification } from '@/lib/claim-email';
 import crypto from 'crypto';
+import { recordSmsOptIn } from '@/lib/sms-leads';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -78,6 +79,11 @@ export async function POST(req: NextRequest) {
 
     if (emailOptIn && profile?.id) {
       await supabase.from('profiles').update({ email_opt_in: true, opted_in_at: new Date().toISOString() }).eq('id', profile.id);
+    }
+
+    // Standalone, optional SMS consent: record it only when the box was ticked and a phone was given.
+    if (body.smsOptIn === true && typeof body.phone === 'string' && body.phone.trim()) {
+      await recordSmsOptIn(supabase, { listingId, phone: body.phone, source: 'claim_form' }).catch(() => false);
     }
 
     if (existingClaim) {
