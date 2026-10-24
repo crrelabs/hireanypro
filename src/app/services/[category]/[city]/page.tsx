@@ -5,6 +5,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
+import { CityIntro, CityFaq } from '@/components/CityInsights';
 import { citySlug, getCountyForCity, countySlug } from '@/lib/geo';
 import { CARD_COLUMNS, toCard, getCategoryCities, getCategoryBySlug, type CardListing } from '@/lib/listings';
 
@@ -21,8 +22,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cityName = group.name;
   const count = group.count;
 
-  const title = `Best ${cat.name} in ${cityName}, FL | HireAnyPro`;
-  const description = `Find top-rated ${cat.name.toLowerCase()} professionals in ${cityName}, Florida. Compare ${count} local ${count === 1 ? 'pro' : 'pros'}, read reviews, and get free quotes.`;
+  const title = `${count > 1 ? `${count} ` : ''}Best ${cat.name} Pros in ${cityName}, FL (${new Date().getFullYear()}) | HireAnyPro`;
+  const description = `Compare ${count} ${cat.name.toLowerCase()} ${count === 1 ? 'pro' : 'pros'} in ${cityName}, Florida: ratings, reviews, ZIP codes served and FAQs. Request free quotes, no obligation.`;
 
   return {
     title,
@@ -66,7 +67,7 @@ export default async function CityLandingPage({ params }: Props) {
   const { data: otherCatRows } = await supabase
     .from('listings')
     .select('category_id, categories(name, slug)')
-    .eq('city', cityName)
+    .in('city', group.variants)
     .neq('category_id', category.id)
     .limit(1000);
 
@@ -131,10 +132,14 @@ export default async function CityLandingPage({ params }: Props) {
           </div>
         </div>
 
+        <CityIntro categoryName={category.name} cityName={cityName} count={group.count} listings={listings} />
+
         <CategoryFilters
           listings={listings}
           cities={[cityName]}
         />
+
+        <CityFaq categoryName={category.name} categorySlug={category.slug} cityName={cityName} citySlug={cSlug} count={group.count} listings={listings} />
 
         {/* Related Services in this City */}
         {relatedCategories.length > 0 && (
