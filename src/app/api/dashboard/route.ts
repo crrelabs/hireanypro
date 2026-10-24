@@ -49,7 +49,13 @@ export async function POST(req: NextRequest) {
         .from('listings')
         .select('id, name, slug, tier, rating, review_count')
         .in('id', listingIds);
-      listings = (listingData || []).map((l) => ({ ...l, tier: planMap[l.id] || l.tier }));
+      const { data: optRows } = await supabase
+        .from('sms_queue')
+        .select('listing_id, to_phone')
+        .in('listing_id', listingIds)
+        .eq('status', 'opt_in');
+      const optMap = Object.fromEntries((optRows || []).map((r) => [r.listing_id, r.to_phone]));
+      listings = (listingData || []).map((l) => ({ ...l, tier: planMap[l.id] || l.tier, smsPhone: optMap[l.id] || null }));
     }
 
     // Get inquiries for these listings
