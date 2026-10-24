@@ -13,7 +13,7 @@ export default function SmsOptInPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-16 text-gray-700">
       <h1 className="text-3xl font-bold text-gray-900 mb-3">HireAnyPro Alerts: SMS Opt-In</h1>
-      <p className="mb-6">Business owners opt in to HireAnyPro Alerts when they claim their free listing at <Link href="/claim" className="text-blue-800 hover:underline">hireanypro.com/claim</Link>. Homeowners can opt in on the quote request form on any business listing. The SMS box is optional and is never pre-checked. This is the exact form and consent language shown to users:</p>
+      <p className="mb-6">Business owners opt in to HireAnyPro Alerts when they claim their free listing at <Link href="/claim" className="text-blue-800 hover:underline">hireanypro.com/claim</Link>. Homeowners can opt in on the quote request form on any business listing. The SMS box is optional, is never pre-checked, and is its own checkbox: it is not combined with any other consent, and claiming a listing or submitting a quote request does not require it. HireAnyPro Alerts texts are transactional only (new quote requests, quote confirmations and account notices); no marketing consent is collected for SMS and no marketing texts are sent. Any optional email newsletter consent on the claim form is a separate checkbox and covers email only. This is the exact SMS consent language shown to users:</p>
 
       <form action="/claim" method="get" className="border border-gray-300 rounded-lg p-6 bg-white">
         <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="email">Your email address</label>
