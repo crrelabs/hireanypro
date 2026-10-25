@@ -147,6 +147,19 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    if (event.type === 'customer.subscription.updated') {
+      // Keep the site's Pro flag in step with Stripe: a subscription that ends up canceled/unpaid loses Pro.
+      // past_due keeps Pro during Stripe's retry window; it is downgraded when Stripe finally cancels.
+      const subscription = event.data.object as Stripe.Subscription;
+      if (['canceled', 'unpaid', 'incomplete_expired'].includes(subscription.status)) {
+        const { data: sub } = await supabase.from('subscriptions').select('listing_id').eq('stripe_subscription_id', subscription.id).maybeSingle();
+        if (sub?.listing_id) {
+          await supabase.from('listings').update({ tier: 'free' }).eq('id', sub.listing_id);
+          await supabase.from('subscriptions').update({ status: 'canceled', plan: 'free' }).eq('stripe_subscription_id', subscription.id);
+        }
+      }
+    }
+
     if (event.type === 'customer.subscription.deleted') {
       const subscription = event.data.object as Stripe.Subscription;
       const subId = subscription.id;

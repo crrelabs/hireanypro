@@ -54,6 +54,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   const from = (page - 1) * perPage;
   const { data: listings, count } = await query
     .order('featured', { ascending: false })
+    .order('tier', { ascending: false }) // 'pro' sorts above 'free'
     .order('rating', { ascending: false })
     .range(from, from + perPage - 1);
 
