@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
     // Mark as handled first so a crash can never cause a double send.
     await supabase.from('inquiries').update({ upsell_followup_sent_at: new Date().toISOString() }).eq('id', r.id);
     if (!l || !to || l.tier === 'pro' || l.tier === 'featured' || mailedToday.has(to) || (await isSuppressed(to))) { skipped++; continue; }
-    const ok = await sendMail(leadTeaser({ listing: l, cat: l.categories?.name || 'home service', city: l.city || 'your area', when: new Date(r.created_at), followUp: true }).mail(to));
+    const ok = await sendMail(leadTeaser({ listing: l, cat: l.categories?.name || 'home service', city: l.city || 'your area', when: new Date(r.created_at), followUp: true, toEmail: to }).mail(to));
     if (ok) { sent++; mailedToday.add(to); } else skipped++;
   }
   // SMS teasers waiting for business hours (only when SMS is switched on).

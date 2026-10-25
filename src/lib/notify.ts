@@ -22,3 +22,10 @@ export async function notifyUpgrade(businessName: string, ownerEmail: string, ti
     `${businessName} upgraded to ${tier.toUpperCase()} plan!\n\nOwner: ${ownerEmail}\nListing: https://hireanypro.com/listing/${listingSlug}\n\nRevenue: ${tier === 'pro' ? '$9/mo' : '$49.99/mo'}`
   );
 }
+
+export async function notifyVerifiedClaim(businessName: string, ownerEmail: string, listingSlug: string) {
+  await sendNotification(
+    `HireAnyPro listing claimed: ${businessName}`,
+    `${ownerEmail} claimed ${businessName} with a one-click link sent to the email on file (verified, no second email needed).\n\nListing: https://hireanypro.com/listing/${listingSlug}`
+  );
+}

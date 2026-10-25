@@ -28,11 +28,18 @@ function ClaimPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const preselectedSlug = searchParams.get('listing');
+  const claimToken = searchParams.get('ct') || '';
+  // The one-click token carries the email it was sent to; prefill it (the server re-checks everything).
+  const tokenEmail = (() => {
+    try { const p = JSON.parse(atob((claimToken.split('.')[0] || '').replace(/-/g, '+').replace(/_/g, '/'))); return typeof p.e === 'string' ? p.e : ''; } catch { return ''; }
+  })();
 
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<ListingResult[]>([]);
   const [selected, setSelected] = useState<ListingResult | null>(null);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(tokenEmail);
+  const [useToken, setUseToken] = useState(!!tokenEmail);
+  const [claimedListingId, setClaimedListingId] = useState('');
   const [phone, setPhone] = useState('');
   const [honeypot, setHoneypot] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');
@@ -93,6 +100,7 @@ function ClaimPage() {
           email,
           phone,
           turnstileToken,
+          claimToken: useToken ? claimToken : undefined,
           emailOptIn,
           smsOptIn,
           website: honeypot,
@@ -100,9 +108,13 @@ function ClaimPage() {
       });
       const data = await res.json();
       if (data.success) {
-        track('claim_submit', { listing_slug: selected.slug, resent: !!data.resent });
+        track('claim_submit', { listing_slug: selected.slug, resent: !!data.resent, method: data.verified ? 'one_click' : 'email_link' });
         setResent(!!data.resent);
-        if (data.pendingVerification) {
+        if (data.verified) {
+          track('claim_verified', { listing_slug: selected.slug, method: 'one_click' });
+          setClaimedListingId(data.listingId || selected.id);
+          setSuccess(true);
+        } else if (data.pendingVerification) {
           setPendingVerification(true);
         } else {
           setSuccess(true);
@@ -138,10 +150,24 @@ function ClaimPage() {
       <div className="max-w-lg mx-auto py-20 px-4 text-center">
         <div className="text-6xl mb-4">🎉</div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Listing Claimed!</h1>
-        <p className="text-gray-600 mb-6">Redirecting to your dashboard...</p>
-        <Link href="/dashboard" className="text-blue-800 hover:underline">
+        <p className="text-gray-600 mb-6">{selected?.name} is now yours. You&apos;re signed in, so you can update your details right away.</p>
+        <Link href="/dashboard" className="inline-block bg-blue-800 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium">
           Go to Dashboard →
         </Link>
+        {claimedListingId && (
+          <div className="mt-10 text-left bg-white border-2 border-blue-800 rounded-xl p-6">
+            <p className="text-xs font-bold uppercase tracking-wide text-blue-800 mb-1">Optional upgrade</p>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Get every quote request in your inbox: Pro, $9/month</h2>
+            <ul className="text-sm text-gray-700 space-y-1 mb-4 list-disc pl-5">
+              <li>See the customer&apos;s name, phone and email on every request</li>
+              <li>Your phone, email and website shown on your listing</li>
+              <li>Ranked above free listings, plus a Verified badge</li>
+            </ul>
+            <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(claimedListingId)}&utm_source=claim_success&utm_medium=web&utm_campaign=post_claim`}
+              className="block text-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg">Upgrade to Pro: $9/month</Link>
+            <p className="text-xs text-gray-500 text-center mt-2">Cancel anytime. Your free listing stays free if you skip this.</p>
+          </div>
+        )}
       </div>
     );
   }
@@ -234,9 +260,16 @@ function ClaimPage() {
           </div>
 
           <label className="block text-sm font-medium text-gray-700 mb-2">Your email address</label>
+          {useToken && (
+            <p className="text-sm text-green-800 bg-green-50 border border-green-200 rounded-lg p-3 mb-2">
+              ✅ You opened this from our email to {tokenEmail}, so no verification email is needed. Just click the button below.{' '}
+              <button type="button" onClick={() => { setUseToken(false); setEmail(''); }} className="text-blue-800 hover:underline">Use a different email</button>
+            </p>
+          )}
           <input
             type="email"
             value={email}
+            readOnly={useToken}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@yourbusiness.com"
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800 focus:border-transparent mb-4 text-gray-900"
@@ -292,11 +325,11 @@ function ClaimPage() {
             disabled={loading || !email}
             className="w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50"
           >
-            {loading ? 'Sending link...' : 'Claim This Listing — Free'}
+            {loading ? (useToken ? 'Claiming...' : 'Sending link...') : 'Claim This Listing — Free'}
           </button>
 
           <p className="text-xs text-gray-500 text-center mt-3">
-            By claiming, you confirm you are authorized to manage this business listing. We&apos;ll email you a one-click verification link.
+            By claiming, you confirm you are authorized to manage this business listing.{useToken ? '' : ' We\u2019ll email you a one-click verification link.'}
           </p>
           </>)}
         </div>
