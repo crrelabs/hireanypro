@@ -13,8 +13,9 @@ const LOGIN_LINK_HOURS = 24;
 type Purpose = 'login' | 'session';
 
 function key(): Buffer {
-  const base = process.env.HAP_SESSION_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-  if (!base) throw new Error('No session secret configured');
+  // Dedicated secret only; never fall back to the database key.
+  const base = (process.env.HAP_SESSION_SECRET || '').trim();
+  if (base.length < 32) throw new Error('HAP_SESSION_SECRET missing or too short');
   return crypto.createHash('sha256').update(`hap-session-v1:${base}`).digest();
 }
 
