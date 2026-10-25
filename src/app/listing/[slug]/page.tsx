@@ -8,7 +8,7 @@ import ReviewForm from '@/components/ReviewForm';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { citySlug, getCountyForCity, countySlug } from '@/lib/geo';
+import { cityPageSlug, getCountyForCity, countySlug, stateCode, stateName } from '@/lib/geo';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -25,11 +25,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const categories = listing.categories as unknown as { name: string } | null;
   const cat = categories?.name || 'Service Provider';
   const metaIsPaid = listing.tier === 'pro' || listing.tier === 'featured';
-  const title = listing.city ? `${listing.name} - ${cat} in ${listing.city}, FL | HireAnyPro` : `${listing.name} - ${cat} in Florida | HireAnyPro`;
+  const st = stateCode(listing.state);
+  const title = listing.city ? `${listing.name} - ${cat} in ${listing.city}, ${st} | HireAnyPro` : `${listing.name} - ${cat} in ${stateName(st)} | HireAnyPro`;
   const ratingText = listing.rating && listing.review_count
     ? ` Rated ${listing.rating}/5 from ${listing.review_count} ${listing.review_count === 1 ? 'review' : 'reviews'}.`
     : '';
-  const description = `${listing.name} is listed under ${cat} in ${listing.city ? `${listing.city}, FL` : 'Florida'}.${ratingText}${metaIsPaid && listing.phone ? ` Call ${listing.phone} for a free quote.` : ' Request a free quote on HireAnyPro.'}`;
+  const description = `${listing.name} is listed under ${cat} in ${listing.city ? `${listing.city}, ${st}` : stateName(st)}.${ratingText}${metaIsPaid && listing.phone ? ` Call ${listing.phone} for a free quote.` : ' Request a free quote on HireAnyPro.'}`;
 
   // Thin listings (no description and no contact info beyond a name) are kept
   // out of Google's index to avoid soft-404 / thin-content signals.
@@ -70,7 +71,7 @@ function buildJsonLd(listing: Record<string, unknown>) {
       '@type': 'PostalAddress',
       streetAddress: listing.address,
       addressLocality: listing.city,
-      addressRegion: listing.state,
+      addressRegion: stateCode(listing.state as string | null),
       postalCode: listing.zip,
       addressCountry: 'US',
     },
@@ -137,12 +138,14 @@ export default async function ListingPage({ params }: Props) {
         .select('slug, name, rating, review_count')
         .eq('category_id', listing.category_id)
         .eq('city', listing.city)
+        .eq('state', stateCode(listing.state))
         .neq('id', listing.id)
         .order('rating', { ascending: false, nullsFirst: false })
         .limit(8)
     : { data: null };
 
-  const listingCounty = listing.city ? await getCountyForCity(listing.city) : null;
+  // County pages are Florida-only; near-border GA/AL listings have no Florida county.
+  const listingCounty = listing.city && stateCode(listing.state) === 'FL' ? await getCountyForCity(listing.city) : null;
 
   const hours = listing.hours as Record<string, string> | null;
   const dayLabels: Record<string, string> = { monday: 'Monday', tuesday: 'Tuesday', wednesday: 'Wednesday', thursday: 'Thursday', friday: 'Friday', saturday: 'Saturday', sunday: 'Sunday' };
@@ -159,7 +162,7 @@ export default async function ListingPage({ params }: Props) {
         <Breadcrumbs items={[
           { label: 'Home', href: '/' },
           ...(listing.categories ? [{ label: listing.categories.name, href: `/category/${listing.categories.slug}` }] : []),
-          ...(listing.city ? [{ label: listing.city, href: listing.categories ? `/services/${listing.categories.slug}/${citySlug(listing.city)}` : undefined }] : []),
+          ...(listing.city ? [{ label: listing.city, href: listing.categories ? `/services/${listing.categories.slug}/${cityPageSlug(listing.city, listing.state)}` : undefined }] : []),
           { label: listing.name },
         ]} />
 
@@ -399,13 +402,13 @@ export default async function ListingPage({ params }: Props) {
           {listing.categories && (
             <p className="text-sm text-gray-600">
               <Link href={`/category/${listing.categories.slug}`} className="text-blue-800 hover:underline font-medium">
-                Browse all {listing.categories.name} in Florida →
+                Browse all {listing.categories.name}{stateCode(listing.state) === 'FL' ? ' in Florida' : ''} →
               </Link>
             </p>
           )}
           {listing.categories && listing.city && (
             <p className="text-sm text-gray-600">
-              <Link href={`/services/${listing.categories.slug}/${citySlug(listing.city)}`} className="text-blue-800 hover:underline font-medium">
+              <Link href={`/services/${listing.categories.slug}/${cityPageSlug(listing.city, listing.state)}`} className="text-blue-800 hover:underline font-medium">
                 More {listing.categories.name.toLowerCase()} in {listing.city} →
               </Link>
             </p>

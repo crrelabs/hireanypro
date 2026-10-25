@@ -81,3 +81,27 @@ export function citySlug(city: string): string {
 export function cityFromSlug(slug: string, cities: string[]): string | null {
   return cities.find(c => citySlug(c) === slug) || null;
 }
+
+const STATE_NAMES: Record<string, string> = { FL: 'Florida', GA: 'Georgia', AL: 'Alabama' };
+
+/** Two-letter state for a listing; defaults to FL (most of the directory). */
+export function stateCode(state?: string | null): string {
+  const s = (state || 'FL').trim().toUpperCase();
+  return s || 'FL';
+}
+
+/** Full state name, e.g. "Georgia" for near-border GA listings. */
+export function stateName(state?: string | null): string {
+  const c = stateCode(state);
+  return STATE_NAMES[c] || c;
+}
+
+/**
+ * City page slug. Florida cities keep their plain slug ("lake-park"); out-of-state cities get a state
+ * suffix ("lake-park-ga") so they never merge into a Florida city with the same name.
+ */
+export function cityPageSlug(city: string, state?: string | null): string {
+  const base = citySlug(city);
+  const c = stateCode(state);
+  return c === 'FL' || !base ? base : `${base}-${c.toLowerCase()}`;
+}

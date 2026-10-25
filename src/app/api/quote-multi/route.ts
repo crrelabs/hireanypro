@@ -64,6 +64,7 @@ export async function POST(req: NextRequest) {
       .select('id, name, slug, email, phone, tier, claimed, city, rating, review_count, categories(name, slug)')
       .eq('category_id', category.id)
       .in('city', group.variants)
+      .eq('state', group.state)
       .order('review_count', { ascending: false, nullsFirst: false })
       .limit(200);
     const candidates = ((rows || []) as unknown as Row[])
