@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
+import listingRedirects from '@/data/listing-redirects.json';
 import StarRating from '@/components/StarRating';
 import MapViewWrapper from '@/components/MapViewWrapper';
 import QuoteRequestForm from '@/components/QuoteRequestForm';
@@ -116,7 +117,13 @@ export default async function ListingPage({ params }: Props) {
     .eq('slug', slug)
     .single();
 
-  if (!listing) notFound();
+  if (!listing) {
+    // Removed listings (merged duplicates, non-business entries, fixed slugs) get a permanent (308) redirect.
+    // Map lives in src/data/listing-redirects.json (too many entries for next.config redirects on Vercel).
+    const target = (listingRedirects as Record<string, string>)[decodeURIComponent(slug)];
+    if (target) permanentRedirect(target);
+    notFound();
+  }
 
   const { data: reviews } = await supabase
     .from('reviews')
