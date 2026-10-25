@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getAllCounties, countyFromSlug, getCitiesInCounty, citySlug, countySlug } from '@/lib/geo';
+import { getAllCounties, countyFromSlug, citySlug, countySlug } from '@/lib/geo';
 
 type Props = { params: Promise<{ county: string }> };
 
@@ -32,17 +32,17 @@ export default async function CountyPage({ params }: Props) {
   const countyName = countyFromSlug(slug, counties);
   if (!countyName) notFound();
 
-  const knownCities = await getCitiesInCounty(countyName);
-
-  // Get all listings in these cities. Paginate: Supabase returns at most 1,000 rows per request,
-  // so the old .limit(5000) silently undercounted big counties.
+  // Count only listings whose county is this county. (Matching by city name counted every Jacksonville
+  // listing under St. Johns and Clay too, so 62 of 67 county pages overstated their pro counts.)
+  // Paginate: Supabase returns at most 1,000 rows per request.
   type Row = { city: string | null; categories: unknown };
   const listings: Row[] = [];
-  for (let from = 0; knownCities.length > 0; from += 1000) {
+  for (let from = 0; ; from += 1000) {
     const { data, error } = await supabase
       .from('listings')
       .select('city, categories(name, slug, icon)')
-      .in('city', knownCities)
+      .eq('county', countyName)
+      .not('city', 'is', null)
       .order('id')
       .range(from, from + 999);
     if (error || !data || data.length === 0) break;
