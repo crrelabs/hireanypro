@@ -202,7 +202,7 @@ function DashboardPage() {
                   </Link>
                 )}
                 {l.tier === 'free' && (
-                  <Link href={`/pricing?listing=${l.id}`} className="text-sm bg-blue-800 text-white px-4 py-1.5 rounded-lg hover:bg-blue-700 font-medium">
+                  <Link href={`/pricing?plan=pro&listing=${l.id}&utm_source=dashboard&utm_medium=web&utm_campaign=upgrade_button`} className="text-sm bg-blue-800 text-white px-4 py-1.5 rounded-lg hover:bg-blue-700 font-medium">
                     Upgrade
                   </Link>
                 )}
@@ -226,7 +226,7 @@ function DashboardPage() {
               <div className="text-center">
                 <div className="text-3xl font-bold text-orange-600 mb-2">🔒 {data.totalInquiries} Lead{data.totalInquiries !== 1 ? 's' : ''} Waiting</div>
                 <p className="text-gray-700 mb-4">Customers are looking for your services! Upgrade to Pro to see their contact info and respond directly.</p>
-                <Link href="/pricing?utm_source=dashboard&utm_medium=web&utm_campaign=locked_lead" className="inline-block bg-blue-800 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                <Link href="/pricing?plan=pro&utm_source=dashboard&utm_medium=web&utm_campaign=locked_lead" className="inline-block bg-blue-800 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
                   Upgrade to Pro — $9/mo
                 </Link>
                 <p className="text-xs text-gray-500 mt-2">See who&apos;s looking for you. Respond to leads. Grow your business.</p>
@@ -246,7 +246,7 @@ function DashboardPage() {
                     <div className="text-sm text-gray-700">I need help with a project at my home in Miami. Can you provide a quote for...</div>
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center bg-white/60">
-                    <Link href="/pricing?utm_source=dashboard&utm_medium=web&utm_campaign=locked_lead" className="bg-blue-800 text-white px-5 py-2 rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors shadow-lg">
+                    <Link href="/pricing?plan=pro&utm_source=dashboard&utm_medium=web&utm_campaign=locked_lead" className="bg-blue-800 text-white px-5 py-2 rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors shadow-lg">
                       🔓 Upgrade to See This Lead
                     </Link>
                   </div>

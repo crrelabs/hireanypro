@@ -41,6 +41,7 @@ export default async function CategoryPage({ params }: Props) {
     .select(CARD_COLUMNS)
     .eq('category_id', category.id)
     .order('featured', { ascending: false })
+    .order('tier', { ascending: false }) // 'pro' sorts above 'free'
     .order('review_count', { ascending: false, nullsFirst: false })
     .order('rating', { ascending: false, nullsFirst: false })
     .limit(120);

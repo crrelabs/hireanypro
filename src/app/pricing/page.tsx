@@ -2,6 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
+
+type Biz = { id: string; name: string; slug: string; city?: string | null; tier?: string | null; claimed?: boolean | null };
+const track = (name: string, p: Record<string, unknown> = {}) => {
+  const w = window as unknown as { gtag?: (...a: unknown[]) => void };
+  w.gtag?.('event', name, { page_path: '/pricing', ...p });
+};
 
 const plans = [
   {
@@ -30,9 +37,9 @@ const plans = [
       'Everything in Free',
       'Direct lead routing to your email',
       'Phone, email & website displayed',
-      'Up to 10 photos',
       'Verified badge ✓',
-      'Priority placement in search',
+      'Ranked above free listings',
+      'Optional text alerts for new quote requests',
       'Edit your business profile',
     ],
     cta: 'Upgrade to Pro',
@@ -51,7 +58,7 @@ const plans = [
       'Top placement in all searches',
       'Homepage carousel feature',
       'Highlighted listing card',
-      'Performance reports & analytics',
+      'Lead stats in your dashboard',
       'Featured badge ⭐',
       'Priority customer support',
     ],
@@ -65,6 +72,11 @@ const plans = [
 
 export default function PricingPage() {
   const [listingId, setListingId] = useState('');
+  const [biz, setBiz] = useState<Biz | null>(null);
+  const [owned, setOwned] = useState<Biz[]>([]);
+  const [signedIn, setSignedIn] = useState(false);
+  const [q, setQ] = useState('');
+  const [results, setResults] = useState<Biz[]>([]);
   const [loading, setLoading] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<'pro' | 'featured' | null>(null);
   const [email, setEmail] = useState('');
@@ -72,29 +84,55 @@ export default function PricingPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    setListingId(params.get('listing') || '');
+    const l = params.get('listing') || '';
+    setListingId(l);
     const plan = params.get('plan');
     if (plan === 'pro' || plan === 'featured') setSelectedPlan(plan);
+    if (l) {
+      const col = /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(l) ? 'id' : 'slug';
+      supabase.from('listings').select('id, name, slug, city, tier, claimed').eq(col, l).maybeSingle()
+        .then(({ data }) => { if (data) setBiz(data as Biz); });
+    }
+    fetch('/api/auth/me').then((r) => r.json()).then((me) => {
+      if (!me?.signedIn) return;
+      setSignedIn(true); setEmail(me.email || '');
+      const ls = (me.listings || []) as Biz[];
+      setOwned(ls);
+      if (!l && ls.length === 1) { setBiz(ls[0]); setListingId(ls[0].id); }
+    }).catch(() => {});
   }, []);
+
+  useEffect(() => { if (selectedPlan) track('checkout_open', { plan: selectedPlan }); }, [selectedPlan]);
+
+  async function search(v: string) {
+    setQ(v);
+    if (v.trim().length < 2) { setResults([]); return; }
+    const { data } = await supabase.from('listings').select('id, name, slug, city, tier, claimed')
+      .ilike('name', `%${v.trim().replace(/[%_,()]/g, ' ')}%`).limit(8);
+    setResults((data as Biz[]) || []);
+  }
 
   async function handleCheckout(e: React.FormEvent) {
     e.preventDefault();
     if (!selectedPlan || !email) return;
-
+    if (!biz && !listingId) { setError('Please choose your business first.'); return; }
     setLoading(selectedPlan);
     setError('');
+    track('checkout_start', { plan: selectedPlan, listing_slug: biz?.slug || listingId });
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: selectedPlan, email, listingId }),
+        body: JSON.stringify({ plan: selectedPlan, email, listingId: biz?.id || listingId }),
       });
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
-      } else {
-        setError(data.error || 'Something went wrong. Please try again.');
+        return;
       }
+      if (data.needListing) { setBiz(null); setListingId(''); }
+      setError(data.error || 'Something went wrong. Please try again.');
+      track('checkout_error', { plan: selectedPlan, reason: String(data.error || '').slice(0, 80) });
     } catch {
       setError('Connection error. Please try again.');
     } finally {
@@ -173,10 +211,43 @@ export default function PricingPage() {
                 Upgrade to {selectedPlan === 'pro' ? 'Pro' : 'Featured'}
               </h2>
               <p className="text-gray-600 mb-6">
-                {selectedPlan === 'pro' ? '$9/month — get direct leads and verified status.' : '$49.99/month — maximum visibility and top placement.'}
+                {selectedPlan === 'pro' ? '$9/month: quote requests straight to your inbox, contact info shown, ranked above free listings. Cancel anytime.' : '$49.99/month: top placement, homepage feature and highlighted card. Cancel anytime.'}
               </p>
 
               <form onSubmit={handleCheckout}>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Your business</label>
+                {biz ? (
+                  <div className="flex justify-between items-start bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                    <div>
+                      <div className="font-semibold text-gray-900">{biz.name}</div>
+                      {biz.city && <div className="text-sm text-gray-600">{biz.city}, FL</div>}
+                    </div>
+                    <button type="button" onClick={() => { setBiz(null); setListingId(''); }} className="text-sm text-blue-800 hover:underline">Change</button>
+                  </div>
+                ) : owned.length > 1 ? (
+                  <select className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 mb-4" defaultValue=""
+                    onChange={(e) => { const b = owned.find((o) => o.id === e.target.value) || null; setBiz(b); setListingId(b?.id || ''); }}>
+                    <option value="" disabled>Choose one of your listings</option>
+                    {owned.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
+                  </select>
+                ) : (
+                  <div className="mb-4">
+                    <input type="text" value={q} onChange={(e) => search(e.target.value)} placeholder="Type your business name..."
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800 focus:border-transparent outline-none text-gray-900" />
+                    {results.length > 0 && (
+                      <div className="mt-2 border border-gray-200 rounded-lg divide-y divide-gray-100 bg-white shadow-sm max-h-56 overflow-y-auto">
+                        {results.map((r) => (
+                          <button type="button" key={r.id} onClick={() => { setBiz(r); setListingId(r.id); setResults([]); setQ(''); }}
+                            className="w-full text-left px-4 py-2 hover:bg-gray-50">
+                            <div className="font-medium text-gray-900 text-sm">{r.name}</div>
+                            <div className="text-xs text-gray-500">{r.city}{r.claimed ? ' · claimed' : ''}</div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    <p className="text-xs text-gray-500 mt-2">Not listed yet? <Link href="/contact" className="text-blue-800 hover:underline">Contact us</Link> and we&apos;ll add you.</p>
+                  </div>
+                )}
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Your email address
                 </label>
@@ -184,6 +255,7 @@ export default function PricingPage() {
                   type="email"
                   required
                   value={email}
+                  readOnly={signedIn}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@yourbusiness.com"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800 focus:border-transparent outline-none text-gray-900 mb-4"

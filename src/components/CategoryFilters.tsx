@@ -19,6 +19,9 @@ function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+// Featured first, then Pro (paid), then free: the placement Pro and Featured are sold on.
+const rank = (l: { featured?: boolean | null; tier?: string | null }) => (l.featured || l.tier === 'featured' ? 2 : l.tier === 'pro' ? 1 : 0);
+
 export default function CategoryFilters({ listings, cities }: Props) {
   const [cityFilter, setCityFilter] = useState('');
   const [ratingFilter, setRatingFilter] = useState('');
@@ -69,20 +72,20 @@ export default function CategoryFilters({ listings, cities }: Props) {
     // Sort
     if (sortBy === 'distance' && userLat && userLng) {
       result.sort((a, b) => {
-        if (a.featured !== b.featured) return a.featured ? -1 : 1;
+        if (rank(a) !== rank(b)) return rank(b) - rank(a);
         const distA = a.lat && a.lng ? getDistanceKm(userLat, userLng, a.lat, a.lng) : 9999;
         const distB = b.lat && b.lng ? getDistanceKm(userLat, userLng, b.lat, b.lng) : 9999;
         return distA - distB;
       });
     } else if (sortBy === 'rating') {
       result.sort((a, b) => {
-        if (a.featured !== b.featured) return a.featured ? -1 : 1;
+        if (rank(a) !== rank(b)) return rank(b) - rank(a);
         return (b.rating || 0) - (a.rating || 0);
       });
     } else {
       // Default: reviews
       result.sort((a, b) => {
-        if (a.featured !== b.featured) return a.featured ? -1 : 1;
+        if (rank(a) !== rank(b)) return rank(b) - rank(a);
         return (b.review_count || 0) - (a.review_count || 0);
       });
     }

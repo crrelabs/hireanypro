@@ -56,6 +56,7 @@ export default async function CityLandingPage({ params }: Props) {
     .eq('category_id', category.id)
     .in('city', group.variants)
     .order('featured', { ascending: false })
+    .order('tier', { ascending: false }) // 'pro' sorts above 'free'
     .order('review_count', { ascending: false, nullsFirst: false })
     .order('rating', { ascending: false, nullsFirst: false })
     .limit(500);
