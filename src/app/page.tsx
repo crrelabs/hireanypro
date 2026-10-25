@@ -18,6 +18,17 @@ export default async function HomePage() {
     supabase.from('categories').select('*').order('name'),
     supabase.from('listings').select('*, categories(name, slug, icon)').eq('featured', true).order('rating', { ascending: false }).limit(6),
   ]);
+  // No Featured subscribers yet: show Pro and top-reviewed pros instead of an empty grid.
+  let showcase = featuredListings || [];
+  const hasFeatured = showcase.length > 0;
+  if (!hasFeatured) {
+    const { data: top } = await supabase.from('listings').select('*, categories(name, slug, icon)')
+      .gte('rating', 4.7).not('slug', 'like', 'zz-%')
+      .order('tier', { ascending: false }).order('review_count', { ascending: false, nullsFirst: false }).limit(18);
+    // Same business can be listed in several categories; show each name once.
+    const seen = new Set<string>();
+    showcase = (top || []).filter((l) => { const k = String(l.name || '').toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, 6);
+  }
 
   // Count listings per category using exact counts to avoid 1000-row limit
   const countMap: Record<string, number> = {};
@@ -75,7 +86,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="flex items-center justify-between mb-10">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Featured Pros</h2>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{hasFeatured ? 'Featured Pros' : 'Top-Rated Pros'}</h2>
               <p className="text-gray-500 mt-1">Top-rated service providers in your area</p>
             </div>
             <Link href="/search" className="text-blue-800 hover:text-blue-600 text-sm font-medium hidden sm:block">
@@ -83,7 +94,7 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredListings?.map((listing) => (
+            {showcase.map((listing) => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
           </div>
