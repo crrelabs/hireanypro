@@ -18,13 +18,13 @@ function stats(listings: L[]) {
 }
 
 /** Unique, data-driven copy for a category+city page (intro). */
-export function CityIntro({ categoryName, cityName, count, listings }: { categoryName: string; cityName: string; count: number; listings: L[] }) {
+export function CityIntro({ categoryName, cityName, count, listings, stateName = 'Florida' }: { categoryName: string; cityName: string; count: number; listings: L[]; stateName?: string }) {
   const s = stats(listings);
   const cat = lc(categoryName);
   return (
     <section className="mb-8 text-gray-700 leading-relaxed max-w-4xl">
       <p>
-        HireAnyPro lists <strong>{count.toLocaleString()} {cat} {count === 1 ? 'business' : 'businesses'}</strong> serving {cityName}, Florida.
+        HireAnyPro lists <strong>{count.toLocaleString()} {cat} {count === 1 ? 'business' : 'businesses'}</strong> serving {cityName}, {stateName}.
         {s.rated > 0 && <> {s.rated.toLocaleString()} of them have public customer ratings, averaging <strong>{s.avg.toFixed(1)} out of 5</strong> across {s.totalReviews.toLocaleString()} reviews.</>}
         {s.top.length > 0 && <> The highest-rated include{' '}
           {s.top.map((l, i) => (
@@ -40,15 +40,17 @@ export function CityIntro({ categoryName, cityName, count, listings }: { categor
 }
 
 /** FAQ block + FAQPage JSON-LD + "own a business here?" claim CTA. */
-export function CityFaq({ categoryName, categorySlug, cityName, citySlug, count, listings }: { categoryName: string; categorySlug: string; cityName: string; citySlug: string; count: number; listings: L[] }) {
+export function CityFaq({ categoryName, categorySlug, cityName, citySlug, count, listings, stateCode = 'FL', stateName = 'Florida' }: { categoryName: string; categorySlug: string; cityName: string; citySlug: string; count: number; listings: L[]; stateCode?: string; stateName?: string }) {
   const s = stats(listings);
   const cat = lc(categoryName);
   const faqs: { q: string; a: string }[] = [
-    { q: `How many ${cat} pros are in ${cityName}, FL?`, a: `HireAnyPro currently lists ${count.toLocaleString()} ${cat} ${count === 1 ? 'business' : 'businesses'} in ${cityName}, Florida${s.zips.length ? `, including pros based in ZIP codes ${s.zips.join(', ')}` : ''}.` },
+    { q: `How many ${cat} pros are in ${cityName}, ${stateCode}?`, a: `HireAnyPro currently lists ${count.toLocaleString()} ${cat} ${count === 1 ? 'business' : 'businesses'} in ${cityName}, ${stateName}${s.zips.length ? `, including pros based in ZIP codes ${s.zips.join(', ')}` : ''}.` },
     ...(s.top.length ? [{ q: `Who are the top-rated ${cat} pros in ${cityName}?`, a: `Based on public customer ratings with at least 5 reviews, the highest-rated ${cat} pros in ${cityName} include ${s.top.map((l) => `${l.name} (${(l.rating || 0).toFixed(1)} stars from ${l.review_count} reviews)`).join(', ')}.` }] : []),
     ...(s.rated ? [{ q: `What is the average rating for ${cat} in ${cityName}?`, a: `${s.rated.toLocaleString()} ${cat} businesses in ${cityName} have public ratings, with a review-weighted average of ${s.avg.toFixed(1)} out of 5 across ${s.totalReviews.toLocaleString()} reviews.` }] : []),
     { q: `How do I get a ${cat} quote in ${cityName}?`, a: `Use the "Get up to 3 free quotes" form at the top of this page: describe the job once and we send it to up to three top-rated ${cat} pros in ${cityName}. You can also open any listing and request a quote from that business directly. It's free and there's no obligation to hire.` },
-    { q: `What should I check before hiring ${cat} in Florida?`, a: `Confirm the business holds any license Florida requires for the work (you can search licenses at myfloridalicense.com), ask for proof of insurance, get a written estimate, and read recent reviews before you pay a deposit.` },
+    stateCode === 'FL'
+      ? { q: `What should I check before hiring ${cat} in Florida?`, a: `Confirm the business holds any license Florida requires for the work (you can search licenses at myfloridalicense.com), ask for proof of insurance, get a written estimate, and read recent reviews before you pay a deposit.` }
+      : { q: `What should I check before hiring ${cat} in ${stateName}?`, a: `Confirm the business holds any license ${stateName} requires for the work (check with the ${stateName} state licensing board), ask for proof of insurance, get a written estimate, and read recent reviews before you pay a deposit.` },
   ];
   const faqJsonLd = {
     '@context': 'https://schema.org',

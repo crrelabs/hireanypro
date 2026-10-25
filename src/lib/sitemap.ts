@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { getAllBlogSlugs } from '@/lib/blog';
-import { citySlug, countySlug, getAllCounties } from '@/lib/geo';
+import { cityPageSlug, countySlug, getAllCounties } from '@/lib/geo';
 import { renderSitemapIndex, renderUrlset } from '@/lib/sitemap-xml';
 import type { SitemapIndexEntry, SitemapUrl } from '@/lib/sitemap-xml';
 
@@ -19,6 +19,7 @@ const FETCH_CONCURRENCY = 5;
 type ListingGeoRow = {
   id: string;
   city: string | null;
+  state?: string | null;
   county: string | null;
   category_id: string | null;
   updated_at: string | null;
@@ -141,7 +142,7 @@ async function fetchListingGeoRows(): Promise<ListingGeoRow[]> {
         return assertOk(
           await supabase
             .from('listings')
-            .select('id, city, county, category_id, updated_at')
+            .select('id, city, state, county, category_id, updated_at')
             .order('id', { ascending: true })
             .range(from, from + PAGE_SIZE - 1)
         );
@@ -216,7 +217,7 @@ export async function getCitiesSitemapUrls(): Promise<SitemapUrl[]> {
     if (row.city && row.category_id) {
       const catSlug = catIdToSlug.get(row.category_id);
       if (catSlug) {
-        rememberLatest(cityLastmod, `${catSlug}/${citySlug(row.city)}`, lastmod);
+        rememberLatest(cityLastmod, `${catSlug}/${cityPageSlug(row.city, row.state)}`, lastmod);
       }
     }
     if (row.county) {

@@ -95,7 +95,7 @@ export default async function CategoryPage({ params }: Props) {
             <div>
               <span className="text-4xl mb-2 block">{category.icon}</span>
               <h1 className="text-2xl md:text-3xl font-bold text-white">{category.name}</h1>
-              <p className="text-blue-100 text-sm mt-1">{totalCount.toLocaleString('en-US')} professionals in {cityGroups.length} Florida cities</p>
+              <p className="text-blue-100 text-sm mt-1">{totalCount.toLocaleString('en-US')} professionals in {cityGroups.length} cities in Florida and nearby</p>
             </div>
           </div>
         </div>
@@ -125,13 +125,13 @@ export default async function CategoryPage({ params }: Props) {
           <section className="mt-16">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Popular Cities for {category.name}</h2>
             <div className="flex flex-wrap gap-2">
-              {popularCities.map(({ name: city, slug: cSlug, count }) => (
+              {popularCities.map(({ name: city, slug: cSlug, count, state }) => (
                 <Link
                   key={cSlug}
                   href={`/services/${slug}/${cSlug}`}
                   className="px-4 py-2 bg-gray-100 hover:bg-blue-50 text-gray-700 hover:text-blue-800 rounded-lg text-sm font-medium transition-colors"
                 >
-                  {city} ({count})
+                  {city}{state !== 'FL' ? `, ${state}` : ''} ({count})
                 </Link>
               ))}
             </div>
@@ -141,12 +141,12 @@ export default async function CategoryPage({ params }: Props) {
         {/* Every city, so each city page is one click from the category hub */}
         {allCities.length > popularCities.length && (
           <section className="mt-12">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">{category.name} in Every Florida City We Cover</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">{category.name} in Every City We Cover</h2>
             <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-1 text-sm">
-              {allCities.map(({ name, slug: cSlug, count }) => (
+              {allCities.map(({ name, slug: cSlug, count, state }) => (
                 <li key={cSlug}>
                   <Link href={`/services/${slug}/${cSlug}`} className="text-gray-600 hover:text-blue-800 hover:underline">
-                    {name} <span className="text-gray-400">({count})</span>
+                    {name}{state !== 'FL' ? `, ${state}` : ''} <span className="text-gray-400">({count})</span>
                   </Link>
                 </li>
               ))}
