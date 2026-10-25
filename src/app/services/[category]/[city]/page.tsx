@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { CityIntro, CityFaq } from '@/components/CityInsights';
+import CityQuoteForm from '@/components/CityQuoteForm';
 import { citySlug, getCountyForCity, countySlug } from '@/lib/geo';
 import { CARD_COLUMNS, toCard, getCategoryCities, getCategoryBySlug, type CardListing } from '@/lib/listings';
 
@@ -133,6 +134,8 @@ export default async function CityLandingPage({ params }: Props) {
         </div>
 
         <CityIntro categoryName={category.name} cityName={cityName} count={group.count} listings={listings} />
+
+        <CityQuoteForm categorySlug={category.slug} categoryName={category.name} citySlug={cSlug} cityName={cityName} />
 
         <CategoryFilters
           listings={listings}

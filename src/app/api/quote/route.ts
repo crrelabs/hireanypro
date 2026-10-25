@@ -4,30 +4,12 @@ import { verifyTurnstile } from '@/lib/turnstile';
 import { isRateLimited, getClientIp } from '@/lib/rate-limit';
 import { isBot } from '@/lib/honeypot';
 import { sendMail } from '@/lib/mailer';
-import { isSuppressed } from '@/lib/suppression';
-import { leadTeaser } from '@/lib/lead-upsell';
-import { queueLeadSms, teaserBody, smsEnabled, optedInPhone } from '@/lib/sms-leads';
+import { SITE, TEAM_INBOX, EMAIL_RE, esc, clip, firstName, shell, isPaidTier, bizEmailOf, deliverToListing, type LeadListing } from '@/lib/lead-delivery';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!.trim(),
   process.env.SUPABASE_SERVICE_ROLE_KEY!.trim()
 );
-
-const SITE = 'https://hireanypro.com';
-const TEAM_INBOX = 'iris@hireanypro.com';
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
-const clip = (s: unknown, n: number) => String(s ?? '').trim().slice(0, n);
-const firstName = (n: string) => n.split(/\s+/)[0] || 'there';
-
-type ListingRow = {
-  id: string; name: string; slug: string; email: string | null; phone: string | null; tier: string | null; claimed: boolean | null;
-  city: string | null; categories: { name: string; slug: string } | null;
-};
-
-const shell = (inner: string, footer = '') =>
-  `<div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#111;line-height:1.5">${inner}` +
-  `<p style="color:#888;font-size:12px;margin-top:32px">HireAnyPro · CRRE Labs LLC · 12394 SW 82 Ave, Pinecrest FL 33156${footer}</p></div>`;
 
 export async function POST(req: NextRequest) {
   try {
@@ -63,14 +45,13 @@ export async function POST(req: NextRequest) {
       .from('listings')
       .select('id, name, slug, email, phone, tier, claimed, city, categories(name, slug)')
       .eq('id', listingId)
-      .single<ListingRow>();
+      .single<LeadListing>();
     if (!listing) {
       return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
     }
 
-    const isPaid = listing.tier === 'pro' || listing.tier === 'featured';
-    const bizEmail = listing.email && EMAIL_RE.test(listing.email.trim()) ? listing.email.trim().toLowerCase() : null;
-    const routedTo = isPaid && bizEmail ? bizEmail : TEAM_INBOX;
+    const bizEmail = bizEmailOf(listing);
+    const routedTo = isPaidTier(listing.tier) && bizEmail ? bizEmail : TEAM_INBOX;
 
     const { data: saved, error } = await supabase.from('inquiries').insert({
       listing_id: listing.id,
@@ -87,60 +68,32 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to submit' }, { status: 500 });
     }
 
-    // Deliver the lead. Email failures never fail the request; the inquiry is already saved.
     const cat = listing.categories?.name || 'home service';
     const city = listing.city || 'your area';
     const listingUrl = `${SITE}/listing/${listing.slug}`;
-    const sends: Promise<boolean>[] = [];
 
     // 1) Homeowner confirmation.
-    sends.push(sendMail({
+    const confirm = sendMail({
       to: email,
       subject: `We got your quote request for ${listing.name}`,
       html: shell(`<p>Hi ${esc(firstName(name))},</p><p>Thanks for your request. We're getting it to <strong>${esc(listing.name)}</strong> now, and we'll follow up if you don't hear back.</p>` +
         `<p style="background:#f3f4f6;padding:12px;border-radius:6px;white-space:pre-wrap">${esc(message)}</p>` +
         `<p>Want more quotes? <a href="${listing.categories?.slug ? `${SITE}/category/${listing.categories.slug}` : `${SITE}/categories`}">Compare other ${esc(cat.toLowerCase())} pros</a>.</p>` +
         `<p>Questions? Just reply to this email.</p><p>The HireAnyPro team</p>`),
-    }));
+    });
 
-    // SMS alert only to a business that opted in to texts on the claim form (transactional, no pitch).
-    let smsNote = '';
-    const smsTo = listing.claimed ? await optedInPhone(supabase, listing.id).catch(() => null) : null;
-    if (smsTo) {
-      const st = await queueLeadSms(supabase, { inquiryId: saved?.id, listingId: listing.id, phone: smsTo,
-        body: teaserBody({ name: listing.name, cat, city }) }).catch(() => 'error');
-      smsNote = `\nSMS alert to opted-in business phone: ${st}${smsEnabled() ? '' : ' (SMS is off)'}`;
-    }
+    // 2) Business delivery (SMS alert / paid lead / free teaser).
+    const note = await deliverToListing(supabase, listing, { name, email, phone, message }, saved?.id);
 
-    // 2) Team copy with full details, so every lead gets followed up.
-    sends.push(sendMail({
+    // 3) Team copy with full details, so every lead gets followed up.
+    const team = sendMail({
       to: TEAM_INBOX,
       replyTo: email,
       subject: `New quote request: ${listing.name} (${listing.tier || 'free'}${listing.claimed ? ', claimed' : ', unclaimed'})`,
-      text: `Listing: ${listing.name} (${cat}, ${city})\n${listingUrl}\nRouted to: ${routedTo}${smsNote}\n\nFrom: ${name} <${email}>${phone ? `\nPhone: ${phone}` : ''}\n\n${message}`,
-    }));
+      text: `Listing: ${listing.name} (${cat}, ${city})\n${listingUrl}\nRouted to: ${routedTo}\nDelivery: ${note}\n\nFrom: ${name} <${email}>${phone ? `\nPhone: ${phone}` : ''}\n\n${message}`,
+    });
 
-    if (isPaid && bizEmail) {
-      // 3a) Paid listings get the lead straight to their inbox.
-      sends.push(sendMail({
-        to: bizEmail,
-        replyTo: email,
-        subject: `New quote request from ${name} via HireAnyPro`,
-        html: shell(`<p>You have a new customer request on HireAnyPro.</p>` +
-          `<p><strong>Name:</strong> ${esc(name)}<br><strong>Email:</strong> ${esc(email)}${phone ? `<br><strong>Phone:</strong> ${esc(phone)}` : ''}</p>` +
-          `<p style="background:#f3f4f6;padding:12px;border-radius:6px;white-space:pre-wrap">${esc(message)}</p>` +
-          `<p>Reply to this email to answer them directly.</p>`),
-      }));
-    } else if (bizEmail && !(await isSuppressed(bizEmail))) {
-      // 3b) Free (claimed or unclaimed) listings: tease the lead, no homeowner contact, pitch Pro.
-      const tease = leadTeaser({ listing, cat, city, when: new Date(), followUp: false });
-      sends.push(sendMail(tease.mail(bizEmail)).then(async (ok) => {
-        if (ok && saved?.id) await supabase.from('inquiries').update({ upsell_sent_at: new Date().toISOString() }).eq('id', saved.id);
-        return ok;
-      }));
-    }
-
-    await Promise.allSettled(sends);
+    await Promise.allSettled([confirm, team]);
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
     console.error('Quote error:', error);
