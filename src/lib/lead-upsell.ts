@@ -1,4 +1,5 @@
 import { signUnsub } from '@/lib/suppression';
+import { signClaimLink } from '@/lib/claim-link';
 
 const SITE = 'https://hireanypro.com';
 const TEAM_INBOX = 'iris@hireanypro.com';
@@ -10,12 +11,14 @@ export type TeaserListing = { id: string; name: string; slug: string; claimed: b
  * Upsell email for FREE listings (claimed or unclaimed) that get a lead.
  * Shows only service + city + date. Never includes the homeowner's name, email, phone or message.
  */
-export function leadTeaser(o: { listing: TeaserListing; cat: string; city: string; when: Date; followUp: boolean }) {
+export function leadTeaser(o: { listing: TeaserListing; cat: string; city: string; when: Date; followUp: boolean; toEmail?: string }) {
   const { listing, cat, city, when, followUp } = o;
+  // toEmail must be the address on file for the listing (that's who we email); it enables a one-click claim.
+  const ct = !listing.claimed && o.toEmail ? signClaimLink(listing.id, o.toEmail) : null;
   const campaign = followUp ? 'lead_upsell_followup' : 'lead_upsell';
   const utm = `utm_source=lead_email&utm_medium=email&utm_campaign=${campaign}`;
   const upgrade = `${SITE}/pricing?plan=pro&listing=${encodeURIComponent(listing.id)}&${utm}`;
-  const claim = `${SITE}/claim?listing=${encodeURIComponent(listing.slug)}&${utm}`;
+  const claim = `${SITE}/claim?listing=${encodeURIComponent(listing.slug)}&${utm}${ct ? `&ct=${encodeURIComponent(ct)}` : ''}`;
   const cta = listing.claimed
     ? { href: upgrade, label: 'Upgrade to Pro ($9/mo) to see this lead' }
     : { href: claim, label: 'Claim your free listing, then upgrade to see this lead' };

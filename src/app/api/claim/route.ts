@@ -3,10 +3,12 @@ import { createClient } from '@supabase/supabase-js';
 import { verifyTurnstile } from '@/lib/turnstile';
 import { isRateLimited, getClientIp } from '@/lib/rate-limit';
 import { isBot } from '@/lib/honeypot';
-import { notifyNewClaim } from '@/lib/notify';
+import { notifyNewClaim, notifyVerifiedClaim } from '@/lib/notify';
 import { sendClaimVerification } from '@/lib/claim-email';
 import crypto from 'crypto';
 import { recordSmsOptIn } from '@/lib/sms-leads';
+import { verifyClaimLink } from '@/lib/claim-link';
+import { setSessionCookie } from '@/lib/session';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -43,7 +45,7 @@ export async function POST(req: NextRequest) {
 
     const { data: listing } = await supabase
       .from('listings')
-      .select('id, claimed, name, slug')
+      .select('id, claimed, name, slug, email')
       .eq('id', listingId)
       .single();
 
@@ -53,6 +55,31 @@ export async function POST(req: NextRequest) {
 
     if (listing.claimed) {
       return NextResponse.json({ error: 'This listing has already been claimed. If this is your business, email iris@hireanypro.com and we will sort it out.', alreadyClaimed: true }, { status: 400 });
+    }
+
+    // One-click claim: the owner opened a signed link we emailed to the address on file for this listing,
+    // which proves inbox control just like the verification email does. Skip the second email round-trip.
+    const link = verifyClaimLink(body.claimToken);
+    const onFile = (listing.email || '').trim().toLowerCase();
+    if (link && link.listingId === listing.id && link.email === email && onFile && onFile === email) {
+      const { data: owner } = await supabase.from('profiles').upsert({ email }, { onConflict: 'email' }).select('id').single();
+      if (!owner) return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+      if (emailOptIn) await supabase.from('profiles').update({ email_opt_in: true, opted_in_at: new Date().toISOString() }).eq('id', owner.id);
+      if (body.smsOptIn === true && typeof body.phone === 'string' && body.phone.trim()) {
+        await recordSmsOptIn(supabase, { listingId, phone: body.phone, source: 'claim_form' }).catch(() => false);
+      }
+      // Claim only if still unclaimed (guards against a race with another claim).
+      const { data: updated } = await supabase.from('listings')
+        .update({ claimed: true, owner_id: owner.id }).eq('id', listing.id).eq('claimed', false).select('id');
+      if (!updated || updated.length === 0) {
+        return NextResponse.json({ error: 'This listing has already been claimed. If this is your business, email iris@hireanypro.com and we will sort it out.', alreadyClaimed: true }, { status: 400 });
+      }
+      await supabase.from('claims').insert({ listing_id: listing.id, email, verified: true, verification_token: crypto.randomUUID(), expires_at: new Date().toISOString() });
+      await supabase.from('subscriptions').insert({ listing_id: listing.id, profile_id: owner.id, plan: 'free', status: 'active' });
+      notifyVerifiedClaim(listing.name || 'Unknown Business', email, listing.slug || '').catch(() => {});
+      const res = NextResponse.json({ success: true, verified: true, listingId: listing.id });
+      setSessionCookie(res, email);
+      return res;
     }
 
     const verificationToken = crypto.randomUUID();

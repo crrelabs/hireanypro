@@ -64,7 +64,7 @@ export async function deliverToListing(
           .eq('listing_id', listing.id).gte('upsell_sent_at', new Date(Date.now() - 3 * 86400e3).toISOString()).limit(1);
         if (recent && recent.length) { notes.push('Teaser skipped (business already alerted in the last 3 days)'); return notes.join('; '); }
       }
-      const tease = leadTeaser({ listing, cat, city, when: new Date(), followUp: false });
+      const tease = leadTeaser({ listing, cat, city, when: new Date(), followUp: false, toEmail: bizEmail });
       const ok = await sendMail(tease.mail(bizEmail));
       if (ok && inquiryId) await supabase.from('inquiries').update({ upsell_sent_at: new Date().toISOString() }).eq('id', inquiryId);
       notes.push(`Locked teaser to free listing: ${ok ? 'sent' : 'FAILED'}`);
