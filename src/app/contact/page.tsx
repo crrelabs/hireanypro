@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Contact Us — HireAnyPro',
-  description: 'Contact HireAnyPro by email or phone.',
+  description: 'Questions about a listing, claiming your business, Pro plans or a quote request? Email the HireAnyPro team and we will help.',
   alternates: { canonical: 'https://hireanypro.com/contact' },
 };
 

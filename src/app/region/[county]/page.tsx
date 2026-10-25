@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export const revalidate = 300;
+export const revalidate = 3600; // hourly: fewer slow cold renders
 
 export default async function CountyPage({ params }: Props) {
   const { county: slug } = await params;

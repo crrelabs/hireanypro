@@ -287,7 +287,7 @@ export default async function ListingPage({ params }: Props) {
 
                   {!listing.claimed && (
                     <>
-                      <a href={`/claim?listing=${listing.slug}`} className="block w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors text-sm text-center mt-4">
+                      <a href={`/claim?listing=${listing.slug}&utm_source=listing_page&utm_medium=web`} className="block w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors text-sm text-center mt-4">
                         🏢 Are you the owner? Claim this listing
                       </a>
                       <p className="text-xs text-gray-400 text-center">Claim your profile to show contact info and receive leads directly.</p>
@@ -314,7 +314,7 @@ export default async function ListingPage({ params }: Props) {
               {/* Claim CTA for paid listings that somehow aren't claimed */}
               {isPaid && !listing.claimed && (
                 <div className="mt-6 pt-4 border-t border-gray-100">
-                  <a href={`/claim?listing=${listing.slug}`} className="block w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors text-sm text-center">
+                  <a href={`/claim?listing=${listing.slug}&utm_source=listing_page&utm_medium=web`} className="block w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors text-sm text-center">
                     🏢 Claim This Listing
                   </a>
                   <p className="text-xs text-gray-400 text-center mt-2">Are you the owner? Claim to manage this page.</p>

@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const session = event.data.object as any;
       let { listingId, email, plan } = session.metadata || {};
+      listingId = listingId || session.client_reference_id || '';
       const customerId = session.customer;
       const subscriptionId = session.subscription;
 

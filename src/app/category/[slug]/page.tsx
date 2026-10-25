@@ -13,8 +13,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const { data: category } = await supabase.from('categories').select('name').eq('slug', slug).single();
   if (!category) return { title: 'Category Not Found' };
-  const title = `${category.name} in Florida | HireAnyPro`;
-  const description = `Find top-rated ${category.name.toLowerCase()} professionals in Florida. Compare ratings, read reviews, and request free quotes on HireAnyPro.`;
+  const lcName = category.name.split(' ').map((w: string) => (w.length > 1 && w === w.toUpperCase() ? w : w.toLowerCase())).join(' ');
+  const title = `Best ${category.name} Pros in Florida: Compare Ratings & Get Free Quotes | HireAnyPro`;
+  const description = `Find top-rated ${lcName} professionals in Florida. Compare ratings, read reviews, and request free quotes on HireAnyPro.`;
   return {
     title,
     description,

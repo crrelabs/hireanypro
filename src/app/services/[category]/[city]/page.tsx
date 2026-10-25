@@ -24,7 +24,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const count = group.count;
 
   const title = `${count > 1 ? `${count} ` : ''}Best ${cat.name} Pros in ${cityName}, FL (${new Date().getFullYear()}) | HireAnyPro`;
-  const description = `Compare ${count} ${cat.name.toLowerCase()} ${count === 1 ? 'pro' : 'pros'} in ${cityName}, Florida: ratings, reviews, ZIP codes served and FAQs. Request free quotes, no obligation.`;
+  const lcName = cat.name.split(' ').map((w) => (w.length > 1 && w === w.toUpperCase() ? w : w.toLowerCase())).join(' ');
+  const description = `Compare ${count} ${lcName} ${count === 1 ? 'pro' : 'pros'} in ${cityName}, Florida: ratings, reviews, ZIP codes served and FAQs. Get up to 3 free quotes, no obligation.`;
 
   return {
     title,
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export const revalidate = 300;
+export const revalidate = 3600; // hourly: fewer slow cold renders (crawls were timing out)
 
 export default async function CityLandingPage({ params }: Props) {
   const { category: catSlug, city: cSlug } = await params;
