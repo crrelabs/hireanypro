@@ -19,6 +19,7 @@ async function loadCountyMap(): Promise<Record<string, string[]>> {
       .select('city, county')
       .not('county', 'is', null)
       .not('city', 'is', null)
+      .order('id') // stable pagination: without an order, pages can skip or repeat rows
       .range(offset, offset + 999);
 
     if (!data || data.length === 0) break;
