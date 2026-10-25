@@ -8,7 +8,7 @@ import MapViewWrapper from '@/components/MapViewWrapper';
 
 export const metadata: Metadata = {
   title: 'Search Home Service Pros — HireAnyPro',
-  description: 'Search 29,000+ Florida plumbers, electricians, roofers, HVAC techs and other home service pros by name, city or zip code.',
+  description: 'Search 27,000+ Florida plumbers, electricians, roofers, HVAC techs and other home service pros by name, city or zip code.',
   robots: { index: false, follow: true },
 };
 
