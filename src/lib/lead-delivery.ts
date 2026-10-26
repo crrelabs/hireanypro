@@ -22,6 +22,16 @@ export const shell = (inner: string, footer = '') =>
   `<p style="color:#888;font-size:12px;margin-top:32px">HireAnyPro · CRRE Labs LLC · 12394 SW 82 Ave, Pinecrest FL 33156${footer}</p></div>`;
 
 export const isPaidTier = (t: string | null | undefined) => t === 'pro' || t === 'featured';
+
+// Listings we never auto-select when the server picks pros for a homeowner (multi-quote, "also ask others").
+export const NEVER_ROUTE = new Set(['rovira-property-management-pinecrest', 'monster-cuts-orlando']);
+export const routable = (l: { slug: string }) => !NEVER_ROUTE.has(l.slug) && !l.slug.startsWith('zz-hap-test');
+// Ranking used whenever the server chooses pros: paid > claimed > reachable by email > most reviews > rating.
+export const proScore = (l: { tier: string | null; claimed: boolean | null; email: string | null; review_count?: number | null; rating?: number | null }) =>
+  (isPaidTier(l.tier) ? 1e6 : 0) + (l.claimed ? 1e5 : 0) + (l.email && EMAIL_RE.test(l.email.trim()) ? 1e4 : 0)
+  + Math.min(l.review_count || 0, 5000) + (l.rating || 0);
+// Internal QA addresses: saved as 'internal' and no business is ever contacted.
+export const isInternalEmail = (e: string) => /@(hireanypro|crrelabs)\.com$/i.test(e);
 export function bizEmailOf(l: { email: string | null }) {
   return l.email && EMAIL_RE.test(l.email.trim()) ? l.email.trim().toLowerCase() : null;
 }

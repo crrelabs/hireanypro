@@ -20,6 +20,9 @@ export async function generateStaticParams() {
 
 type Props = { params: Promise<{ slug: string }> };
 
+// Lowercase a category name for running text but keep acronyms ("HVAC", not "hvac").
+const catText = (n: string) => n.split(' ').map((w) => (/^[A-Z]{2,}$/.test(w) ? w : w.toLowerCase())).join(' ');
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const { data: listing } = await supabase
@@ -300,7 +303,8 @@ export default async function ListingPage({ params }: Props) {
                   </div>
                   {/* Quote form right here for free/unclaimed */}
                   <div className="mt-4 pt-4 border-t border-gray-100">
-                    <QuoteRequestForm listingId={listing.id} businessName={listing.name} tier={listing.tier} />
+                    <QuoteRequestForm listingId={listing.id} businessName={listing.name} tier={listing.tier}
+                      othersLabel={listing.categories && listing.city && nearby && nearby.length > 0 ? `${catText(listing.categories.name)} pros in ${listing.city}` : undefined} />
                   </div>
 
                   {!listing.claimed && (
@@ -388,7 +392,7 @@ export default async function ListingPage({ params }: Props) {
         {nearby && nearby.length > 0 && listing.categories && (
           <div className="mt-8 bg-white rounded-xl border border-gray-200 p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">
-              Other {listing.categories.name.toLowerCase()} pros in {listing.city}
+              Other {catText(listing.categories.name)} pros in {listing.city}
             </h2>
             <ul className="grid sm:grid-cols-2 gap-3">
               {nearby.map((n: { slug: string; name: string; rating: number | null; review_count: number | null }) => (
@@ -417,7 +421,7 @@ export default async function ListingPage({ params }: Props) {
           {listing.categories && listing.city && (
             <p className="text-sm text-gray-600">
               <Link href={`/services/${listing.categories.slug}/${cityPageSlug(listing.city, listing.state)}`} className="text-blue-800 hover:underline font-medium">
-                More {listing.categories.name.toLowerCase()} in {listing.city} →
+                More {catText(listing.categories.name)} pros in {listing.city} →
               </Link>
             </p>
           )}
