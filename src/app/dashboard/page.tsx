@@ -14,6 +14,7 @@ type DashboardData = {
     rating: number;
     review_count: number;
     smsPhone?: string | null;
+    views30?: number;
   }>;
   inquiries: Array<{
     id: string;
@@ -25,6 +26,7 @@ type DashboardData = {
   }>;
   totalInquiries: number;
   monthInquiries: number;
+  views30: number;
 };
 
 export default function DashboardPageWrapper() {
@@ -62,6 +64,7 @@ function DashboardPage() {
         inquiries: result.inquiries || [],
         totalInquiries: result.totalInquiries || 0,
         monthInquiries: result.monthInquiries || 0,
+        views30: result.views30 || 0,
       });
     } catch (err) {
       console.error('Dashboard error:', err);
@@ -149,6 +152,7 @@ function DashboardPage() {
   }
 
   const isFree = data.listings.every((l) => l.tier === 'free');
+  const lockedListing = data.inquiries[0]?.listing_id || data.listings.find((l) => l.tier === 'free')?.id || '';
 
   return (
     <div className="max-w-5xl mx-auto py-12 px-4">
@@ -158,10 +162,14 @@ function DashboardPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <div className="text-sm text-gray-500">Claimed Listings</div>
           <div className="text-2xl font-bold text-gray-900">{data.listings.length}</div>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <div className="text-sm text-gray-500">Page Views (30 days)</div>
+          <div className="text-2xl font-bold text-gray-900">{data.views30}</div>
         </div>
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <div className="text-sm text-gray-500">Total Inquiries</div>
@@ -184,8 +192,14 @@ function DashboardPage() {
                   {l.name}
                 </Link>
                 <div className="text-sm text-gray-500 mt-1">
-                  ⭐ {l.rating.toFixed(1)} ({l.review_count} reviews)
+                  {l.rating ? <>⭐ {Number(l.rating).toFixed(1)} ({l.review_count || 0} reviews) · </> : null}👀 {l.views30 || 0} {l.views30 === 1 ? 'view' : 'views'} in the last 30 days
                 </div>
+                {l.tier === 'free' && (l.views30 || 0) >= 3 && (
+                  <div className="text-sm text-gray-700 mt-2 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
+                    {l.views30} people looked at your listing this month, but free listings hide your phone and website.{' '}
+                    <Link href={`/pricing?plan=pro&listing=${l.id}&utm_source=dashboard&utm_medium=web&utm_campaign=views_nudge`} className="text-blue-800 font-semibold hover:underline">Show them with Pro ($9/mo)</Link>
+                  </div>
+                )}
                 <SmsToggle listingId={l.id} initialPhone={l.smsPhone || null} />
               </div>
               <div className="flex items-center gap-3">
@@ -196,7 +210,8 @@ function DashboardPage() {
                 }`}>
                   {l.tier}
                 </span>
-                {(l.tier === 'pro' || l.tier === 'featured') && (
+                {/* Every owner can edit (free included): claiming promises "correct your phone, hours, services and description". */}
+                {(
                   <Link href={`/dashboard/edit/${l.id}`} className="text-sm bg-orange-500 text-white px-4 py-1.5 rounded-lg hover:bg-orange-600 font-medium transition-colors">
                     Edit
                   </Link>
@@ -226,7 +241,7 @@ function DashboardPage() {
               <div className="text-center">
                 <div className="text-3xl font-bold text-orange-600 mb-2">🔒 {data.totalInquiries} Lead{data.totalInquiries !== 1 ? 's' : ''} Waiting</div>
                 <p className="text-gray-700 mb-4">Customers are looking for your services! Upgrade to Pro to see their contact info and respond directly.</p>
-                <Link href="/pricing?plan=pro&utm_source=dashboard&utm_medium=web&utm_campaign=locked_lead" className="inline-block bg-blue-800 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                <Link href={`/pricing?plan=pro${lockedListing ? `&listing=${lockedListing}` : ''}&utm_source=dashboard&utm_medium=web&utm_campaign=locked_lead`} className="inline-block bg-blue-800 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
                   Upgrade to Pro — $9/mo
                 </Link>
                 <p className="text-xs text-gray-500 mt-2">See who&apos;s looking for you. Respond to leads. Grow your business.</p>
@@ -246,7 +261,7 @@ function DashboardPage() {
                     <div className="text-sm text-gray-700">I need help with a project at my home in Miami. Can you provide a quote for...</div>
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center bg-white/60">
-                    <Link href="/pricing?plan=pro&utm_source=dashboard&utm_medium=web&utm_campaign=locked_lead" className="bg-blue-800 text-white px-5 py-2 rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors shadow-lg">
+                    <Link href={`/pricing?plan=pro${lockedListing ? `&listing=${lockedListing}` : ''}&utm_source=dashboard&utm_medium=web&utm_campaign=locked_lead`} className="bg-blue-800 text-white px-5 py-2 rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors shadow-lg">
                       🔓 Upgrade to See This Lead
                     </Link>
                   </div>

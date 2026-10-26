@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { isRateLimited, getClientIp } from '@/lib/rate-limit';
 import { sessionEmail, likeExact } from '@/lib/session';
+import { recentViews } from '@/lib/listing-views';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -55,7 +56,8 @@ export async function POST(req: NextRequest) {
         .in('listing_id', listingIds)
         .eq('status', 'opt_in');
       const optMap = Object.fromEntries((optRows || []).map((r) => [r.listing_id, r.to_phone]));
-      listings = (listingData || []).map((l) => ({ ...l, tier: planMap[l.id] || l.tier, smsPhone: optMap[l.id] || null }));
+      const views = await recentViews(listingIds, 30, supabase);
+      listings = (listingData || []).map((l) => ({ ...l, tier: planMap[l.id] || l.tier, smsPhone: optMap[l.id] || null, views30: views[l.id] || 0 }));
     }
 
     // Get inquiries for these listings
@@ -94,7 +96,8 @@ export async function POST(req: NextRequest) {
       monthInquiries = monthCount || 0;
     }
 
-    return NextResponse.json({ email, listings, inquiries, totalInquiries, monthInquiries });
+    const views30 = listings.reduce((n, l) => n + (Number(l.views30) || 0), 0);
+    return NextResponse.json({ email, listings, inquiries, totalInquiries, monthInquiries, views30 });
   } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
