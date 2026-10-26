@@ -111,7 +111,7 @@ function buildJsonLd(listing: Record<string, unknown>) {
       addressCountry: 'US',
     },
     ...(listing.lat && listing.lng ? { geo: { '@type': 'GeoCoordinates', latitude: listing.lat, longitude: listing.lng } } : {}),
-    ...(listing.rating ? {
+    ...(listing.rating && Number(listing.review_count || 0) > 0 ? {
       aggregateRating: {
         '@type': 'AggregateRating',
         ratingValue: listing.rating,

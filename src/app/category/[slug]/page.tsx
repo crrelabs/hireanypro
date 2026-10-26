@@ -72,6 +72,23 @@ export default async function CategoryPage({ params }: Props) {
     })),
   };
 
+  // Answer-first intro + FAQ from real data (rating stats cover the most-reviewed pros loaded on this page).
+  const lcCat = category.name.split(' ').map((w: string) => (w.length > 1 && w === w.toUpperCase() ? w : w.toLowerCase())).join(' ');
+  const rated = listings.filter((l) => (l.rating || 0) > 0 && (l.review_count || 0) > 0);
+  const totalReviews = rated.reduce((s, l) => s + (l.review_count || 0), 0);
+  const avg = totalReviews ? rated.reduce((s, l) => s + (l.rating || 0) * (l.review_count || 0), 0) / totalReviews : 0;
+  const topCities = popularCities.slice(0, 5);
+  const faqs: { q: string; a: string }[] = [
+    { q: `How many ${lcCat} pros does HireAnyPro list in Florida?`, a: `HireAnyPro lists ${totalCount.toLocaleString('en-US')} ${lcCat} businesses in ${cityGroups.length} cities${topCities.length ? `. The most are in ${topCities.map((c) => `${c.name} (${c.count})`).join(', ')}` : ''}.` },
+    ...(rated.length ? [{ q: `How are ${lcCat} pros rated?`, a: `Among the ${listings.length} most-reviewed ${lcCat} pros on HireAnyPro, ${rated.length} have public customer ratings, with a review-weighted average of ${avg.toFixed(1)} out of 5 across ${totalReviews.toLocaleString('en-US')} reviews.` }] : []),
+    { q: `How do I get a ${lcCat} quote?`, a: `Pick your city below, then use the free quote form to send your job to up to three top-rated ${lcCat} pros, or request a quote from any single listing. It's free and there's no obligation to hire.` },
+  ];
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  };
+
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -85,6 +102,7 @@ export default async function CategoryPage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Breadcrumbs items={[
@@ -106,6 +124,10 @@ export default async function CategoryPage({ params }: Props) {
           </div>
         </div>
 
+        <section className="mb-8 text-gray-700 leading-relaxed max-w-4xl">
+          <p>{faqs[0].a}{rated.length > 0 && <> {faqs[1].a}</>} Compare pros below and request a free quote.</p>
+        </section>
+
         {listings.length > 0 ? (
           <>
             <CategoryFilters
@@ -125,6 +147,18 @@ export default async function CategoryPage({ params }: Props) {
             <p className="text-gray-500 text-sm">Be the first {category.name.split(' ').map((w: string) => (w.length > 1 && w === w.toUpperCase() ? w : w.toLowerCase())).join(' ')} professional listed!</p>
           </div>
         )}
+
+        <section className="mt-16 max-w-4xl">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">{category.name}: Frequently Asked Questions</h2>
+          <div className="divide-y divide-gray-200 border border-gray-200 rounded-xl bg-white">
+            {faqs.map((f) => (
+              <details key={f.q} className="p-5">
+                <summary className="font-semibold text-gray-900 cursor-pointer">{f.q}</summary>
+                <p className="mt-3 text-gray-700">{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
 
         {/* Popular Cities */}
         {popularCities.length > 0 && (
