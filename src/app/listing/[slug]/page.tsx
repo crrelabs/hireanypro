@@ -22,6 +22,28 @@ export async function generateStaticParams() {
 
 type Props = { params: Promise<{ slug: string }> };
 
+// Hours come in several shapes from the scrape: an object of {open, close} or "09:00-18:00" strings, and sometimes the
+// whole object stored as a JSON string. Normalize to { monday: "9:00 - 18:00", ... } and drop junk; "00:00-00:00" = open 24 hours.
+type DayHours = { open: string; close: string };
+function normalizeHours(raw: unknown): Record<string, DayHours> | null {
+  let h = raw;
+  if (typeof h === 'string') { try { h = JSON.parse(h); } catch { return null; } }
+  if (!h || typeof h !== 'object' || Array.isArray(h)) return null;
+  const out: Record<string, DayHours> = {};
+  for (const [day, v] of Object.entries(h as Record<string, unknown>)) {
+    const d = day.toLowerCase();
+    if (!['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].includes(d) || v == null) continue;
+    const o = typeof v === 'object' ? v as { open?: string; close?: string } : null;
+    const open = (o?.open ?? (typeof v === 'string' ? v.split('-')[0] : '') ?? '').trim();
+    const close = (o?.close ?? (typeof v === 'string' ? v.split('-')[1] : '') ?? '').trim();
+    if (/^\d{1,2}:\d{2}$/.test(open) && /^\d{1,2}:\d{2}$/.test(close)) out[d] = { open, close };
+  }
+  return Object.keys(out).length >= 2 ? out : null; // a single stray day is scrape noise, not real opening hours
+}
+const fmtHours = (h: DayHours) => (h.open === '00:00' && h.close === '00:00') || (h.open === '00:00' && h.close === '23:59') ? 'Open 24 hours' : `${h.open} - ${h.close}`;
+// "4900 Rio Grande Ave, Orlando, FL 32839, USA" already includes city/ZIP: don't repeat them on a second line.
+const cleanAddress = (a: unknown) => (typeof a === 'string' ? a.replace(/,?\s*(USA|United States)\s*$/i, '').trim() : '');
+
 // Lowercase a category name for running text but keep acronyms ("HVAC", not "hvac").
 const catText = (n: string) => n.split(' ').map((w) => (/^[A-Z]{2,}$/.test(w) ? w : w.toLowerCase())).join(' ');
 
@@ -71,7 +93,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 function buildJsonLd(listing: Record<string, unknown>) {
   const cat = (listing.categories as Record<string, string> | null)?.name || 'Service Provider';
-  const hours = listing.hours as Record<string, string> | null;
+  const hours = normalizeHours(listing.hours);
 
   const localBusiness: Record<string, unknown> = {
     '@context': 'https://schema.org',
@@ -98,16 +120,20 @@ function buildJsonLd(listing: Record<string, unknown>) {
       },
     } : {}),
     ...(hours ? {
-      openingHoursSpecification: Object.entries(hours).filter(([, v]) => v != null).map(([day, h]) => {
-        const dayMap: Record<string, string> = { monday: 'Monday', tuesday: 'Tuesday', wednesday: 'Wednesday', thursday: 'Thursday', friday: 'Friday', saturday: 'Saturday', sunday: 'Sunday' };
-        const hObj = typeof h === 'object' && h !== null ? h as { open?: string; close?: string } : null;
-        const opens = hObj?.open || (typeof h === 'string' ? h.split('-')[0]?.trim() : '') || '';
-        const closes = hObj?.close || (typeof h === 'string' ? h.split('-')[1]?.trim() : '') || '';
-        return { '@type': 'OpeningHoursSpecification', dayOfWeek: dayMap[day] || day, opens, closes };
-      }),
+      openingHoursSpecification: Object.entries(hours).map(([day, h]) => ({
+        '@type': 'OpeningHoursSpecification', dayOfWeek: day.charAt(0).toUpperCase() + day.slice(1), opens: h.open, closes: h.close === '00:00' && h.open === '00:00' ? '23:59' : h.close,
+      })),
     } : {}),
-    priceRange: '$$',
   };
+  // Drop empty fields so Google doesn't see null values.
+  if (!localBusiness.description) delete localBusiness.description;
+  const addr = localBusiness.address as Record<string, unknown>;
+  for (const k of Object.keys(addr)) if (addr[k] == null || addr[k] === '') delete addr[k];
+  if (addr.streetAddress) {
+    const a = cleanAddress(addr.streetAddress);
+    const i = listing.city ? a.toLowerCase().indexOf(`, ${String(listing.city).toLowerCase()}`) : -1;
+    addr.streetAddress = i > 0 ? a.slice(0, i) : a;
+  }
 
   const breadcrumb = {
     '@context': 'https://schema.org',
@@ -158,12 +184,18 @@ export default async function ListingPage({ params }: Props) {
     : { data: null };
 
   // County pages are Florida-only; near-border GA/AL listings have no Florida county.
-  const listingCounty = listing.city && stateCode(listing.state) === 'FL' ? await getCountyForCity(listing.city) : null;
+  // Use the listing's own county column when present; fall back to the city's primary county.
+  const listingCounty = stateCode(listing.state) !== 'FL' ? null : (listing.county as string | null) || (listing.city ? await getCountyForCity(listing.city) : null);
 
   // 30-day page views (bot-filtered beacon), shown to owners on unclaimed listings as a reason to claim.
   const views30 = !listing.claimed ? (await recentViews([listing.id]))[listing.id] || 0 : 0;
 
-  const hours = listing.hours as Record<string, string> | null;
+  const hours = normalizeHours(listing.hours);
+  const address = cleanAddress(listing.address);
+  const addressHasCity = !!(address && listing.city && address.toLowerCase().includes(String(listing.city).toLowerCase()));
+  const cityLine = [listing.city, [stateCode(listing.state), listing.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+  const description = (listing.description && String(listing.description).trim())
+    || `${listing.name} is a ${listing.categories?.name ? catText(listing.categories.name) : 'home service'} business${listing.city ? ` in ${listing.city}, ${stateCode(listing.state)}` : ''}${listing.rating && listing.review_count ? `, rated ${listing.rating} out of 5 from ${listing.review_count} Google reviews` : ''}. Request a free quote below.`;
   const dayLabels: Record<string, string> = { monday: 'Monday', tuesday: 'Tuesday', wednesday: 'Wednesday', thursday: 'Thursday', friday: 'Friday', saturday: 'Saturday', sunday: 'Sunday' };
   const jsonLdItems = buildJsonLd(listing);
   const isPaid = listing.tier === 'pro' || listing.tier === 'featured';
@@ -219,7 +251,7 @@ export default async function ListingPage({ params }: Props) {
                   <span className="bg-orange-500 text-white text-xs font-semibold px-3 py-1 rounded-full">Featured</span>
                 )}
               </div>
-              <p className="text-gray-600 mt-4 leading-relaxed">{listing.description}</p>
+              <p className="text-gray-600 mt-4 leading-relaxed">{description}</p>
             </div>
 
             {/* Map */}
@@ -277,7 +309,7 @@ export default async function ListingPage({ params }: Props) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    <span>{listing.address}<br />{listing.city}, {listing.state} {listing.zip}</span>
+                    <span>{address}{address && !addressHasCity ? <><br />{cityLine}</> : null}{!address ? cityLine : null}</span>
                   </div>
                   {/* Quote form for paid listings */}
                   <div className="mt-4 pt-4 border-t border-gray-100">
@@ -305,7 +337,7 @@ export default async function ListingPage({ params }: Props) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    <span>{listing.address}<br />{listing.city}, {listing.state} {listing.zip}</span>
+                    <span>{address}{address && !addressHasCity ? <><br />{cityLine}</> : null}{!address ? cityLine : null}</span>
                   </div>
                   {/* Quote form right here for free/unclaimed */}
                   <div className="mt-4 pt-4 border-t border-gray-100">
@@ -335,7 +367,7 @@ export default async function ListingPage({ params }: Props) {
                     {Object.entries(dayLabels).map(([key, label]) => (
                       <div key={key} className="flex justify-between">
                         <span className="text-gray-500">{label}</span>
-                        <span className="text-gray-900 font-medium">{hours[key] && typeof hours[key] === 'object' ? `${(hours[key] as {open?: string}).open || ''} - ${(hours[key] as {close?: string}).close || ''}` : (hours[key] || 'Closed')}</span>
+                        <span className="text-gray-900 font-medium">{hours[key] ? fmtHours(hours[key]) : 'Closed'}</span>
                       </div>
                     ))}
                   </div>
@@ -373,7 +405,7 @@ export default async function ListingPage({ params }: Props) {
                 <div key={review.id} className="border-b border-gray-100 last:border-0 pb-4 last:pb-0">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      <span className="text-blue-800 font-semibold text-sm">{review.author_name.charAt(0)}</span>
+                      <span className="text-blue-800 font-semibold text-sm">{(review.author_name || '?').charAt(0)}</span>
                     </div>
                     <div>
                       <p className="font-medium text-gray-900 text-sm">{review.author_name}</p>

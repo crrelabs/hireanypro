@@ -3,6 +3,8 @@ import { supabase } from './supabase';
 // Cache for county/city data (refreshes every 5 min via ISR)
 let _countyCache: Record<string, string[]> | null = null;
 let _cacheTime = 0;
+// city (lowercase) -> county -> number of listings; used to pick a city's primary county (the one with most listings).
+let _cityCounty: Record<string, string> = {};
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 async function loadCountyMap(): Promise<Record<string, string[]>> {
@@ -13,6 +15,7 @@ async function loadCountyMap(): Promise<Record<string, string[]>> {
   // Paginate through all listings with county data
   let offset = 0;
   const seen = new Set<string>();
+  const counts: Record<string, Record<string, number>> = {};
   while (true) {
     const { data } = await supabase
       .from('listings')
@@ -24,6 +27,8 @@ async function loadCountyMap(): Promise<Record<string, string[]>> {
 
     if (!data || data.length === 0) break;
     for (const row of data) {
+      const lc = String(row.city).toLowerCase();
+      (counts[lc] ??= {})[row.county] = (counts[lc][row.county] || 0) + 1;
       const key = `${row.county}|${row.city}`;
       if (seen.has(key)) continue;
       seen.add(key);
@@ -39,6 +44,11 @@ async function loadCountyMap(): Promise<Record<string, string[]>> {
     map[county].sort();
   }
 
+  const primary: Record<string, string> = {};
+  for (const [city, byCounty] of Object.entries(counts)) {
+    primary[city] = Object.entries(byCounty).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0][0];
+  }
+  _cityCounty = primary;
   _countyCache = map;
   _cacheTime = Date.now();
   return map;
@@ -48,12 +58,10 @@ export async function getCountyMap(): Promise<Record<string, string[]>> {
   return loadCountyMap();
 }
 
+/** A city's primary county: the county where most of its listings are (e.g. Jacksonville -> Duval, not Clay). */
 export async function getCountyForCity(city: string): Promise<string | null> {
-  const map = await loadCountyMap();
-  for (const [county, cities] of Object.entries(map)) {
-    if (cities.some(c => c.toLowerCase() === city.toLowerCase())) return county;
-  }
-  return null;
+  await loadCountyMap();
+  return _cityCounty[city.toLowerCase()] || null;
 }
 
 export async function getCitiesInCounty(county: string): Promise<string[]> {

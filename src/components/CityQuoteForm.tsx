@@ -37,7 +37,7 @@ export default function CityQuoteForm({ categorySlug, categoryName, citySlug, ci
     } catch { setErr('Something went wrong. Please try again.'); setStatus('error'); }
   }
 
-  const cat = categoryName.toLowerCase();
+  const cat = categoryName.split(' ').map((w) => (w.length > 1 && w === w.toUpperCase() ? w : w.toLowerCase())).join(' '); // keep acronyms ("HVAC")
   if (status === 'done') {
     return (
       <section id="get-quotes" className="mb-10 bg-green-50 border border-green-200 rounded-xl p-6">

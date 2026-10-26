@@ -114,7 +114,7 @@ export default async function CategoryPage({ params }: Props) {
             />
             {totalCount > listings.length && (
               <p className="mt-6 text-sm text-gray-500 text-center">
-                Showing the {listings.length} most-reviewed {category.name.toLowerCase()} pros statewide. Pick your city below to see all {totalCount.toLocaleString('en-US')}.
+                Showing the {listings.length} most-reviewed {category.name.split(' ').map((w: string) => (w.length > 1 && w === w.toUpperCase() ? w : w.toLowerCase())).join(' ')} pros statewide. Pick your city below to see all {totalCount.toLocaleString('en-US')}.
               </p>
             )}
           </>
@@ -122,7 +122,7 @@ export default async function CategoryPage({ params }: Props) {
           <div className="text-center py-16">
             <span className="text-5xl mb-4 block">{category.icon}</span>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No listings yet</h3>
-            <p className="text-gray-500 text-sm">Be the first {category.name.toLowerCase()} professional listed!</p>
+            <p className="text-gray-500 text-sm">Be the first {category.name.split(' ').map((w: string) => (w.length > 1 && w === w.toUpperCase() ? w : w.toLowerCase())).join(' ')} professional listed!</p>
           </div>
         )}
 
