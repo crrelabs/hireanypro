@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { verifyTurnstile } from '@/lib/turnstile';
 import { isRateLimited, getClientIp } from '@/lib/rate-limit';
 import { isBot } from '@/lib/honeypot';
+import { revalidateListing } from '@/lib/revalidate';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -43,6 +44,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to submit' }, { status: 500 });
     }
 
+    await revalidateListing(supabase, listingId);
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
     console.error('Review error:', error);

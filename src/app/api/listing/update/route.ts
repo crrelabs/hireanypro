@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { isRateLimited, getClientIp } from '@/lib/rate-limit';
 import { sessionEmail, likeExact } from '@/lib/session';
+import { revalidateListing } from '@/lib/revalidate';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -75,6 +76,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to update listing.' }, { status: 500 });
     }
 
+    await revalidateListing(supabase, listingId);
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('Update API error:', err);

@@ -10,6 +10,14 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { cityPageSlug, getCountyForCity, countySlug, stateCode, stateName } from '@/lib/geo';
 
+export const revalidate = 3600;
+
+// Cached pages (ISR): rendered on first request, then served from Vercel's cache and refreshed in the background.
+// Returning [] means nothing is prerendered at build time; every path is generated on demand and cached.
+export async function generateStaticParams() {
+  return [];
+}
+
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
