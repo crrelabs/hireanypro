@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { getAllBlogSlugs } from '@/lib/blog';
-import { cityPageSlug, countySlug, getAllCounties } from '@/lib/geo';
+import { cityPageSlug, countySlug } from '@/lib/geo';
 import { renderSitemapIndex, renderUrlset } from '@/lib/sitemap-xml';
 import type { SitemapIndexEntry, SitemapUrl } from '@/lib/sitemap-xml';
 
@@ -178,10 +178,7 @@ export async function getPagesSitemapUrls(): Promise<SitemapUrl[]> {
     { loc: `${BASE_URL}/claim`, changefreq: 'monthly', priority: 0.5 },
   ];
 
-  // County hub pages (/region/*) were reachable only via internal links; list them so crawlers find them.
-  for (const county of await getAllCounties()) {
-    urls.push({ loc: `${BASE_URL}/region/${countySlug(county)}`, lastmod: latestListing, changefreq: 'weekly', priority: 0.7 });
-  }
+  // County hub pages (/region/*) are listed once, in the cities sitemap (with per-county lastmod).
 
   for (const category of categories) {
     urls.push({
