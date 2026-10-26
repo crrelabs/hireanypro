@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { notifyUpgrade } from '@/lib/notify';
 import Stripe from 'stripe';
+import { revalidateListing } from '@/lib/revalidate';
 
 export const runtime = 'nodejs';
 
@@ -139,6 +140,7 @@ export async function POST(req: NextRequest) {
           .from('listings')
           .update({ tier: plan, claimed: true })
           .eq('id', listingId);
+        await revalidateListing(supabase, listingId);
 
         // Notify Carlos of upgrade
         const { data: upgradedListing } = await supabase.from('listings').select('name, slug').eq('id', listingId).single();
@@ -156,6 +158,7 @@ export async function POST(req: NextRequest) {
         const { data: sub } = await supabase.from('subscriptions').select('listing_id').eq('stripe_subscription_id', subscription.id).maybeSingle();
         if (sub?.listing_id) {
           await supabase.from('listings').update({ tier: 'free' }).eq('id', sub.listing_id);
+          await revalidateListing(supabase, sub.listing_id);
           await supabase.from('subscriptions').update({ status: 'canceled', plan: 'free' }).eq('stripe_subscription_id', subscription.id);
         }
       }
@@ -176,6 +179,7 @@ export async function POST(req: NextRequest) {
           .from('listings')
           .update({ tier: 'free' })
           .eq('id', sub.listing_id);
+        await revalidateListing(supabase, sub.listing_id);
 
         await supabase
           .from('subscriptions')

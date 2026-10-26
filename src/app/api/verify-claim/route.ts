@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { sendClaimVerification } from '@/lib/claim-email';
 import { setSessionCookie } from '@/lib/session';
+import { revalidateListing } from '@/lib/revalidate';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -80,6 +81,7 @@ export async function POST(req: NextRequest) {
       .from('listings')
       .update({ claimed: true, owner_id: profile?.id })
       .eq('id', claim.listing_id);
+    await revalidateListing(supabase, claim.listing_id);
 
     // Create free subscription
     if (profile) {

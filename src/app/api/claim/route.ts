@@ -9,6 +9,7 @@ import crypto from 'crypto';
 import { recordSmsOptIn } from '@/lib/sms-leads';
 import { verifyClaimLink } from '@/lib/claim-link';
 import { setSessionCookie } from '@/lib/session';
+import { revalidateListing } from '@/lib/revalidate';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -77,6 +78,7 @@ export async function POST(req: NextRequest) {
       await supabase.from('claims').insert({ listing_id: listing.id, email, verified: true, verification_token: crypto.randomUUID(), expires_at: new Date().toISOString() });
       await supabase.from('subscriptions').insert({ listing_id: listing.id, profile_id: owner.id, plan: 'free', status: 'active' });
       notifyVerifiedClaim(listing.name || 'Unknown Business', email, listing.slug || '').catch(() => {});
+      await revalidateListing(supabase, listing.id);
       const res = NextResponse.json({ success: true, verified: true, listingId: listing.id });
       setSessionCookie(res, email);
       return res;

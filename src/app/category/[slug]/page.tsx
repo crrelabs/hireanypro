@@ -7,6 +7,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { CARD_COLUMNS, toCard, getCategoryCities, getCategoryBySlug, type CardListing } from '@/lib/listings';
 
+// Cached pages (ISR): rendered on first request, then served from Vercel's cache and refreshed in the background.
+// Returning [] means nothing is prerendered at build time; every path is generated on demand and cached.
+export async function generateStaticParams() {
+  return [];
+}
+
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
