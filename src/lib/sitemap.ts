@@ -174,6 +174,8 @@ export async function getPagesSitemapUrls(): Promise<SitemapUrl[]> {
     { loc: `${BASE_URL}/pricing`, changefreq: 'monthly', priority: 0.6 },
     { loc: `${BASE_URL}/blog`, lastmod: latestBlog, changefreq: 'daily', priority: 0.8 },
     { loc: `${BASE_URL}/contact`, changefreq: 'yearly', priority: 0.3 },
+    { loc: `${BASE_URL}/about`, changefreq: 'yearly', priority: 0.4 },
+    { loc: `${BASE_URL}/claim`, changefreq: 'monthly', priority: 0.5 },
   ];
 
   // County hub pages (/region/*) were reachable only via internal links; list them so crawlers find them.

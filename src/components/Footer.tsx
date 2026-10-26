@@ -40,6 +40,7 @@ export default function Footer() {
               <li><Link href="/claim" className="hover:text-white transition-colors">Claim Your Listing</Link></li>
               <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
               <li><Link href="/dashboard" className="hover:text-white transition-colors">Business Dashboard</Link></li>
+              <li><Link href="/about" className="hover:text-white transition-colors">About HireAnyPro</Link></li>
               <li><Link href="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>
               <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
               <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
