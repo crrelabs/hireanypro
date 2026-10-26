@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
     const proList = all.map((l) => `<li><a href="${SITE}/listing/${l.slug}">${esc(l.name)}</a></li>`).join('');
     const confirm = sendMail({
       to: email,
-      subject: sentExtras.length ? `Your ${cat.toLowerCase()} quote request in ${city}` : `We got your quote request for ${listing.name}`,
+      campaign: 'quote_confirm', subject: sentExtras.length ? `Your ${cat.toLowerCase()} quote request in ${city}` : `We got your quote request for ${listing.name}`,
       html: shell(`<p>Hi ${esc(firstName(name))},</p>` +
         (sentExtras.length
           ? `<p>Thanks for your request. We're sending it to ${all.length} ${esc(cat.toLowerCase())} pros in ${esc(city)}:</p><ul>${proList}</ul>`

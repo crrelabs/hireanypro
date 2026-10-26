@@ -9,6 +9,7 @@ export async function sendClaimVerification(to: string, listingName: string, tok
   try {
     return await sendMail({
       to,
+      campaign: 'claim_verify',
       subject: `Verify your claim for ${listingName} on HireAnyPro`,
       text: `${opts.reissued ? 'Your previous link expired, so here is a fresh one. ' : ''}Verify your claim for ${listingName}: ${verifyUrl}\n\nThis link expires in 24 hours. If you didn't request this, ignore this email.`,
       html: `

@@ -4,8 +4,27 @@ import nodemailer from 'nodemailer';
 const FROM = (process.env.RESEND_FROM_EMAIL || 'HireAnyPro <iris@hireanypro.com>').trim();
 const REPLY_TO = 'iris@hireanypro.com';
 
+/** Append utm params to every https://hireanypro.com link (skips /api/ endpoints like unsubscribe and sign-in callbacks, and links that already carry utm_). */
+export function tagLinks(body: string, campaign: string, medium = 'transactional'): string {
+  const utm = `utm_source=email&utm_medium=${encodeURIComponent(medium)}&utm_campaign=${encodeURIComponent(campaign)}`;
+  return body.replace(/https:\/\/(?:www\.)?hireanypro\.com(\/[^\s"'<>)]*)?/g, (m, path = '') => {
+    if (/^\/api\//.test(path) || /[?&]utm_/.test(m)) return m;
+    const trail = /[.,;:!]+$/.exec(m)?.[0] || '';
+    const core = trail ? m.slice(0, -trail.length) : m;
+    const hashAt = core.indexOf('#');
+    const base = hashAt >= 0 ? core.slice(0, hashAt) : core;
+    const hash = hashAt >= 0 ? core.slice(hashAt) : '';
+    const sep = base.includes('?') ? (base.includes('&amp;') ? '&amp;' : '&') : (/^https:\/\/[^/]+$/.test(base) ? '/?' : '?');
+    return base + sep + utm + hash + trail;
+  });
+}
+
 /** Transactional mail: Resend (hireanypro.com is verified) first, Gmail SMTP as fallback. */
-export async function sendMail(opts: { to: string; subject: string; html?: string; text?: string; replyTo?: string; headers?: Record<string, string> }): Promise<boolean> {
+export async function sendMail(opts: { to: string; subject: string; html?: string; text?: string; replyTo?: string; headers?: Record<string, string>; campaign?: string }): Promise<boolean> {
+  if (!/@hireanypro\.com$/i.test(opts.to.trim())) {
+    const c = opts.campaign || 'transactional';
+    opts = { ...opts, html: opts.html && tagLinks(opts.html, c), text: opts.text && tagLinks(opts.text, c) };
+  }
   const key = (process.env.RESEND_API_KEY || '').trim();
   if (key) {
     try {

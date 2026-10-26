@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
     await Promise.allSettled([
       sendMail({
         to: email,
-        subject: `Your ${category.name.toLowerCase()} quote request in ${cityName}`,
+        campaign: 'quote_multi_confirm', subject: `Your ${category.name.toLowerCase()} quote request in ${cityName}`,
         html: shell(`<p>Hi ${esc(firstName(name))},</p><p>Thanks! We're sending your request to ${picked.length} ${esc(category.name.toLowerCase())} ${picked.length === 1 ? 'pro' : 'pros'} in ${esc(cityName)}:</p><ul>${proList}</ul>` +
           `<p style="background:#f3f4f6;padding:12px;border-radius:6px;white-space:pre-wrap">${esc(message)}</p>` +
           `<p>We'll follow up if you don't hear back. Questions? Just reply to this email.</p><p>The HireAnyPro team</p>`),

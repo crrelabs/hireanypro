@@ -60,7 +60,7 @@ export async function deliverToListing(
       const ok = await sendMail({
         to: bizEmail,
         replyTo: lead.email,
-        subject: `New quote request from ${lead.name} via HireAnyPro`,
+        campaign: 'lead_full', subject: `New quote request from ${lead.name} via HireAnyPro`,
         html: shell(`<p>You have a new customer request on HireAnyPro.</p>` +
           `<p><strong>Name:</strong> ${esc(lead.name)}<br><strong>Email:</strong> ${esc(lead.email)}${lead.phone ? `<br><strong>Phone:</strong> ${esc(lead.phone)}` : ''}</p>` +
           `<p style="background:#f3f4f6;padding:12px;border-radius:6px;white-space:pre-wrap">${esc(lead.message)}</p>` +

@@ -16,7 +16,7 @@ export function leadTeaser(o: { listing: TeaserListing; cat: string; city: strin
   // toEmail must be the address on file for the listing (that's who we email); it enables a one-click claim.
   const ct = !listing.claimed && o.toEmail ? signClaimLink(listing.id, o.toEmail) : null;
   const campaign = followUp ? 'lead_upsell_followup' : 'lead_upsell';
-  const utm = `utm_source=lead_email&utm_medium=email&utm_campaign=${campaign}`;
+  const utm = `utm_source=email&utm_medium=upsell&utm_campaign=${campaign}`;
   const upgrade = `${SITE}/pricing?plan=pro&listing=${encodeURIComponent(listing.id)}&${utm}`;
   const claim = `${SITE}/claim?listing=${encodeURIComponent(listing.slug)}&${utm}${ct ? `&ct=${encodeURIComponent(ct)}` : ''}`;
   const cta = listing.claimed

@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     const url = `https://hireanypro.com/api/auth/callback?t=${encodeURIComponent(signToken(email, 'login'))}`;
     const ok = await sendMail({
       to: email,
-      subject: 'Your HireAnyPro sign-in link',
+      campaign: 'login_link', subject: 'Your HireAnyPro sign-in link',
       text: `Sign in to your HireAnyPro dashboard: ${url}\n\nThis link works for 24 hours. If you didn't ask for it, ignore this email.`,
       html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <h2 style="color: #1e40af;">Sign in to HireAnyPro</h2>
