@@ -5,7 +5,7 @@ import { isRateLimited, getClientIp } from '@/lib/rate-limit';
 import { isBot } from '@/lib/honeypot';
 import { sendMail } from '@/lib/mailer';
 import { getCategoryBySlug, getCategoryCities } from '@/lib/listings';
-import { SITE, TEAM_INBOX, EMAIL_RE, esc, clip, firstName, shell, isPaidTier, bizEmailOf, deliverToListing, type LeadListing } from '@/lib/lead-delivery';
+import { SITE, TEAM_INBOX, EMAIL_RE, esc, clip, firstName, shell, isPaidTier, bizEmailOf, deliverToListing, routable, proScore, isInternalEmail, type LeadListing } from '@/lib/lead-delivery';
 
 /**
  * "Get up to 3 free quotes" from a category+city page. The server picks the pros (never the browser):
@@ -17,8 +17,6 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!.trim()
 );
 
-// Listings we never auto-select for multi-quote routing.
-const NEVER_ROUTE = new Set(['rovira-property-management-pinecrest', 'monster-cuts-orlando']);
 const MAX_PROS = 3;
 
 type Row = LeadListing & { rating: number | null; review_count: number | null };
@@ -68,14 +66,12 @@ export async function POST(req: NextRequest) {
       .order('review_count', { ascending: false, nullsFirst: false })
       .limit(200);
     const candidates = ((rows || []) as unknown as Row[])
-      .filter((l) => !NEVER_ROUTE.has(l.slug) && !l.slug.startsWith('zz-hap-test'));
-    const score = (l: Row) => (isPaidTier(l.tier) ? 1e6 : 0) + (l.claimed ? 1e5 : 0) + (bizEmailOf(l) ? 1e4 : 0)
-      + Math.min(l.review_count || 0, 5000) + (l.rating || 0);
-    const picked = candidates.sort((a, b) => score(b) - score(a)).slice(0, MAX_PROS);
+      .filter(routable);
+    const picked = candidates.sort((a, b) => proScore(b) - proScore(a)).slice(0, MAX_PROS);
     if (picked.length === 0) return NextResponse.json({ error: 'No pros found for this city yet.' }, { status: 404 });
 
     // Internal QA (our own addresses): save as 'internal' and never contact the businesses.
-    const isTest = /@(hireanypro|crrelabs)\.com$/.test(email);
+    const isTest = isInternalEmail(email);
     const lead = { name, email, phone, message };
     const tagged = `[Multi-quote] ${message}`;
     const results: string[] = [];

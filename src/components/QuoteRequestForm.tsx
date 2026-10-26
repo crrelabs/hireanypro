@@ -7,9 +7,11 @@ interface QuoteRequestFormProps {
   listingId: string;
   businessName: string;
   tier?: string;
+  /** e.g. "plumbing pros in Miami". When set (free/unclaimed listings only), offers to also ask up to 2 other top-rated pros. */
+  othersLabel?: string;
 }
 
-export default function QuoteRequestForm({ listingId, businessName, tier = 'free' }: QuoteRequestFormProps) {
+export default function QuoteRequestForm({ listingId, businessName, tier = 'free', othersLabel }: QuoteRequestFormProps) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
   const [smsOptIn, setSmsOptIn] = useState(false);
   const [honeypot, setHoneypot] = useState('');
@@ -18,6 +20,12 @@ export default function QuoteRequestForm({ listingId, businessName, tier = 'free
   const [errorMsg, setErrorMsg] = useState('');
 
   const isPaid = tier === 'pro' || tier === 'featured';
+  const offerOthers = !isPaid && !!othersLabel;
+  const [alsoOthers, setAlsoOthers] = useState(true);
+  const [sentTo, setSentTo] = useState<string[]>([]);
+  const [started, setStarted] = useState(false);
+  const track = (name: string, params: Record<string, unknown> = {}) =>
+    (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag?.('event', name, { form: 'listing', ...params });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,12 +48,15 @@ export default function QuoteRequestForm({ listingId, businessName, tier = 'free
           phone: form.phone,
           smsOptIn: smsOptIn && !!form.phone,
           message: form.message,
+          alsoOthers: offerOthers && alsoOthers,
           turnstileToken,
           website: honeypot, // honeypot field
         }),
       });
       const data = await res.json();
       if (res.ok && data.success) {
+        setSentTo(Array.isArray(data.pros) ? data.pros : []);
+        track('quote_submit', { multi: offerOthers && alsoOthers, pros: data.count || 1 });
         setStatus('success');
         setForm({ name: '', email: '', phone: '', message: '' });
         setSmsOptIn(false);
@@ -65,7 +76,9 @@ export default function QuoteRequestForm({ listingId, businessName, tier = 'free
         <span className="text-3xl mb-2 block">✅</span>
         <h3 className="font-semibold text-green-800 text-lg">Quote Request Sent!</h3>
         <p className="text-green-700 text-sm mt-1">
-          {isPaid ? `${businessName} will get back to you soon.` : 'Your request has been forwarded. We\'ll connect you with this business shortly.'}
+          {sentTo.length > 1
+            ? `We sent your request to ${sentTo.length} pros: ${sentTo.join(', ')}. Check your email for a copy.`
+            : isPaid ? `${businessName} will get back to you soon.` : 'Your request has been forwarded. We\'ll connect you with this business shortly.'}
         </p>
         <button onClick={() => setStatus('idle')} className="mt-4 text-sm text-blue-800 hover:underline">
           Send another request
@@ -82,7 +95,7 @@ export default function QuoteRequestForm({ listingId, businessName, tier = 'free
           ? `Your request goes directly to ${businessName}`
           : 'Your request will be forwarded to this business'}
       </p>
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form onSubmit={handleSubmit} onFocus={() => { if (!started) { setStarted(true); track('quote_form_start'); } }} className="space-y-3">
         {/* Honeypot - hidden from humans */}
         <div className="hidden" aria-hidden="true">
           <label htmlFor="website">Website</label>
@@ -127,6 +140,16 @@ export default function QuoteRequestForm({ listingId, businessName, tier = 'free
           onChange={(e) => setForm({ ...form, message: e.target.value })}
           className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-800 focus:border-transparent outline-none resize-none"
         />
+
+        {offerOthers && (
+          <label className="flex items-start gap-2 cursor-pointer bg-orange-50 border border-orange-200 rounded-lg p-3">
+            <input type="checkbox" checked={alsoOthers} onChange={(e) => setAlsoOthers(e.target.checked)}
+              className="mt-0.5 w-4 h-4 text-orange-500 border-gray-300 rounded" />
+            <span className="text-sm text-gray-700">
+              <strong>Compare prices:</strong> also send my request to up to 2 other top-rated {othersLabel}. Free, no obligation.
+            </span>
+          </label>
+        )}
 
         <TurnstileWidget onSuccess={setTurnstileToken} />
 
