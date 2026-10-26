@@ -295,7 +295,7 @@ export default function PricingPage() {
         )}
 
         <div className="text-center mt-12 text-sm text-gray-500">
-          <p>All plans include a 14-day money-back guarantee. Cancel anytime.</p>
+          <p>Cancel anytime.</p>
         </div>
       </div>
     </div>
