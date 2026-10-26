@@ -6,6 +6,8 @@ import MapViewWrapper from '@/components/MapViewWrapper';
 import QuoteRequestForm from '@/components/QuoteRequestForm';
 import ReviewForm from '@/components/ReviewForm';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import ListingViewBeacon from '@/components/ListingViewBeacon';
+import { recentViews } from '@/lib/listing-views';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { cityPageSlug, getCountyForCity, countySlug, stateCode, stateName } from '@/lib/geo';
@@ -158,6 +160,9 @@ export default async function ListingPage({ params }: Props) {
   // County pages are Florida-only; near-border GA/AL listings have no Florida county.
   const listingCounty = listing.city && stateCode(listing.state) === 'FL' ? await getCountyForCity(listing.city) : null;
 
+  // 30-day page views (bot-filtered beacon), shown to owners on unclaimed listings as a reason to claim.
+  const views30 = !listing.claimed ? (await recentViews([listing.id]))[listing.id] || 0 : 0;
+
   const hours = listing.hours as Record<string, string> | null;
   const dayLabels: Record<string, string> = { monday: 'Monday', tuesday: 'Tuesday', wednesday: 'Wednesday', thursday: 'Thursday', friday: 'Friday', saturday: 'Saturday', sunday: 'Sunday' };
   const jsonLdItems = buildJsonLd(listing);
@@ -169,6 +174,7 @@ export default async function ListingPage({ params }: Props) {
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }} />
       ))}
 
+      {!slug.startsWith('zz-hap-test') && <ListingViewBeacon listingId={listing.id} />}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Breadcrumbs items={[
           { label: 'Home', href: '/' },
@@ -312,6 +318,9 @@ export default async function ListingPage({ params }: Props) {
                       <a href={`/claim?listing=${listing.slug}&utm_source=listing_page&utm_medium=web`} className="block w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors text-sm text-center mt-4">
                         🏢 Are you the owner? Claim this listing
                       </a>
+                      {views30 >= 2 && (
+                        <p className="text-xs text-gray-700 text-center bg-yellow-50 border border-yellow-200 rounded-md py-1.5 px-2">👀 {views30} people viewed this page in the last 30 days.</p>
+                      )}
                       <p className="text-xs text-gray-400 text-center">Claim your profile to show contact info and receive leads directly.</p>
                     </>
                   )}
