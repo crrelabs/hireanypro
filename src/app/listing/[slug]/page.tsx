@@ -12,6 +12,10 @@ import { recentViews } from '@/lib/listing-views';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { cityPageSlug, getCountyForCity, countySlug, stateCode, stateName } from '@/lib/geo';
+import { DAY_LABELS, formatDayHours, normalizeHours } from '@/lib/hours';
+import { isBoilerplateDescription } from '@/lib/directory-content';
+import { getCityCategorySnapshot } from '@/lib/listings';
+import ListingMarketContext from '@/components/ListingMarketContext';
 
 export const revalidate = 3600;
 
@@ -23,25 +27,6 @@ export async function generateStaticParams() {
 
 type Props = { params: Promise<{ slug: string }> };
 
-// Hours come in several shapes from the scrape: an object of {open, close} or "09:00-18:00" strings, and sometimes the
-// whole object stored as a JSON string. Normalize to { monday: "9:00 - 18:00", ... } and drop junk; "00:00-00:00" = open 24 hours.
-type DayHours = { open: string; close: string };
-function normalizeHours(raw: unknown): Record<string, DayHours> | null {
-  let h = raw;
-  if (typeof h === 'string') { try { h = JSON.parse(h); } catch { return null; } }
-  if (!h || typeof h !== 'object' || Array.isArray(h)) return null;
-  const out: Record<string, DayHours> = {};
-  for (const [day, v] of Object.entries(h as Record<string, unknown>)) {
-    const d = day.toLowerCase();
-    if (!['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].includes(d) || v == null) continue;
-    const o = typeof v === 'object' ? v as { open?: string; close?: string } : null;
-    const open = (o?.open ?? (typeof v === 'string' ? v.split('-')[0] : '') ?? '').trim();
-    const close = (o?.close ?? (typeof v === 'string' ? v.split('-')[1] : '') ?? '').trim();
-    if (/^\d{1,2}:\d{2}$/.test(open) && /^\d{1,2}:\d{2}$/.test(close)) out[d] = { open, close };
-  }
-  return Object.keys(out).length >= 2 ? out : null; // a single stray day is scrape noise, not real opening hours
-}
-const fmtHours = (h: DayHours) => (h.open === '00:00' && h.close === '00:00') || (h.open === '00:00' && h.close === '23:59') ? 'Open 24 hours' : `${h.open} - ${h.close}`;
 // "4900 Rio Grande Ave, Orlando, FL 32839, USA" already includes city/ZIP: don't repeat them on a second line.
 const cleanAddress = (a: unknown) => (typeof a === 'string' ? a.replace(/,?\s*(USA|United States)\s*$/i, '').trim() : '');
 
@@ -136,14 +121,26 @@ function buildJsonLd(listing: Record<string, unknown>) {
     addr.streetAddress = i > 0 ? a.slice(0, i) : a;
   }
 
+  const catSlug = (listing.categories as Record<string, string> | null)?.slug;
+  const crumb: { '@type': string; position: number; name: string; item?: string }[] = [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://hireanypro.com' },
+  ];
+  if (listing.categories && catSlug) {
+    crumb.push({ '@type': 'ListItem', position: crumb.length + 1, name: cat, item: `https://hireanypro.com/category/${catSlug}` });
+  }
+  if (listing.city && catSlug) {
+    crumb.push({
+      '@type': 'ListItem',
+      position: crumb.length + 1,
+      name: String(listing.city),
+      item: `https://hireanypro.com/services/${catSlug}/${cityPageSlug(String(listing.city), listing.state as string | null)}`,
+    });
+  }
+  crumb.push({ '@type': 'ListItem', position: crumb.length + 1, name: listing.name as string });
   const breadcrumb = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://hireanypro.com' },
-      ...(listing.categories ? [{ '@type': 'ListItem', position: 2, name: cat, item: `https://hireanypro.com/category/${(listing.categories as Record<string, string>).slug}` }] : []),
-      { '@type': 'ListItem', position: listing.categories ? 3 : 2, name: listing.name as string },
-    ],
+    itemListElement: crumb,
   };
 
   return [localBusiness, breadcrumb];
@@ -192,12 +189,16 @@ export default async function ListingPage({ params }: Props) {
   const views30 = !listing.claimed ? (await recentViews([listing.id]))[listing.id] || 0 : 0;
 
   const hours = normalizeHours(listing.hours);
+  const thinListing = isBoilerplateDescription(listing.description) && (!reviews || reviews.length === 0);
+  const market = thinListing && listing.category_id && listing.city
+    ? await getCityCategorySnapshot(listing.category_id, listing.city, listing.state, listing.slug)
+    : null;
   const address = cleanAddress(listing.address);
   const addressHasCity = !!(address && listing.city && address.toLowerCase().includes(String(listing.city).toLowerCase()));
   const cityLine = [listing.city, [stateCode(listing.state), listing.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+  const catLabel = listing.categories?.name ? catText(listing.categories.name) : 'home service';
   const description = (listing.description && String(listing.description).trim())
-    || `${listing.name} is a ${listing.categories?.name ? catText(listing.categories.name) : 'home service'} business${listing.city ? ` in ${listing.city}, ${stateCode(listing.state)}` : ''}${listing.rating && listing.review_count ? `, rated ${listing.rating} out of 5 from ${listing.review_count} Google reviews` : ''}. Request a free quote below.`;
-  const dayLabels: Record<string, string> = { monday: 'Monday', tuesday: 'Tuesday', wednesday: 'Wednesday', thursday: 'Thursday', friday: 'Friday', saturday: 'Saturday', sunday: 'Sunday' };
+    || `${listing.name} is ${/^[aeiou]/i.test(catLabel) ? 'an' : 'a'} ${catLabel} business${listing.city ? ` in ${listing.city}, ${stateCode(listing.state)}` : ''}${listing.rating && listing.review_count ? `, rated ${listing.rating} out of 5 from ${listing.review_count} Google reviews` : ''}. Request a free quote below.`;
   const jsonLdItems = buildJsonLd(listing);
   const isPaid = listing.tier === 'pro' || listing.tier === 'featured';
 
@@ -256,6 +257,26 @@ export default async function ListingPage({ params }: Props) {
               </div>
               <p className="text-gray-600 mt-4 leading-relaxed">{description}</p>
             </div>
+
+            {market && listing.categories && (
+              <ListingMarketContext
+                name={listing.name}
+                categoryName={listing.categories.name}
+                categorySlug={listing.categories.slug}
+                cityName={market.name}
+                citySlug={market.slug}
+                stateCode={stateCode(listing.state)}
+                stateName={stateName(listing.state)}
+                county={listingCounty}
+                zip={listing.zip}
+                hours={hours}
+                count={market.count}
+                rated={market.rated}
+                avg={market.avg}
+                totalReviews={market.totalReviews}
+                peers={market.peers}
+              />
+            )}
 
             {/* Map */}
             {listing.lat && listing.lng && (
@@ -367,10 +388,10 @@ export default async function ListingPage({ params }: Props) {
                 <div className="mt-6 pt-4 border-t border-gray-100">
                   <h3 className="font-semibold text-gray-900 text-sm mb-3">Hours</h3>
                   <div className="space-y-1.5 text-sm">
-                    {Object.entries(dayLabels).map(([key, label]) => (
+                    {Object.entries(DAY_LABELS).map(([key, label]) => (
                       <div key={key} className="flex justify-between">
                         <span className="text-gray-500">{label}</span>
-                        <span className="text-gray-900 font-medium">{hours[key] ? fmtHours(hours[key]) : 'Closed'}</span>
+                        <span className="text-gray-900 font-medium">{hours[key] ? formatDayHours(hours[key]) : 'Closed'}</span>
                       </div>
                     ))}
                   </div>

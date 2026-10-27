@@ -1,14 +1,28 @@
-import { supabase } from '@/lib/supabase';
 import { notFound, permanentRedirect } from 'next/navigation';
 import CategoryFilters from '@/components/CategoryFilters';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { CityIntro, CityFaq } from '@/components/CityInsights';
+import { CityIntro, CityStatsBlock, CityFaq } from '@/components/CityInsights';
 import CityQuoteForm from '@/components/CityQuoteForm';
-import { getCountyForCity, countySlug, stateName } from '@/lib/geo';
-import { CARD_COLUMNS, toCard, getCategoryCities, getCategoryBySlug, type CardListing } from '@/lib/listings';
+import { getCountyForCity, getCitiesInCounty, countySlug, stateName } from '@/lib/geo';
+import {
+  toCard,
+  getCategoryCities,
+  getCategoryBySlug,
+  getCityPageRows,
+  getCitySiblingCategories,
+  type CardListing,
+  type CityPageRow,
+} from '@/lib/listings';
+import {
+  computeCityStats,
+  lowerCategory,
+  neighborsInCounty,
+  neighborsInState,
+  shouldIndexCityPage,
+} from '@/lib/directory-content';
 
 // Cached pages (ISR): rendered on first request, then served from Vercel's cache and refreshed in the background.
 // Returning [] means nothing is prerendered at build time; every path is generated on demand and cached.
@@ -17,6 +31,26 @@ export async function generateStaticParams() {
 }
 
 type Props = { params: Promise<{ category: string; city: string }> };
+
+function cityCard(row: CityPageRow): CardListing {
+  const categories = Array.isArray(row.categories) ? row.categories[0] : row.categories;
+  return toCard({
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    city: row.city,
+    state: row.state,
+    zip: row.zip,
+    rating: row.rating,
+    review_count: row.review_count,
+    tier: row.tier,
+    featured: row.featured,
+    lat: row.lat,
+    lng: row.lng,
+    phone: row.phone,
+    categories: categories || undefined,
+  } as CardListing);
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category: catSlug, city: cSlug } = await params;
@@ -30,14 +64,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const count = group.count;
   const st = group.state;
   const stName = stateName(st);
+  const rows = await getCityPageRows(cat.id, group.variants, st, count);
+  const stats = computeCityStats(rows, count);
 
   const title = `${count > 1 ? `${count} ` : ''}Best ${cat.name} Pros in ${cityName}, ${st} (${new Date().getFullYear()}) | HireAnyPro`;
-  const lcName = cat.name.split(' ').map((w) => (w.length > 1 && w === w.toUpperCase() ? w : w.toLowerCase())).join(' ');
-  const description = `Compare ${count} ${lcName} ${count === 1 ? 'pro' : 'pros'} in ${cityName}, ${stName}: ratings, reviews, ZIP codes served and FAQs. Get up to 3 free quotes, no obligation.`;
+  const lcName = lowerCategory(cat.name);
+  const description = stats.rated > 0
+    ? `Compare ${count.toLocaleString('en-US')} ${lcName} ${count === 1 ? 'pro' : 'pros'} in ${cityName}, ${stName}. Average rating ${stats.avg.toFixed(1)}/5 across ${stats.totalReviews.toLocaleString('en-US')} reviews. Free quotes.`
+    : `Compare ${count.toLocaleString('en-US')} ${lcName} ${count === 1 ? 'pro' : 'pros'} in ${cityName}, ${stName}. See who lists a phone or website and request free quotes.`;
 
   return {
     title,
     description,
+    ...(shouldIndexCityPage(count) ? {} : { robots: { index: false, follow: true } }),
     alternates: { canonical: `https://hireanypro.com/services/${catSlug}/${cSlug}` },
     openGraph: { title, description, url: `https://hireanypro.com/services/${catSlug}/${cSlug}`, siteName: 'HireAnyPro' },
   };
@@ -63,53 +102,48 @@ export default async function CityLandingPage({ params }: Props) {
   const cityName = group.name;
   const stName = stateName(group.state);
 
-  // Query this city's listings directly. (Previously this loaded only the category's top 1,000 listings and
-  // filtered by city, so ~15% of city pages in the sitemap returned 404.)
-  const { data: cityListings } = await supabase
-    .from('listings')
-    .select(CARD_COLUMNS)
-    .eq('category_id', category.id)
-    .in('city', group.variants)
-    .eq('state', group.state)
-    .order('featured', { ascending: false })
-    .order('tier', { ascending: false }) // 'pro' sorts above 'free'
-    .order('review_count', { ascending: false, nullsFirst: false })
-    .order('rating', { ascending: false, nullsFirst: false })
-    .limit(500);
-
-  const listings = ((cityListings || []) as unknown as CardListing[]).map(toCard);
+  const [rows, siblings, county] = await Promise.all([
+    getCityPageRows(category.id, group.variants, group.state, group.count),
+    getCitySiblingCategories(group.variants, group.state, category.id),
+    group.state === 'FL' ? getCountyForCity(cityName) : Promise.resolve(null),
+  ]);
+  const listings = rows.slice(0, 500).map(cityCard);
   if (listings.length === 0) notFound();
-  // County pages are Florida-only; near-border GA/AL cities have no Florida county.
-  const county = group.state === 'FL' ? await getCountyForCity(cityName) : null;
 
-  // Related services: other categories in this city
-  const { data: otherCatRows } = await supabase
-    .from('listings')
-    .select('category_id, categories(name, slug)')
-    .in('city', group.variants)
-    .eq('state', group.state)
-    .neq('category_id', category.id)
-    .limit(1000);
+  const stats = computeCityStats(rows, group.count);
+  // Neighbor links stay inside the county (Florida) or the same state (GA/AL), so they are not the same 12 cities on every page.
+  // A city is a neighbor only when this county is its primary county (the county column on most of its listings).
+  // Otherwise one mistagged row would link the whole Sarasota page from a DeSoto page.
+  const countyCities = county ? await getCitiesInCounty(county) : [];
+  const primaryCountyCities = county
+    ? (await Promise.all(countyCities.map(async (name) => ((await getCountyForCity(name)) === county ? name : null)))).filter((name): name is string => !!name)
+    : [];
+  const neighbors = (county
+    ? neighborsInCounty(cityGroups, primaryCountyCities, cSlug, group.state)
+    : neighborsInState(cityGroups, cSlug, group.state)
+  ).slice(0, 12);
 
-  const relatedCategories = [...new Map(
-    (otherCatRows || [])
-      .filter(r => r.categories)
-      .map(r => [
-        (r.categories as unknown as { slug: string }).slug,
-        r.categories as unknown as { name: string; slug: string },
-      ])
-  ).values()].slice(0, 12);
+  const copy = {
+    categoryName: category.name,
+    categorySlug: category.slug,
+    cityName,
+    citySlug: cSlug,
+    stateCode: group.state,
+    stateName: stName,
+    county,
+    count: group.count,
+    stats,
+    neighbors,
+    siblings,
+  };
 
-  // Nearby cities (same category, different city)
-  const nearbyCities = [...cityGroups].filter(g => g.slug !== cSlug).sort((a, b) => b.count - a.count).slice(0, 12);
-
-  // JSON-LD
+  const itemList = listings.slice(0, 50);
   const itemListJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: `${category.name} in ${cityName}, ${stName}`,
-    numberOfItems: group.count,
-    itemListElement: listings.slice(0, 50).map((l, i) => ({
+    numberOfItems: itemList.length,
+    itemListElement: itemList.map((l, i) => ({
       '@type': 'ListItem',
       position: i + 1,
       url: `https://hireanypro.com/listing/${l.slug}`,
@@ -139,7 +173,6 @@ export default async function CityLandingPage({ params }: Props) {
           { label: cityName },
         ]} />
 
-        {/* Hero Banner */}
         <div className="relative h-48 md:h-64 rounded-xl overflow-hidden mb-8">
           <Image src={`/categories/${category.slug}.png`} alt={`${category.name} in ${cityName}`} fill className="object-cover" sizes="100vw" />
           <div className="absolute inset-0 bg-gradient-to-r from-blue-900/70 to-blue-900/30" />
@@ -152,7 +185,8 @@ export default async function CityLandingPage({ params }: Props) {
           </div>
         </div>
 
-        <CityIntro categoryName={category.name} cityName={cityName} count={group.count} listings={listings} stateName={stName} />
+        <CityIntro {...copy} />
+        <CityStatsBlock categoryName={category.name} cityName={cityName} count={group.count} stats={stats} />
 
         <CityQuoteForm categorySlug={category.slug} categoryName={category.name} citySlug={cSlug} cityName={cityName} />
 
@@ -161,55 +195,59 @@ export default async function CityLandingPage({ params }: Props) {
           cities={[cityName]}
         />
 
-        <CityFaq categoryName={category.name} categorySlug={category.slug} cityName={cityName} citySlug={cSlug} count={group.count} listings={listings} stateCode={group.state} stateName={stName} />
+        <CityFaq {...copy} />
 
-        {/* Related Services in this City */}
-        {relatedCategories.length > 0 && (
+        {siblings.length > 0 && (
           <section className="mt-16">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Related Services in {cityName}</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Other services in {cityName}</h2>
             <div className="flex flex-wrap gap-2">
-              {relatedCategories.map(rc => (
+              {siblings.map((rc) => (
                 <Link
                   key={rc.slug}
                   href={`/services/${rc.slug}/${cSlug}`}
                   className="px-4 py-2 bg-gray-100 hover:bg-blue-50 text-gray-700 hover:text-blue-800 rounded-lg text-sm font-medium transition-colors"
                 >
-                  {rc.name}
+                  {rc.name} ({rc.count.toLocaleString('en-US')})
                 </Link>
               ))}
             </div>
           </section>
         )}
 
-        {/* Nearby Cities */}
-        {nearbyCities.length > 0 && (
+        {neighbors.length > 0 && (
           <section className="mt-12">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">{category.name} in Nearby Cities</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              {category.name} in {county ? `other ${county} County cities` : `other ${stName} cities`}
+            </h2>
             <div className="flex flex-wrap gap-2">
-              {nearbyCities.map(nc => (
+              {neighbors.map((nc) => (
                 <Link
                   key={nc.slug}
                   href={`/services/${catSlug}/${nc.slug}`}
                   className="px-4 py-2 bg-gray-100 hover:bg-blue-50 text-gray-700 hover:text-blue-800 rounded-lg text-sm font-medium transition-colors"
                 >
-                  {nc.name}{nc.state !== 'FL' ? `, ${nc.state}` : ''}
+                  {nc.name}{nc.state !== 'FL' ? `, ${nc.state}` : ''} ({nc.count.toLocaleString('en-US')})
                 </Link>
               ))}
             </div>
           </section>
         )}
 
-        {/* County link */}
-        {county && (
-          <section className="mt-12 p-6 bg-blue-50 rounded-xl">
+        <section className="mt-12 p-6 bg-blue-50 rounded-xl space-y-2">
+          <p className="text-gray-700">
+            <Link href={`/category/${category.slug}`} className="text-blue-800 font-semibold hover:underline">
+              All {lowerCategory(category.name)} pros
+            </Link>
+            {' '}across Florida and nearby cities.
+          </p>
+          {county && (
             <p className="text-gray-700">
-              Browse all home services in{' '}
               <Link href={`/region/${countySlug(county)}`} className="text-blue-800 font-semibold hover:underline">
-                {county} County
+                All home services in {county} County
               </Link>
             </p>
-          </section>
-        )}
+          )}
+        </section>
       </div>
     </>
   );

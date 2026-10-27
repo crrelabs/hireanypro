@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { getAllBlogSlugs } from '@/lib/blog';
 import { cityPageSlug, countySlug } from '@/lib/geo';
+import { shouldIndexCityPage } from '@/lib/directory-content';
 import { renderSitemapIndex, renderUrlset } from '@/lib/sitemap-xml';
 import type { SitemapIndexEntry, SitemapUrl } from '@/lib/sitemap-xml';
 
@@ -210,6 +211,7 @@ export async function getCitiesSitemapUrls(): Promise<SitemapUrl[]> {
 
   const catIdToSlug = new Map((catRows || []).map((c) => [c.id as string, c.slug as string]));
   const cityLastmod = new Map<string, string>();
+  const cityCount = new Map<string, number>();
   const countyLastmod = new Map<string, string>();
 
   for (const row of rows) {
@@ -217,15 +219,20 @@ export async function getCitiesSitemapUrls(): Promise<SitemapUrl[]> {
     if (row.city && row.category_id) {
       const catSlug = catIdToSlug.get(row.category_id);
       if (catSlug) {
-        rememberLatest(cityLastmod, `${catSlug}/${cityPageSlug(row.city, row.state)}`, lastmod);
+        const key = `${catSlug}/${cityPageSlug(row.city, row.state)}`;
+        cityCount.set(key, (cityCount.get(key) || 0) + 1);
+        rememberLatest(cityLastmod, key, lastmod);
       }
     }
-    if (row.county) {
+    // County hubs are Florida-only. GA/AL rows have a null county.
+    if (row.county && (row.state || 'FL').trim().toUpperCase() === 'FL') {
       rememberLatest(countyLastmod, row.county, lastmod);
     }
   }
 
+  // Pages with fewer than 3 listings are noindex. Leaving them in the sitemap spends crawl budget on thin URLs.
   const cityUrls: SitemapUrl[] = [...cityLastmod.entries()]
+    .filter(([combo]) => shouldIndexCityPage(cityCount.get(combo) || 0))
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([combo, lastmod]) => ({
       loc: `${BASE_URL}/services/${combo}`,
