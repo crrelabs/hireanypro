@@ -3,7 +3,6 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Page Not Found — HireAnyPro',
-  robots: { index: false, follow: true },
 };
 
 const POPULAR = [

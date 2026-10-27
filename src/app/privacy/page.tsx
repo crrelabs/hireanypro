@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy — HireAnyPro',
-  description: 'How HireAnyPro collects, uses, and protects your information.',
+  description: 'How HireAnyPro (CRRE Labs LLC) collects, uses and protects information from homeowners requesting quotes and businesses claiming listings, including SMS and email.',
   alternates: { canonical: 'https://hireanypro.com/privacy' },
 };
 

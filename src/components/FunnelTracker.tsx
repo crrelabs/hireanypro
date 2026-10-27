@@ -16,7 +16,8 @@ export default function FunnelTracker() {
       else if (href.includes('checkout.stripe.com') || href.includes('buy.stripe.com')) name = 'checkout_click';
       if (!name) return;
       const w = window as unknown as { gtag?: (...args: unknown[]) => void };
-      w.gtag?.('event', name, { link_url: href, page_path: window.location.pathname });
+      // Never send the signed one-click token (ct) to analytics.
+      w.gtag?.('event', name, { link_url: href.replace(/([?&])ct=[^&#]*&?/, '$1').replace(/[?&]$/, ''), page_path: window.location.pathname });
     };
     document.addEventListener('click', onClick, true);
     return () => document.removeEventListener('click', onClick, true);

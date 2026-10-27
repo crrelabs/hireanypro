@@ -242,7 +242,7 @@ export default async function ListingPage({ params }: Props) {
                         <StarRating rating={listing.rating} size="md" />
                         <span className="font-semibold text-gray-900">{listing.rating}</span>
                         {listing.review_count > 0 && (
-                          <span className="text-gray-400 text-sm">on Google · {listing.review_count} reviews</span>
+                          <span className="text-gray-400 text-sm">on Google · {listing.review_count} {listing.review_count === 1 ? 'review' : 'reviews'}</span>
                         )}
                       </>
                     ) : (
@@ -396,7 +396,7 @@ export default async function ListingPage({ params }: Props) {
             <div className="flex items-center gap-2 mb-4 pb-4 border-b border-gray-100">
               <StarRating rating={listing.rating} size="md" />
               <span className="font-semibold text-gray-900">{listing.rating}</span>
-              <span className="text-gray-500 text-sm">on Google · {listing.review_count} reviews</span>
+              <span className="text-gray-500 text-sm">on Google · {listing.review_count} {listing.review_count === 1 ? 'review' : 'reviews'}</span>
             </div>
           )}
           <h2 className="text-xl font-bold text-gray-900 mb-4">
