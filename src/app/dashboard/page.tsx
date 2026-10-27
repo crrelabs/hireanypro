@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import SmsToggle from './SmsToggle';
+import BadgeBox from './BadgeBox';
 
 type DashboardData = {
   listings: Array<{
@@ -201,6 +202,7 @@ function DashboardPage() {
                   </div>
                 )}
                 <SmsToggle listingId={l.id} initialPhone={l.smsPhone || null} />
+                <BadgeBox slug={l.slug} name={l.name} />
               </div>
               <div className="flex items-center gap-3">
                 <span className={`text-xs font-bold px-3 py-1 rounded-full uppercase ${
