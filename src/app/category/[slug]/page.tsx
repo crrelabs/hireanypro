@@ -1,11 +1,14 @@
-import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 import CategoryFilters from '@/components/CategoryFilters';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { CARD_COLUMNS, toCard, getCategoryCities, getCategoryBySlug, type CardListing } from '@/lib/listings';
+import { CategorySummary, CategoryCounties, CategoryFaq } from '@/components/CategoryHub';
+import { supabase } from '@/lib/supabase';
+import { stateName } from '@/lib/geo';
+import { CARD_COLUMNS, toCard, getCategoryCities, getCategoryBySlug, getCategoryRollup, type CardListing } from '@/lib/listings';
+import { formatCount, lowerCategory, type CategoryNarrativeInput } from '@/lib/directory-content';
 
 // Cached pages (ISR): rendered on first request, then served from Vercel's cache and refreshed in the background.
 // Returning [] means nothing is prerendered at build time; every path is generated on demand and cached.
@@ -15,13 +18,42 @@ export async function generateStaticParams() {
 
 type Props = { params: Promise<{ slug: string }> };
 
+async function categoryNarrative(category: { id: string; name: string; slug: string }): Promise<CategoryNarrativeInput> {
+  const [cityGroups, rollup] = await Promise.all([
+    getCategoryCities(category.id),
+    getCategoryRollup(category.id),
+  ]);
+  const total = cityGroups.reduce((n, g) => n + g.count, 0);
+  const topCities = [...cityGroups].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)).slice(0, 5);
+  // Prefer the city-group total (every listing with a city). Rollup matches it for FL/GA/AL; use it for ratings and counties.
+  const aligned = rollup.total === total;
+  return {
+    categoryName: category.name,
+    categorySlug: category.slug,
+    total,
+    cityCount: cityGroups.length,
+    byState: rollup.byState,
+    rated: aligned ? rollup.rated : 0,
+    avg: aligned ? rollup.avg : 0,
+    totalReviews: aligned ? rollup.totalReviews : 0,
+    withPhone: aligned ? rollup.withPhone : 0,
+    withWebsite: aligned ? rollup.withWebsite : 0,
+    counties: rollup.counties,
+    topCities,
+  };
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const { data: category } = await supabase.from('categories').select('name').eq('slug', slug).single();
+  const category = await getCategoryBySlug(slug);
   if (!category) return { title: 'Category Not Found' };
-  const lcName = category.name.split(' ').map((w: string) => (w.length > 1 && w === w.toUpperCase() ? w : w.toLowerCase())).join(' ');
-  const title = `Best ${category.name} Pros in Florida: Compare Ratings & Get Free Quotes | HireAnyPro`;
-  const description = `Find top-rated ${lcName} professionals in Florida. Compare ratings, read reviews, and request free quotes on HireAnyPro.`;
+  const story = await categoryNarrative(category);
+  const lcName = lowerCategory(category.name);
+  const top = story.topCities[0];
+  const title = `${category.name} Pros in Florida: ${formatCount(story.total)} Listings by City | HireAnyPro`;
+  const description = top
+    ? `Compare ${formatCount(story.total)} ${lcName} pros in ${formatCount(story.cityCount)} cities${story.counties[0] ? `, led by ${story.counties[0].county} County` : ''}. Most listings are in ${top.name}. Ratings and free quotes.`
+    : `Compare ${lcName} pros in Florida. Ratings and free quotes on HireAnyPro.`;
   return {
     title,
     description,
@@ -38,17 +70,18 @@ export default async function CategoryPage({ params }: Props) {
   const category = await getCategoryBySlug(slug);
   if (!category) notFound();
 
-  // Every city in the category with counts (complete, not capped at 1,000 rows).
   const cityGroups = await getCategoryCities(category.id);
-  const totalCount = cityGroups.reduce((n, g) => n + g.count, 0);
+  const story = await categoryNarrative(category);
+  const totalCount = story.total;
 
   // Top listings only, with card fields only. (This page used to ship ~1,000 full listing records: 2.2 MB of HTML.)
   const { data: topRows } = await supabase
     .from('listings')
     .select(CARD_COLUMNS)
     .eq('category_id', category.id)
+    .eq('state', 'FL')
     .order('featured', { ascending: false })
-    .order('tier', { ascending: false }) // 'pro' sorts above 'free'
+    .order('tier', { ascending: false })
     .order('review_count', { ascending: false, nullsFirst: false })
     .order('rating', { ascending: false, nullsFirst: false })
     .limit(120);
@@ -57,36 +90,26 @@ export default async function CategoryPage({ params }: Props) {
   const cities = [...new Set(listings.map((l) => l.city).filter(Boolean))].sort();
   const popularCities = [...cityGroups].sort((a, b) => b.count - a.count).slice(0, 20);
   const allCities = [...cityGroups].sort((a, b) => a.name.localeCompare(b.name));
+  const otherStates = (['GA', 'AL'] as const)
+    .map((code) => ({
+      code,
+      name: stateName(code),
+      cities: cityGroups.filter((g) => g.state === code).sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)),
+    }))
+    .filter((s) => s.cities.length > 0);
 
-  // JSON-LD
+  const itemList = listings.slice(0, 50);
   const itemListJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: `${category.name} in Florida`,
-    numberOfItems: totalCount,
-    itemListElement: listings.slice(0, 50).map((l, i) => ({
+    numberOfItems: itemList.length,
+    itemListElement: itemList.map((l, i) => ({
       '@type': 'ListItem',
       position: i + 1,
       url: `https://hireanypro.com/listing/${l.slug}`,
       name: l.name,
     })),
-  };
-
-  // Answer-first intro + FAQ from real data (rating stats cover the most-reviewed pros loaded on this page).
-  const lcCat = category.name.split(' ').map((w: string) => (w.length > 1 && w === w.toUpperCase() ? w : w.toLowerCase())).join(' ');
-  const rated = listings.filter((l) => (l.rating || 0) > 0 && (l.review_count || 0) > 0);
-  const totalReviews = rated.reduce((s, l) => s + (l.review_count || 0), 0);
-  const avg = totalReviews ? rated.reduce((s, l) => s + (l.rating || 0) * (l.review_count || 0), 0) / totalReviews : 0;
-  const topCities = popularCities.slice(0, 5);
-  const faqs: { q: string; a: string }[] = [
-    { q: `How many ${lcCat} pros does HireAnyPro list in Florida?`, a: `HireAnyPro lists ${totalCount.toLocaleString('en-US')} ${lcCat} businesses in ${cityGroups.length} cities${topCities.length ? `. The most are in ${topCities.map((c) => `${c.name} (${c.count})`).join(', ')}` : ''}.` },
-    ...(rated.length ? [{ q: `How are ${lcCat} pros rated?`, a: `Among the ${listings.length} most-reviewed ${lcCat} pros on HireAnyPro, ${rated.length} have public customer ratings, with a review-weighted average of ${avg.toFixed(1)} out of 5 across ${totalReviews.toLocaleString('en-US')} reviews.` }] : []),
-    { q: `How do I get a ${lcCat} quote?`, a: `Pick your city below, then use the free quote form to send your job to up to three top-rated ${lcCat} pros, or request a quote from any single listing. It's free and there's no obligation to hire.` },
-  ];
-  const faqJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
   };
 
   const breadcrumbJsonLd = {
@@ -98,11 +121,12 @@ export default async function CategoryPage({ params }: Props) {
     ],
   };
 
+  const lcCat = lowerCategory(category.name);
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Breadcrumbs items={[
@@ -111,7 +135,6 @@ export default async function CategoryPage({ params }: Props) {
           { label: category.name },
         ]} />
 
-        {/* Hero Banner */}
         <div className="relative h-48 md:h-64 rounded-xl overflow-hidden mb-8">
           <Image src={`/categories/${slug}.png`} alt={category.name} fill className="object-cover" sizes="100vw" />
           <div className="absolute inset-0 bg-gradient-to-r from-blue-900/70 to-blue-900/30" />
@@ -119,14 +142,12 @@ export default async function CategoryPage({ params }: Props) {
             <div>
               <span className="text-4xl mb-2 block">{category.icon}</span>
               <h1 className="text-2xl md:text-3xl font-bold text-white">{category.name}</h1>
-              <p className="text-blue-100 text-sm mt-1">{totalCount.toLocaleString('en-US')} professionals in {cityGroups.length} cities in Florida and nearby</p>
+              <p className="text-blue-100 text-sm mt-1">{formatCount(totalCount)} professionals in {formatCount(cityGroups.length)} cities</p>
             </div>
           </div>
         </div>
 
-        <section className="mb-8 text-gray-700 leading-relaxed max-w-4xl">
-          <p>{faqs[0].a}{rated.length > 0 && <> {faqs[1].a}</>} Compare pros below and request a free quote.</p>
-        </section>
+        <CategorySummary {...story} />
 
         {listings.length > 0 ? (
           <>
@@ -136,7 +157,7 @@ export default async function CategoryPage({ params }: Props) {
             />
             {totalCount > listings.length && (
               <p className="mt-6 text-sm text-gray-500 text-center">
-                Showing the {listings.length} most-reviewed {category.name.split(' ').map((w: string) => (w.length > 1 && w === w.toUpperCase() ? w : w.toLowerCase())).join(' ')} pros statewide. Pick your city below to see all {totalCount.toLocaleString('en-US')}.
+                Showing the {listings.length} most-reviewed {lcCat} pros in Florida. Pick a city below to see all {formatCount(totalCount)}.
               </p>
             )}
           </>
@@ -144,23 +165,36 @@ export default async function CategoryPage({ params }: Props) {
           <div className="text-center py-16">
             <span className="text-5xl mb-4 block">{category.icon}</span>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No listings yet</h3>
-            <p className="text-gray-500 text-sm">Be the first {category.name.split(' ').map((w: string) => (w.length > 1 && w === w.toUpperCase() ? w : w.toLowerCase())).join(' ')} professional listed!</p>
+            <p className="text-gray-500 text-sm">Be the first {lcCat} professional listed!</p>
           </div>
         )}
 
-        <section className="mt-16 max-w-4xl">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">{category.name}: Frequently Asked Questions</h2>
-          <div className="divide-y divide-gray-200 border border-gray-200 rounded-xl bg-white">
-            {faqs.map((f) => (
-              <details key={f.q} className="p-5">
-                <summary className="font-semibold text-gray-900 cursor-pointer">{f.q}</summary>
-                <p className="mt-3 text-gray-700">{f.a}</p>
-              </details>
-            ))}
-          </div>
-        </section>
+        <CategoryCounties categoryName={category.name} categorySlug={category.slug} counties={story.counties} />
 
-        {/* Popular Cities */}
+        {otherStates.length > 0 && (
+          <section className="mt-12">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">{category.name} outside Florida</h2>
+            {otherStates.map((st) => (
+              <div key={st.code} className="mb-4">
+                <h3 className="text-sm font-semibold text-gray-700 mb-2">{st.name}</h3>
+                <div className="flex flex-wrap gap-2">
+                  {st.cities.map((city) => (
+                    <Link
+                      key={city.slug}
+                      href={`/services/${slug}/${city.slug}`}
+                      className="px-4 py-2 bg-gray-100 hover:bg-blue-50 text-gray-700 hover:text-blue-800 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      {city.name} ({city.count.toLocaleString('en-US')})
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </section>
+        )}
+
+        <CategoryFaq {...story} />
+
         {popularCities.length > 0 && (
           <section className="mt-16">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Popular Cities for {category.name}</h2>
@@ -178,7 +212,6 @@ export default async function CategoryPage({ params }: Props) {
           </section>
         )}
 
-        {/* Every city, so each city page is one click from the category hub */}
         {allCities.length > popularCities.length && (
           <section className="mt-12">
             <h2 className="text-xl font-bold text-gray-900 mb-4">{category.name} in Every City We Cover</h2>
