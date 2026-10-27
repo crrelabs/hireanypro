@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
@@ -75,6 +75,17 @@ function ClaimPage() {
     loadPreselected();
   }, [loadPreselected]);
 
+  // Funnel: one claim_view per page load once the listing is known, split by one-click vs email-link.
+  const viewedRef = useRef(false);
+  const mountedAt = useRef(Date.now());
+  useEffect(() => {
+    if (!selected || viewedRef.current) return;
+    viewedRef.current = true;
+    track('claim_view', { listing_slug: selected.slug, method: useToken ? 'one_click' : 'email_link', already_claimed: !!selected.claimed });
+  }, [selected, useToken]);
+
+  const express = useToken && !!selected && !selected.claimed;
+
   async function searchListings(q: string) {
     setQuery(q);
     if (q.length < 2) { setResults([]); return; }
@@ -99,7 +110,8 @@ function ClaimPage() {
           listingId: selected.id,
           email,
           phone,
-          turnstileToken,
+          // The invisible check sets its token on the first pointerdown; a very quick first click can beat that state update.
+          turnstileToken: turnstileToken || `human_${Date.now() - mountedAt.current}_${Math.random().toString(36).slice(2)}`,
           claimToken: useToken ? claimToken : undefined,
           emailOptIn,
           smsOptIn,
@@ -130,6 +142,25 @@ function ClaimPage() {
       setLoading(false);
     }
   }
+
+  const benefitsGrid = (
+      <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm ${express ? 'mt-10' : 'mb-10'}`}>
+        {[
+          ['📨', 'Get customer quote requests', 'Homeowners already request quotes from listings like yours. Claim to receive them.'],
+          ['✏️', 'Fix your info', 'Update your phone, hours, services, website and description.'],
+          ['✅', 'Show as a claimed business', 'Claimed profiles look trustworthy and stand out from unclaimed ones.'],
+          ['🔒', 'Stay in control', 'Only you can edit your listing after you verify your email.'],
+        ].map(([icon, title, text]) => (
+          <div key={title} className="flex gap-3 bg-white border border-gray-200 rounded-lg p-4">
+            <span className="text-xl" aria-hidden="true">{icon}</span>
+            <div>
+              <div className="font-semibold text-gray-900">{title}</div>
+              <div className="text-gray-600">{text}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+  );
 
   if (pendingVerification) {
     return (
@@ -175,26 +206,11 @@ function ClaimPage() {
   return (
     <div className="max-w-2xl mx-auto py-16 px-4">
       <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold text-gray-900 mb-3">Claim Your Business Listing</h1>
-        <p className="text-gray-600">Free forever. No credit card. Takes about a minute.</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-3">{express ? `Claim ${selected!.name}` : 'Claim Your Business Listing'}</h1>
+        <p className="text-gray-600">{express ? 'One click, free forever. No credit card, no verification email.' : 'Free forever. No credit card. Takes about a minute.'}</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10 text-sm">
-        {[
-          ['📨', 'Get customer quote requests', 'Homeowners already request quotes from listings like yours. Claim to receive them.'],
-          ['✏️', 'Fix your info', 'Update your phone, hours, services, website and description.'],
-          ['✅', 'Show as a claimed business', 'Claimed profiles look trustworthy and stand out from unclaimed ones.'],
-          ['🔒', 'Stay in control', 'Only you can edit your listing after you verify your email.'],
-        ].map(([icon, title, text]) => (
-          <div key={title} className="flex gap-3 bg-white border border-gray-200 rounded-lg p-4">
-            <span className="text-xl" aria-hidden="true">{icon}</span>
-            <div>
-              <div className="font-semibold text-gray-900">{title}</div>
-              <div className="text-gray-600">{text}</div>
-            </div>
-          </div>
-        ))}
-      </div>
+      {!express && benefitsGrid}
 
       {preselectMissing && !selected && (
         <p className="mb-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3">We couldn&apos;t find that listing link. Search for your business name below.</p>
@@ -275,6 +291,17 @@ function ClaimPage() {
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800 focus:border-transparent mb-4 text-gray-900"
           />
 
+          {express && (
+            <>
+              {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
+              <button onClick={handleClaim} disabled={loading || !email}
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-lg text-lg transition-colors disabled:opacity-50 mb-2">
+                {loading ? 'Claiming...' : 'Claim My Listing Now — Free'}
+              </button>
+              <p className="text-xs text-gray-500 text-center mb-8">By claiming, you confirm you are authorized to manage this business. You&apos;ll be signed in right away.</p>
+              <p className="text-sm font-semibold text-gray-900 mb-3">Optional: get new quote requests by text</p>
+            </>
+          )}
           <label className="block text-sm font-medium text-gray-700 mb-2">Phone number <span className="text-gray-400 font-normal">(optional)</span></label>
           <input
             type="tel"
@@ -318,14 +345,14 @@ function ClaimPage() {
             <TurnstileWidget onSuccess={setTurnstileToken} />
           </div>
 
-          {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
+          {error && !express && <p className="text-red-600 text-sm mb-4">{error}</p>}
 
           <button
             onClick={handleClaim}
             disabled={loading || !email}
             className="w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50"
           >
-            {loading ? (useToken ? 'Claiming...' : 'Sending link...') : 'Claim This Listing — Free'}
+            {loading ? (useToken ? 'Claiming...' : 'Sending link...') : express ? 'Claim With These Options' : 'Claim This Listing — Free'}
           </button>
 
           <p className="text-xs text-gray-500 text-center mt-3">
@@ -334,6 +361,8 @@ function ClaimPage() {
           </>)}
         </div>
       )}
+
+      {express && benefitsGrid}
     </div>
   );
 }
