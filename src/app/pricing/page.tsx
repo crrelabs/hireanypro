@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 
-type Biz = { id: string; name: string; slug: string; city?: string | null; tier?: string | null; claimed?: boolean | null };
+type Biz = { id: string; name: string; slug: string; city?: string | null; state?: string | null; tier?: string | null; claimed?: boolean | null };
 const track = (name: string, p: Record<string, unknown> = {}) => {
   const w = window as unknown as { gtag?: (...a: unknown[]) => void };
   w.gtag?.('event', name, { page_path: '/pricing', ...p });
@@ -89,9 +89,16 @@ export default function PricingPage() {
     setListingId(l);
     const plan = params.get('plan');
     if (plan === 'pro' || plan === 'featured') setSelectedPlan(plan);
+    // Upgrade emails carry the signed listing token (same format as one-click claim links); it names the address the
+    // email went to, so prefill it. The server still checks that this email owns the listing.
+    const ct = params.get('ct') || '';
+    let tokenEmail = '';
+    try { const p = JSON.parse(atob((ct.split('.')[0] || '').replace(/-/g, '+').replace(/_/g, '/'))); if (typeof p.e === 'string') tokenEmail = p.e; } catch {}
+    if (tokenEmail) setEmail(tokenEmail);
+    track('pricing_view', { has_listing: !!l, from_email_link: !!tokenEmail, plan: plan || '' });
     if (l) {
       const col = /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(l) ? 'id' : 'slug';
-      supabase.from('listings').select('id, name, slug, city, tier, claimed').eq(col, l).maybeSingle()
+      supabase.from('listings').select('id, name, slug, city, state, tier, claimed').eq(col, l).maybeSingle()
         .then(({ data }) => { if (data) setBiz(data as Biz); });
     }
     fetch('/api/auth/me').then((r) => r.json()).then((me) => {
@@ -108,7 +115,7 @@ export default function PricingPage() {
   async function search(v: string) {
     setQ(v);
     if (v.trim().length < 2) { setResults([]); return; }
-    const { data } = await supabase.from('listings').select('id, name, slug, city, tier, claimed')
+    const { data } = await supabase.from('listings').select('id, name, slug, city, state, tier, claimed')
       .ilike('name', `%${v.trim().replace(/[%_,()]/g, ' ')}%`).limit(8);
     setResults((data as Biz[]) || []);
   }
@@ -152,6 +159,18 @@ export default function PricingPage() {
             Choose the plan that fits your business. Upgrade anytime to get more leads and visibility.
           </p>
         </div>
+
+        {biz && !selectedPlan && (biz.tier === 'free' || !biz.tier) && (
+          <div className="max-w-3xl mx-auto mb-12 bg-white border-2 border-blue-800 rounded-2xl p-6 flex flex-col md:flex-row md:items-center gap-4">
+            <div className="flex-1">
+              <p className="text-xs font-bold uppercase tracking-wide text-blue-800 mb-1">Your listing</p>
+              <p className="text-lg font-bold text-gray-900">{biz.name}{biz.city ? ` · ${biz.city}, ${biz.state || 'FL'}` : ''}</p>
+              <p className="text-sm text-gray-600">Currently on the Free plan. Pro shows your phone and website, ranks you above free listings and sends every quote request with the customer&apos;s full contact details.</p>
+            </div>
+            <button onClick={() => { setSelectedPlan('pro'); track('upgrade_banner_click', { listing_slug: biz.slug }); }}
+              className="shrink-0 bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-lg">Upgrade to Pro: $9/mo</button>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {plans.map((p) => (
@@ -221,7 +240,7 @@ export default function PricingPage() {
                   <div className="flex justify-between items-start bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
                     <div>
                       <div className="font-semibold text-gray-900">{biz.name}</div>
-                      {biz.city && <div className="text-sm text-gray-600">{biz.city}, FL</div>}
+                      {biz.city && <div className="text-sm text-gray-600">{biz.city}, {biz.state || 'FL'}</div>}
                     </div>
                     <button type="button" onClick={() => { setBiz(null); setListingId(''); }} className="text-sm text-blue-800 hover:underline">Change</button>
                   </div>
