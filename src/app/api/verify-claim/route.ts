@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
-import { sendClaimVerification } from '@/lib/claim-email';
+import { sendClaimVerification, sendClaimConfirmed } from '@/lib/claim-email';
 import { setSessionCookie } from '@/lib/session';
 import { revalidateListing } from '@/lib/revalidate';
 
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     // Check listing isn't already claimed by someone else
     const { data: listing } = await supabase
       .from('listings')
-      .select('id, claimed')
+      .select('id, claimed, name, slug')
       .eq('id', claim.listing_id)
       .single();
 
@@ -91,6 +91,10 @@ export async function POST(req: NextRequest) {
         plan: 'free',
         status: 'active',
       });
+    }
+
+    if (claim.email && listing?.slug) {
+      await sendClaimConfirmed(claim.email, listing.name || 'your business', listing.slug).catch(() => false);
     }
 
     // Verified email = proof of ownership: sign the owner straight into their dashboard.

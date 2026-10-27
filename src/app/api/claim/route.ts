@@ -4,7 +4,7 @@ import { verifyTurnstile } from '@/lib/turnstile';
 import { isRateLimited, getClientIp } from '@/lib/rate-limit';
 import { isBot } from '@/lib/honeypot';
 import { notifyNewClaim, notifyVerifiedClaim } from '@/lib/notify';
-import { sendClaimVerification } from '@/lib/claim-email';
+import { sendClaimVerification, sendClaimConfirmed } from '@/lib/claim-email';
 import crypto from 'crypto';
 import { recordSmsOptIn } from '@/lib/sms-leads';
 import { verifyClaimLink } from '@/lib/claim-link';
@@ -79,6 +79,7 @@ export async function POST(req: NextRequest) {
       await supabase.from('subscriptions').insert({ listing_id: listing.id, profile_id: owner.id, plan: 'free', status: 'active' });
       notifyVerifiedClaim(listing.name || 'Unknown Business', email, listing.slug || '').catch(() => {});
       await revalidateListing(supabase, listing.id);
+      if (listing.slug) await sendClaimConfirmed(email, listing.name || 'your business', listing.slug).catch(() => false);
       const res = NextResponse.json({ success: true, verified: true, listingId: listing.id });
       setSessionCookie(res, email);
       return res;

@@ -6,6 +6,11 @@ const REPLY_TO = 'iris@hireanypro.com';
 
 /** Append utm params to every https://hireanypro.com link (skips /api/ endpoints like unsubscribe and sign-in callbacks, and links that already carry utm_). */
 export function tagLinks(body: string, campaign: string, medium = 'transactional'): string {
+  // [[notag]]...[[/notag]] marks copy-paste code (e.g. the badge snippet) whose links must stay exactly as written.
+  if (body.includes('[[notag]]')) {
+    return body.split(/(\[\[notag\]\][\s\S]*?\[\[\/notag\]\])/).map((part) =>
+      part.startsWith('[[notag]]') ? part : tagLinks(part, campaign, medium)).join('');
+  }
   const utm = `utm_source=email&utm_medium=${encodeURIComponent(medium)}&utm_campaign=${encodeURIComponent(campaign)}`;
   return body.replace(/https:\/\/(?:www\.)?hireanypro\.com(\/[^\s"'<>)]*)?/g, (m, path = '') => {
     if (/^\/api\//.test(path) || /[?&]utm_/.test(m)) return m;
@@ -25,6 +30,8 @@ export async function sendMail(opts: { to: string; subject: string; html?: strin
     const c = opts.campaign || 'transactional';
     opts = { ...opts, html: opts.html && tagLinks(opts.html, c), text: opts.text && tagLinks(opts.text, c) };
   }
+  const strip = (b?: string) => b && b.replace(/\[\[\/?notag\]\]/g, '');
+  opts = { ...opts, html: strip(opts.html), text: strip(opts.text) };
   const key = (process.env.RESEND_API_KEY || '').trim();
   if (key) {
     try {
