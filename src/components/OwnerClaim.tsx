@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 
 /**
  * Owners who open their listing from one of our claim emails arrive with ?ct=<signed token> (and utm_medium=outreach).
@@ -8,15 +8,14 @@ import { useEffect, useState } from 'react';
  * verification-email flow. These helpers keep the token and put a clear "this is your listing" prompt on top.
  * The page itself stays static (ISR); we only read the query string in the browser. Clicks are counted as claim_click by FunnelTracker.
  */
+const noopSubscribe = () => () => {};
 function useEmailArrival() {
-  const [state, setState] = useState<{ ct: string; fromEmail: boolean }>({ ct: '', fromEmail: false });
-  useEffect(() => {
-    const p = new URLSearchParams(window.location.search);
-    const ct = p.get('ct') || '';
-    const fromEmail = !!ct || (p.get('utm_source') === 'email' && p.get('utm_medium') === 'outreach');
-    setState({ ct, fromEmail });
-  }, []);
-  return state;
+  // Server render (and hydration) see '' so the static HTML never differs; the browser then reads the real query.
+  const search = useSyncExternalStore(noopSubscribe, () => window.location.search, () => '');
+  const p = new URLSearchParams(search);
+  const ct = p.get('ct') || '';
+  const fromEmail = !!ct || (p.get('utm_source') === 'email' && p.get('utm_medium') === 'outreach');
+  return { ct, fromEmail };
 }
 
 function claimHref(slug: string, ct: string, source: string) {
