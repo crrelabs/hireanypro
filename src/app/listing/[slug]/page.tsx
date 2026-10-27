@@ -7,6 +7,7 @@ import QuoteRequestForm from '@/components/QuoteRequestForm';
 import ReviewForm from '@/components/ReviewForm';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import ListingViewBeacon from '@/components/ListingViewBeacon';
+import { OwnerClaimBanner, ClaimLink } from '@/components/OwnerClaim';
 import { recentViews } from '@/lib/listing-views';
 import Link from 'next/link';
 import type { Metadata } from 'next';
@@ -215,6 +216,8 @@ export default async function ListingPage({ params }: Props) {
           { label: listing.name },
         ]} />
 
+        {!listing.claimed && <OwnerClaimBanner slug={listing.slug} name={listing.name} />}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
@@ -347,9 +350,9 @@ export default async function ListingPage({ params }: Props) {
 
                   {!listing.claimed && (
                     <>
-                      <a href={`/claim?listing=${listing.slug}&utm_source=listing_page&utm_medium=web`} className="block w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors text-sm text-center mt-4">
+                      <ClaimLink slug={listing.slug} className="block w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors text-sm text-center mt-4">
                         🏢 Are you the owner? Claim this listing
-                      </a>
+                      </ClaimLink>
                       {views30 >= 2 && (
                         <p className="text-xs text-gray-700 text-center bg-yellow-50 border border-yellow-200 rounded-md py-1.5 px-2">👀 {views30} people viewed this page in the last 30 days.</p>
                       )}
@@ -377,9 +380,9 @@ export default async function ListingPage({ params }: Props) {
               {/* Claim CTA for paid listings that somehow aren't claimed */}
               {isPaid && !listing.claimed && (
                 <div className="mt-6 pt-4 border-t border-gray-100">
-                  <a href={`/claim?listing=${listing.slug}&utm_source=listing_page&utm_medium=web`} className="block w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors text-sm text-center">
+                  <ClaimLink slug={listing.slug} className="block w-full bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors text-sm text-center">
                     🏢 Claim This Listing
-                  </a>
+                  </ClaimLink>
                   <p className="text-xs text-gray-400 text-center mt-2">Are you the owner? Claim to manage this page.</p>
                 </div>
               )}
