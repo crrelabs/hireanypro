@@ -175,6 +175,7 @@ export async function getPagesSitemapUrls(): Promise<SitemapUrl[]> {
     { loc: `${BASE_URL}/blog`, lastmod: latestBlog, changefreq: 'daily', priority: 0.8 },
     { loc: `${BASE_URL}/contact`, changefreq: 'yearly', priority: 0.3 },
     { loc: `${BASE_URL}/about`, changefreq: 'yearly', priority: 0.4 },
+    { loc: `${BASE_URL}/data/florida-contractor-ratings-2026`, lastmod: '2026-10-27', changefreq: 'monthly', priority: 0.6 },
     { loc: `${BASE_URL}/claim`, changefreq: 'monthly', priority: 0.5 },
   ];
 
