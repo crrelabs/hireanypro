@@ -192,7 +192,7 @@ function DashboardPage() {
                   {l.name}
                 </Link>
                 <div className="text-sm text-gray-500 mt-1">
-                  {l.rating ? <>⭐ {Number(l.rating).toFixed(1)} ({l.review_count || 0} reviews) · </> : null}👀 {l.views30 || 0} {l.views30 === 1 ? 'view' : 'views'} in the last 30 days
+                  {l.rating ? <>⭐ {Number(l.rating).toFixed(1)} ({l.review_count || 0} {l.review_count === 1 ? 'review' : 'reviews'}) · </> : null}👀 {l.views30 || 0} {l.views30 === 1 ? 'view' : 'views'} in the last 30 days
                 </div>
                 {l.tier === 'free' && (l.views30 || 0) >= 3 && (
                   <div className="text-sm text-gray-700 mt-2 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">

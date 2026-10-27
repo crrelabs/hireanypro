@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Terms of Service — HireAnyPro',
-  description: 'Terms and conditions for using HireAnyPro services.',
+  description: 'Terms of Service for HireAnyPro, the Florida home service directory: quote requests, claiming a business listing, Pro and Featured plans, billing and SMS alerts.',
   alternates: { canonical: 'https://hireanypro.com/terms' },
 };
 
