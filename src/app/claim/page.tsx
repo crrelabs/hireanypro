@@ -99,7 +99,7 @@ function ClaimPage() {
       .from('listings')
       .select('id, name, slug, city, state, claimed, categories(name)')
       .ilike('name', `%${name}%`)
-      .not('slug', 'like', 'zz-%')
+      .not('slug', 'like', 'zz-hap-test%')
       .order('review_count', { ascending: false, nullsFirst: false })
       .limit(10);
     if (city) req = req.ilike('city', `${city}%`);

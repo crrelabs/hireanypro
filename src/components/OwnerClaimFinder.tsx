@@ -23,7 +23,7 @@ export default function OwnerClaimFinder({ source }: { source: string }) {
         .from('listings')
         .select('id, name, slug, city, claimed, categories(name)')
         .ilike('name', `%${name.replace(/[%_]/g, '')}%`)
-        .not('slug', 'like', 'zz-%')
+        .not('slug', 'like', 'zz-hap-test%')
         .order('review_count', { ascending: false, nullsFirst: false })
         .limit(8);
       if (city) query = query.ilike('city', `${city.replace(/[%_]/g, '')}%`);

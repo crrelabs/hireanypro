@@ -49,7 +49,7 @@ export default async function HomePage() {
   const hasFeatured = showcase.length > 0;
   if (!hasFeatured) {
     const { data: top } = await supabase.from('listings').select('*, categories(name, slug, icon)')
-      .gte('rating', 4.7).not('slug', 'like', 'zz-%')
+      .gte('rating', 4.7).not('slug', 'like', 'zz-hap-test%')
       .order('tier', { ascending: false }).order('review_count', { ascending: false, nullsFirst: false }).limit(18);
     // Same business can be listed in several categories; show each name once.
     const seen = new Set<string>();
