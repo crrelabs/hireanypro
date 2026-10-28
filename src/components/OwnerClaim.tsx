@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useSyncExternalStore } from 'react';
+import { isAutomatedBrowser } from '@/lib/track';
 
 /**
  * Owners who open their listing from one of our claim emails arrive with ?ct=<signed token> (and utm_medium=outreach).
@@ -23,6 +24,7 @@ function claimHref(slug: string, ct: string, source: string) {
 }
 
 function track(name: string, params: Record<string, unknown>) {
+  if (isAutomatedBrowser()) return;
   const w = window as unknown as { gtag?: (...a: unknown[]) => void };
   w.gtag?.('event', name, { page_path: window.location.pathname, ...params });
 }

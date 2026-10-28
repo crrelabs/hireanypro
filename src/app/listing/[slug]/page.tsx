@@ -201,7 +201,7 @@ export default async function ListingPage({ params }: Props) {
   const cityLine = [listing.city, [stateCode(listing.state), listing.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
   const catLabel = listing.categories?.name ? catText(listing.categories.name) : 'home service';
   const description = (listing.description && String(listing.description).trim())
-    || `${listing.name} is ${/^[aeiou]/i.test(catLabel) ? 'an' : 'a'} ${catLabel} business${listing.city ? ` in ${listing.city}, ${stateCode(listing.state)}` : ''}${listing.rating && listing.review_count ? `, rated ${listing.rating} out of 5 from ${listing.review_count} Google reviews` : ''}. Request a free quote below.`;
+    || `${listing.name} is ${/^[aeiou]/i.test(catLabel) ? 'an' : 'a'} ${catLabel} business${listing.city ? ` in ${listing.city}, ${stateCode(listing.state)}` : ''}${listing.rating && listing.review_count ? `, rated ${listing.rating} out of 5 from ${listing.review_count} Google ${listing.review_count === 1 ? 'review' : 'reviews'}` : ''}. Request a free quote below.`;
   const jsonLdItems = buildJsonLd(listing);
   const isPaid = listing.tier === 'pro' || listing.tier === 'featured';
 
@@ -348,9 +348,10 @@ export default async function ListingPage({ params }: Props) {
                   {/* Blurred placeholder for contact info */}
                   <div className="relative rounded-lg bg-gray-50 p-4 overflow-hidden">
                     <div className="blur-sm select-none pointer-events-none space-y-2 text-sm text-gray-400" aria-hidden="true">
-                      <p>📞 (305) 555-0123</p>
-                      <p>✉️ info@example.com</p>
-                      <p>🌐 www.example.com</p>
+                      {/* Neutral bars, not fake numbers: placeholder text like "555-0123" / "example.com" was indexed on every unclaimed page. */}
+                      <div className="h-3 w-40 rounded bg-gray-300" />
+                      <div className="h-3 w-48 rounded bg-gray-300" />
+                      <div className="h-3 w-32 rounded bg-gray-300" />
                     </div>
                     <div className="absolute inset-0 flex items-center justify-center bg-gray-50/80">
                       <p className="text-sm text-gray-600 font-medium text-center px-4">

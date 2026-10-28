@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import TurnstileWidget from '@/components/TurnstileWidget';
+import { isAutomatedBrowser } from '@/lib/track';
 
 type ListingResult = {
   id: string;
@@ -67,6 +68,7 @@ function ClaimPage() {
   }, [preselectedSlug]);
 
   function track(name: string, params: Record<string, unknown> = {}) {
+    if (isAutomatedBrowser()) return;
     const w = window as unknown as { gtag?: (...args: unknown[]) => void };
     w.gtag?.('event', name, { page_path: window.location.pathname, ...params });
   }

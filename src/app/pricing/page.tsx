@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
+import { isAutomatedBrowser } from '@/lib/track';
 
 type Biz = { id: string; name: string; slug: string; city?: string | null; state?: string | null; tier?: string | null; claimed?: boolean | null };
 const track = (name: string, p: Record<string, unknown> = {}) => {
+  if (isAutomatedBrowser()) return;
   const w = window as unknown as { gtag?: (...a: unknown[]) => void };
   w.gtag?.('event', name, { page_path: '/pricing', ...p });
 };
@@ -57,7 +59,7 @@ const plans = [
     features: [
       'Everything in Pro',
       'Top placement in all searches',
-      'Homepage carousel feature',
+      'Featured on the homepage',
       'Highlighted listing card',
       'Lead stats in your dashboard',
       'Featured badge ⭐',

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import TurnstileWidget from '@/components/TurnstileWidget';
+import { isAutomatedBrowser } from '@/lib/track';
 
 /** "Get up to 3 free quotes" on category+city pages. The server picks which pros receive it. */
 export default function CityQuoteForm({ categorySlug, categoryName, citySlug, cityName }: {
@@ -17,6 +18,7 @@ export default function CityQuoteForm({ categorySlug, categoryName, citySlug, ci
   const [started, setStarted] = useState(false);
 
   const track = (name: string, p: Record<string, unknown> = {}) => {
+    if (isAutomatedBrowser()) return;
     const w = window as unknown as { gtag?: (...a: unknown[]) => void };
     w.gtag?.('event', name, { page_path: window.location.pathname, form: 'city_multi_quote', category: categorySlug, city: citySlug, ...p });
   };

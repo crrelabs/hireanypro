@@ -1,10 +1,12 @@
 'use client';
 import { useEffect } from 'react';
+import { isAutomatedBrowser } from '@/lib/track';
 
 // Fires GA4 events for the money clicks so the claim → paid funnel is measurable.
 export default function FunnelTracker() {
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
+      if (isAutomatedBrowser()) return; // email scanners and headless crawlers
       const a = (e.target as HTMLElement | null)?.closest?.('a') as HTMLAnchorElement | null;
       if (!a) return;
       const href = a.getAttribute('href') || '';
