@@ -15,13 +15,23 @@ export const metadata: Metadata = {
 
 export const revalidate = 60;
 
+/** First, last and two pages either side of the current one; null marks a gap. (Every page number used to be
+ *  rendered: 2,300 links and ~1 MB of HTML on each unfiltered search page.) */
+function pageWindow(page: number, total: number): (number | null)[] {
+  const keep = new Set([1, total, page - 2, page - 1, page, page + 1, page + 2].filter((p) => p >= 1 && p <= total));
+  const sorted = [...keep].sort((a, b) => a - b);
+  const out: (number | null)[] = [];
+  sorted.forEach((p, i) => { if (i > 0 && p - sorted[i - 1] > 1) out.push(null); out.push(p); });
+  return out;
+}
+
 export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string; category?: string; city?: string; rating?: string; page?: string }> }) {
   const params = await searchParams;
   const q = params.q || '';
   const category = params.category || '';
   const city = params.city || '';
   const rating = params.rating ? parseFloat(params.rating) : 0;
-  const page = parseInt(params.page || '1', 10);
+  const page = Math.max(1, parseInt(params.page || '1', 10) || 1);
   const perPage = 12;
 
   const { data: categories } = await supabase.from('categories').select('*').order('name');
@@ -105,7 +115,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex justify-center gap-2 mt-8">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
+              {pageWindow(page, totalPages).map((p, i) => {
+                if (p === null) return <span key={`gap-${i}`} className="px-2 py-2 text-gray-400" aria-hidden="true">…</span>;
                 const newParams = new URLSearchParams();
                 if (q) newParams.set('q', q);
                 if (category) newParams.set('category', category);
@@ -116,6 +127,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
                   <a
                     key={p}
                     href={`/search?${newParams.toString()}`}
+                    rel="nofollow"
+                    aria-current={p === page ? 'page' : undefined}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       p === page
                         ? 'bg-blue-800 text-white'

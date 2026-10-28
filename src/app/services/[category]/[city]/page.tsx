@@ -121,7 +121,7 @@ export default async function CityLandingPage({ params }: Props) {
   const neighbors = (county
     ? neighborsInCounty(cityGroups, primaryCountyCities, cSlug, group.state)
     : neighborsInState(cityGroups, cSlug, group.state)
-  ).slice(0, 12);
+  ).filter((n) => shouldIndexCityPage(n.count)).slice(0, 12); // only link indexable city pages (see cityHref)
 
   const copy = {
     categoryName: category.name,
@@ -197,11 +197,11 @@ export default async function CityLandingPage({ params }: Props) {
 
         <CityFaq {...copy} />
 
-        {siblings.length > 0 && (
+        {siblings.some((rc) => shouldIndexCityPage(rc.count)) && (
           <section className="mt-16">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Other services in {cityName}</h2>
             <div className="flex flex-wrap gap-2">
-              {siblings.map((rc) => (
+              {siblings.filter((rc) => shouldIndexCityPage(rc.count)).map((rc) => (
                 <Link
                   key={rc.slug}
                   href={`/services/${rc.slug}/${cSlug}`}

@@ -13,7 +13,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { cityPageSlug, getCountyForCity, countySlug, stateCode, stateName } from '@/lib/geo';
 import { DAY_LABELS, formatDayHours, normalizeHours } from '@/lib/hours';
-import { isBoilerplateDescription } from '@/lib/directory-content';
+import { isBoilerplateDescription, MIN_INDEXABLE_CITY_LISTINGS } from '@/lib/directory-content';
 import { getCityCategorySnapshot } from '@/lib/listings';
 import ListingMarketContext from '@/components/ListingMarketContext';
 
@@ -181,6 +181,9 @@ export default async function ListingPage({ params }: Props) {
         .limit(8)
     : { data: null };
 
+  // Only link the city x category page when it is indexable (3+ listings); thin city pages are noindex (see cityHref).
+  const cityLinkOk = (nearby?.length || 0) + 1 >= MIN_INDEXABLE_CITY_LISTINGS;
+
   // County pages are Florida-only; near-border GA/AL listings have no Florida county.
   // Use the listing's own county column when present; fall back to the city's primary county.
   const listingCounty = stateCode(listing.state) !== 'FL' ? null : (listing.county as string | null) || (listing.city ? await getCountyForCity(listing.city) : null);
@@ -213,7 +216,7 @@ export default async function ListingPage({ params }: Props) {
         <Breadcrumbs items={[
           { label: 'Home', href: '/' },
           ...(listing.categories ? [{ label: listing.categories.name, href: `/category/${listing.categories.slug}` }] : []),
-          ...(listing.city ? [{ label: listing.city, href: listing.categories ? `/services/${listing.categories.slug}/${cityPageSlug(listing.city, listing.state)}` : undefined }] : []),
+          ...(listing.city ? [{ label: listing.city, href: listing.categories && cityLinkOk ? `/services/${listing.categories.slug}/${cityPageSlug(listing.city, listing.state)}` : undefined }] : []),
           { label: listing.name },
         ]} />
 
@@ -483,7 +486,7 @@ export default async function ListingPage({ params }: Props) {
               </Link>
             </p>
           )}
-          {listing.categories && listing.city && (
+          {listing.categories && listing.city && cityLinkOk && (
             <p className="text-sm text-gray-600">
               <Link href={`/services/${listing.categories.slug}/${cityPageSlug(listing.city, listing.state)}`} className="text-blue-800 hover:underline font-medium">
                 More {catText(listing.categories.name)} pros in {listing.city} →

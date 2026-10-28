@@ -5,6 +5,7 @@ import {
   buildCategoryIntro,
   categoryStatCards,
   faqPageJsonLd,
+  shouldIndexCityPage,
   type CategoryNarrativeInput,
   type TextPart,
 } from '@/lib/directory-content';
@@ -66,9 +67,13 @@ export function CategoryCounties({ categoryName, categorySlug, counties }: Pick<
                 {county.cities.map((city, i) => (
                   <span key={city.slug}>
                     {i > 0 && ' · '}
-                    <Link href={`/services/${categorySlug}/${city.slug}`} className="text-blue-800 hover:underline">
-                      {city.name} ({city.count.toLocaleString('en-US')})
-                    </Link>
+                    {shouldIndexCityPage(city.count) ? (
+                      <Link href={`/services/${categorySlug}/${city.slug}`} className="text-blue-800 hover:underline">
+                        {city.name} ({city.count.toLocaleString('en-US')})
+                      </Link>
+                    ) : (
+                      <span className="text-gray-600">{city.name} ({city.count.toLocaleString('en-US')})</span>
+                    )}
                   </span>
                 ))}
               </p>
