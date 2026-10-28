@@ -3,6 +3,7 @@ import SearchBar from '@/components/SearchBar';
 import CategoryCard from '@/components/CategoryCard';
 import ListingCard from '@/components/ListingCard';
 import Link from 'next/link';
+import OwnerClaimFinder from '@/components/OwnerClaimFinder';
 import { getAllCounties, countySlug, getCitiesInCounty, getCountyForCity, citySlug } from '@/lib/geo';
 import { getCategoryCities, getCategoryBySlug } from '@/lib/listings';
 import { shouldIndexCityPage } from '@/lib/directory-content';
@@ -221,10 +222,11 @@ export default async function HomePage() {
       <section className="bg-gradient-to-r from-orange-500 to-orange-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">Are You a Home Service Pro?</h2>
-          <p className="text-orange-100 mb-6 max-w-xl mx-auto">Claim your free listing and reach thousands of homeowners looking for your services.</p>
-          <Link href="/search" className="inline-block bg-white text-orange-600 font-semibold px-8 py-3 rounded-lg hover:bg-orange-50 transition-colors">
-            Claim Your Listing
-          </Link>
+          <p className="text-orange-100 mb-6 max-w-xl mx-auto">Your business may already be listed. Find it and claim it free: fix your details and get homeowner quote requests.</p>
+          <OwnerClaimFinder source="home_claim_finder" />
+          <p className="text-sm text-orange-100 mt-4">
+            Free to claim, no card needed. <Link href="/pricing?utm_source=home_claim_finder&utm_medium=web" className="underline font-medium text-white">See Pro and Featured plans</Link>
+          </p>
         </div>
       </section>
     </>

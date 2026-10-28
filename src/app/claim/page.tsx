@@ -86,14 +86,23 @@ function ClaimPage() {
 
   const express = useToken && !!selected && !selected.claimed;
 
+  const latestQuery = useRef('');
   async function searchListings(q: string) {
     setQuery(q);
+    latestQuery.current = q;
     if (q.length < 2) { setResults([]); return; }
-    const { data } = await supabase
+    // "Name, City" narrows by city; best-known businesses first so the owner's real listing is near the top.
+    const [name, city] = q.split(',').map((s) => s.trim().replace(/[%_]/g, ''));
+    let req = supabase
       .from('listings')
       .select('id, name, slug, city, state, claimed, categories(name)')
-      .ilike('name', `%${q}%`)
+      .ilike('name', `%${name}%`)
+      .not('slug', 'like', 'zz-%')
+      .order('review_count', { ascending: false, nullsFirst: false })
       .limit(10);
+    if (city) req = req.ilike('city', `${city}%`);
+    const { data } = await req;
+    if (q !== latestQuery.current) return; // a newer keystroke already searched
     setResults((data as unknown as ListingResult[]) || []);
   }
 
