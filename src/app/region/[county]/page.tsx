@@ -54,7 +54,7 @@ const loadCounty = cache(async (slug: string) => {
       .order('id')
       .range(from, from + 999);
     if (!data?.length) break;
-    rows.push(...(data as unknown as Row[]).filter((r) => !r.slug.startsWith('zz-')));
+    rows.push(...(data as unknown as Row[]).filter((r) => !r.slug.startsWith('zz-hap-test')));
     if (data.length < 1000) break;
   }
 
