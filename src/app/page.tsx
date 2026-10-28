@@ -5,13 +5,38 @@ import ListingCard from '@/components/ListingCard';
 import Link from 'next/link';
 import { getAllCounties, countySlug, getCitiesInCounty, getCountyForCity, citySlug } from '@/lib/geo';
 import { getCategoryCities, getCategoryBySlug } from '@/lib/listings';
+import { shouldIndexCityPage } from '@/lib/directory-content';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://hireanypro.com' },
 };
 
-export const revalidate = 300; // ISR every 5 min
+export const revalidate = 3600; // ISR hourly (counts change daily at most)
+
+const POPULAR_CATEGORIES: { slug: string; noun: string }[] = [
+  { slug: 'plumbing', noun: 'Plumbers' },
+  { slug: 'hvac', noun: 'HVAC Pros' },
+  { slug: 'roofing', noun: 'Roofers' },
+  { slug: 'electrical', noun: 'Electricians' },
+  { slug: 'general-contractor', noun: 'Contractors' },
+  { slug: 'pest-control', noun: 'Pest Control' },
+];
+
+/** Top 3 Florida cities (by listing count) for each popular category. Only indexable pages, never a hardcoded guess. */
+async function popularCombos(): Promise<{ cat: string; slug: string; label: string }[]> {
+  const out: { cat: string; slug: string; label: string }[] = [];
+  for (const { slug, noun } of POPULAR_CATEGORIES) {
+    const cat = await getCategoryBySlug(slug);
+    if (!cat) continue;
+    const groups = (await getCategoryCities(cat.id))
+      .filter((g) => g.state === 'FL' && shouldIndexCityPage(g.count))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3);
+    for (const g of groups) out.push({ cat: slug, slug: g.slug, label: `${noun} in ${g.name}` });
+  }
+  return out;
+}
 
 export default async function HomePage() {
   const [{ data: categories }, { data: featuredListings }] = await Promise.all([
@@ -135,7 +160,8 @@ export default async function HomePage() {
               const counties = await getAllCounties();
               // Only link cities that actually have a plumbing page (linking every city produced ~175 broken links).
               const plumbing = await getCategoryBySlug('plumbing');
-              const plumbingCities = new Map((plumbing ? await getCategoryCities(plumbing.id) : []).map((g) => [g.slug, g.count]));
+              // Thin plumbing pages (fewer than 3 listings) are noindex, so they are not linked from the homepage.
+              const plumbingCities = new Map((plumbing ? await getCategoryCities(plumbing.id) : []).filter((g) => shouldIndexCityPage(g.count)).map((g) => [g.slug, g.count]));
               return Promise.all(counties.map(async (county) => {
                 const allCities = await getCitiesInCounty(county);
                 // A city can show up under several counties in the raw data (Orlando was linked 21 times);
@@ -173,33 +199,14 @@ export default async function HomePage() {
             })()}
           </div>
 
-          {/* Popular service+city combos for SEO */}
+          {/* Popular service+city combos: the biggest city pages per top category, computed from the data (always indexable). */}
           <div className="mt-12">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Popular Services by City</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
-              {[
-                { cat: 'plumbing', city: 'Miami', label: 'Plumbers in Miami' },
-                { cat: 'electrical', city: 'Miami', label: 'Electricians in Miami' },
-                { cat: 'roofing', city: 'Miami', label: 'Roofers in Miami' },
-                { cat: 'hvac', city: 'Miami', label: 'HVAC in Miami' },
-                { cat: 'plumbing', city: 'Fort Lauderdale', label: 'Plumbers in Ft. Lauderdale' },
-                { cat: 'electrical', city: 'Fort Lauderdale', label: 'Electricians in Ft. Lauderdale' },
-                { cat: 'roofing', city: 'Fort Lauderdale', label: 'Roofers in Ft. Lauderdale' },
-                { cat: 'plumbing', city: 'Orlando', label: 'Plumbers in Orlando' },
-                { cat: 'electrical', city: 'Orlando', label: 'Electricians in Orlando' },
-                { cat: 'hvac', city: 'Orlando', label: 'HVAC in Orlando' },
-                { cat: 'plumbing', city: 'West Palm Beach', label: 'Plumbers in West Palm Beach' },
-                { cat: 'roofing', city: 'West Palm Beach', label: 'Roofers in West Palm Beach' },
-                { cat: 'plumbing', city: 'Coral Gables', label: 'Plumbers in Coral Gables' },
-                { cat: 'landscaping', city: 'Miami', label: 'Landscaping in Miami' },
-                { cat: 'painting', city: 'Miami', label: 'Painters in Miami' },
-                { cat: 'general-contractor', city: 'Miami', label: 'Contractors in Miami' },
-                { cat: 'pool-service', city: 'Miami', label: 'Pool Service in Miami' },
-                { cat: 'cleaning', city: 'Miami', label: 'Cleaning in Miami' },
-              ].map(({ cat, city, label }) => (
+              {(await popularCombos()).map(({ cat, slug, label }) => (
                 <Link
-                  key={`${cat}-${city}`}
-                  href={`/services/${cat}/${citySlug(city)}`}
+                  key={`${cat}-${slug}`}
+                  href={`/services/${cat}/${slug}`}
                   className="text-sm text-gray-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-2 rounded-lg border border-gray-100 transition-colors text-center"
                 >
                   {label}

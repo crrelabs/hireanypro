@@ -43,6 +43,15 @@ function maxLastmod(values: Array<string | null | undefined>): string | undefine
   return maxMs ? new Date(maxMs).toISOString() : undefined;
 }
 
+// Page templates were rewritten on these dates (PR #52: city + category pages; 2026-10-28: county hubs). The page content
+// changed even where no listing row did, so lastmod must not be older than the rewrite or crawlers skip the new copy.
+export const CITY_PAGES_REVISED = '2026-10-27';
+export const CATEGORY_PAGES_REVISED = '2026-10-27';
+export const COUNTY_PAGES_REVISED = '2026-10-28';
+export function withFloor(lastmod: string | null | undefined, floor: string): string {
+  return lastmod && lastmod > floor ? lastmod : floor;
+}
+
 function rememberLatest(map: Map<string, string>, key: string, lastmod?: string) {
   const current = map.get(key);
   if (current == null) {
@@ -185,7 +194,7 @@ export async function getPagesSitemapUrls(): Promise<SitemapUrl[]> {
   for (const category of categories) {
     urls.push({
       loc: `${BASE_URL}/category/${category.slug}`,
-      lastmod: toLastmod(category.created_at),
+      lastmod: withFloor(toLastmod(category.created_at), CATEGORY_PAGES_REVISED),
       changefreq: 'weekly',
       priority: 0.8,
     });
@@ -236,7 +245,7 @@ export async function getCitiesSitemapUrls(): Promise<SitemapUrl[]> {
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([combo, lastmod]) => ({
       loc: `${BASE_URL}/services/${combo}`,
-      lastmod: lastmod || undefined,
+      lastmod: withFloor(lastmod, CITY_PAGES_REVISED),
       changefreq: 'weekly' as const,
       priority: 0.7,
     }));
@@ -245,7 +254,7 @@ export async function getCitiesSitemapUrls(): Promise<SitemapUrl[]> {
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([county, lastmod]) => ({
       loc: `${BASE_URL}/region/${countySlug(county)}`,
-      lastmod: lastmod || undefined,
+      lastmod: withFloor(lastmod, COUNTY_PAGES_REVISED),
       changefreq: 'weekly' as const,
       priority: 0.7,
     }));
@@ -263,8 +272,8 @@ export function buildSitemapIndexEntries(
 ): SitemapIndexEntry[] {
   const listingChunks = Math.ceil(listingCount / LISTING_CHUNK_SIZE);
   const entries: SitemapIndexEntry[] = [
-    { loc: `${BASE_URL}/sitemap/pages.xml`, lastmod: latestListing },
-    { loc: `${BASE_URL}/sitemap/cities.xml`, lastmod: latestListing },
+    { loc: `${BASE_URL}/sitemap/pages.xml`, lastmod: withFloor(latestListing, CATEGORY_PAGES_REVISED) },
+    { loc: `${BASE_URL}/sitemap/cities.xml`, lastmod: withFloor(latestListing, COUNTY_PAGES_REVISED) },
   ];
 
   for (let chunk = 0; chunk < listingChunks; chunk++) {

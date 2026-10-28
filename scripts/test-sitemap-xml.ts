@@ -34,6 +34,9 @@ assert.equal(indexEntries[0].loc, 'https://hireanypro.com/sitemap/pages.xml');
 assert.equal(indexEntries[1].loc, 'https://hireanypro.com/sitemap/cities.xml');
 assert.equal(indexEntries[2].loc, 'https://hireanypro.com/sitemap/listings/0.xml');
 assert.equal(indexEntries[7].loc, 'https://hireanypro.com/sitemap/listings/5.xml');
-assert.ok(indexEntries.every((e) => e.lastmod === '2026-08-15T12:00:00.000Z'));
+assert.ok(indexEntries.slice(2).every((e) => e.lastmod === '2026-08-15T12:00:00.000Z'));
+// Page/city sitemaps never report a lastmod older than the last template rewrite.
+assert.equal(indexEntries[0].lastmod, '2026-10-27');
+assert.equal(indexEntries[1].lastmod, '2026-10-28');
 
 console.log('sitemap-xml unit checks passed');

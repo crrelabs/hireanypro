@@ -15,6 +15,14 @@ export function shouldIndexCityPage(count: number): boolean {
   return count >= MIN_INDEXABLE_CITY_LISTINGS;
 }
 
+/**
+ * Internal links only point at city pages Google may index. Thin (noindex) city pages get no href, so the link equity
+ * and crawl budget go to the pages we want indexed. Thin pages stay reachable from their county hub and listings.
+ */
+export function cityHref(categorySlug: string, citySlug: string, count: number): string | undefined {
+  return shouldIndexCityPage(count) ? `/services/${categorySlug}/${citySlug}` : undefined;
+}
+
 /** "Plumbing" -> "plumbing", but keep acronyms like "HVAC". */
 export function lowerCategory(name: string): string {
   return name.split(' ').map((w) => (w.length > 1 && w === w.toUpperCase() ? w : w.toLowerCase())).join(' ');
@@ -277,7 +285,7 @@ export function buildCityIntroParts(input: {
     third.push({ text: `Other ${where} cities with ${cat} listings include ` });
     neighborBits.forEach((n, i) => {
       if (i > 0) third.push({ text: i === neighborBits.length - 1 ? ', and ' : ', ' });
-      third.push({ text: `${n.name} (${formatCount(n.count)})`, href: `/services/${input.categorySlug}/${n.slug}` });
+      third.push({ text: `${n.name} (${formatCount(n.count)})`, href: cityHref(input.categorySlug, n.slug, n.count) });
     });
     third.push({ text: '.' });
   }
@@ -453,7 +461,7 @@ export function buildCategoryIntro(input: CategoryNarrativeInput): TextPart[][] 
     input.topCities.slice(0, 5).forEach((c, i, arr) => {
       if (i > 0) first.push({ text: i === arr.length - 1 ? ', and ' : ', ' });
       const label = c.state !== 'FL' ? `${c.name}, ${c.state}` : c.name;
-      first.push({ text: `${label} (${formatCount(c.count)})`, href: `/services/${input.categorySlug}/${c.slug}` });
+      first.push({ text: `${label} (${formatCount(c.count)})`, href: cityHref(input.categorySlug, c.slug, c.count) });
     });
     first.push({ text: '.' });
   }
@@ -602,12 +610,15 @@ export function listingMarketLinks(input: {
   cityName: string;
   citySlug: string;
   county: string | null;
+  count?: number;
 }): { href: string; label: string }[] {
   const cat = lowerCategory(input.categoryName);
-  const links = [
-    { href: `/services/${input.categorySlug}/${input.citySlug}`, label: `${input.categoryName} in ${input.cityName}` },
-    { href: `/category/${input.categorySlug}`, label: `All ${cat} pros` },
-  ];
+  const links: { href: string; label: string }[] = [];
+  // Thin (noindex) city pages are not linked; see cityHref.
+  if (input.count === undefined || shouldIndexCityPage(input.count)) {
+    links.push({ href: `/services/${input.categorySlug}/${input.citySlug}`, label: `${input.categoryName} in ${input.cityName}` });
+  }
+  links.push({ href: `/category/${input.categorySlug}`, label: `All ${cat} pros` });
   if (input.county) {
     links.push({
       href: `/region/${countyPath(input.county)}`,

@@ -8,7 +8,7 @@ import { CategorySummary, CategoryCounties, CategoryFaq } from '@/components/Cat
 import { supabase } from '@/lib/supabase';
 import { stateName } from '@/lib/geo';
 import { CARD_COLUMNS, toCard, getCategoryCities, getCategoryBySlug, getCategoryRollup, type CardListing } from '@/lib/listings';
-import { formatCount, lowerCategory, type CategoryNarrativeInput } from '@/lib/directory-content';
+import { formatCount, lowerCategory, shouldIndexCityPage, type CategoryNarrativeInput } from '@/lib/directory-content';
 
 // Cached pages (ISR): rendered on first request, then served from Vercel's cache and refreshed in the background.
 // Returning [] means nothing is prerendered at build time; every path is generated on demand and cached.
@@ -88,13 +88,16 @@ export default async function CategoryPage({ params }: Props) {
   const listings = ((topRows || []) as unknown as CardListing[]).map(toCard);
 
   const cities = [...new Set(listings.map((l) => l.city).filter(Boolean))].sort();
-  const popularCities = [...cityGroups].sort((a, b) => b.count - a.count).slice(0, 20);
-  const allCities = [...cityGroups].sort((a, b) => a.name.localeCompare(b.name));
+  // Link only indexable city pages (3+ listings); thin pages are noindex and stay reachable from county hubs.
+  const indexableCities = cityGroups.filter((g) => shouldIndexCityPage(g.count));
+  const thinCityCount = cityGroups.length - indexableCities.length;
+  const popularCities = [...indexableCities].sort((a, b) => b.count - a.count).slice(0, 20);
+  const allCities = [...indexableCities].sort((a, b) => a.name.localeCompare(b.name));
   const otherStates = (['GA', 'AL'] as const)
     .map((code) => ({
       code,
       name: stateName(code),
-      cities: cityGroups.filter((g) => g.state === code).sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)),
+      cities: indexableCities.filter((g) => g.state === code).sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)),
     }))
     .filter((s) => s.cities.length > 0);
 
@@ -224,6 +227,11 @@ export default async function CategoryPage({ params }: Props) {
                 </li>
               ))}
             </ul>
+            {thinCityCount > 0 && (
+              <p className="mt-4 text-sm text-gray-500">
+                Plus {formatCount(thinCityCount)} smaller {thinCityCount === 1 ? 'town' : 'towns'} with one or two {lcCat} listings, shown on each county page above.
+              </p>
+            )}
           </section>
         )}
       </div>
