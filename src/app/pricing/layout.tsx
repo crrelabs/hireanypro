@@ -25,7 +25,7 @@ const faqs = [
   },
   {
     q: 'Is there a contract?',
-    a: 'No. Plans are month to month and billed through Stripe. To cancel, email iris@hireanypro.com. There is no cancellation fee.',
+    a: 'No. Plans are month to month and billed through Stripe. To cancel, email iris@hireanypro.com; cancellation takes effect at the end of the current billing period and there is no cancellation fee.',
   },
   {
     q: 'What does Featured add?',
