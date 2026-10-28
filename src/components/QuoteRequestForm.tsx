@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import TurnstileWidget from '@/components/TurnstileWidget';
+import { isAutomatedBrowser } from '@/lib/track';
 
 interface QuoteRequestFormProps {
   listingId: string;
@@ -25,7 +26,7 @@ export default function QuoteRequestForm({ listingId, businessName, tier = 'free
   const [sentTo, setSentTo] = useState<string[]>([]);
   const [started, setStarted] = useState(false);
   const track = (name: string, params: Record<string, unknown> = {}) =>
-    (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag?.('event', name, { form: 'listing', ...params });
+    !isAutomatedBrowser() && (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag?.('event', name, { form: 'listing', ...params });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

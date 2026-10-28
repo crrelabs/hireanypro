@@ -91,7 +91,7 @@ function VerifyClaimContent() {
 
 export default function VerifyClaimPage() {
   return (
-    <Suspense fallback={<div className="max-w-lg mx-auto py-20 px-4 text-center text-gray-500">Loading...</div>}>
+    <Suspense fallback={<div className="max-w-lg mx-auto py-20 px-4 text-center"><h1 className="text-2xl font-bold text-gray-900 mb-2">Verifying Your Claim</h1><p className="text-gray-500">Loading...</p></div>}>
       <VerifyClaimContent />
     </Suspense>
   );

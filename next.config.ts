@@ -4,6 +4,12 @@ const nextConfig: NextConfig = {
   trailingSlash: false,
   async redirects() {
     return [
+      // Bare section paths (people trim URLs; /listing got real visits) had no index page and returned 404.
+      { source: '/listing', destination: '/categories', permanent: true },
+      { source: '/category', destination: '/categories', permanent: true },
+      { source: '/services', destination: '/categories', permanent: true },
+      { source: '/region', destination: '/categories', permanent: true },
+      { source: '/services/:category', destination: '/category/:category', permanent: true },
       {
         // Deleted duplicate listing (2026-10-24)
         source: '/listing/zz-garage-doors-and-repair-haines-city',
