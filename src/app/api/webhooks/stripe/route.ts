@@ -138,7 +138,9 @@ export async function POST(req: NextRequest) {
         // Update listing tier
         await supabase
           .from('listings')
-          .update({ tier: plan, claimed: true })
+          // featured=true is what puts a Featured listing first on search/category/city pages and on the homepage
+          // (sorting on tier alone ranks 'featured' below 'free'). Pro clears it.
+          .update({ tier: plan, claimed: true, featured: plan === 'featured' })
           .eq('id', listingId);
         await revalidateListing(supabase, listingId);
 
@@ -157,7 +159,7 @@ export async function POST(req: NextRequest) {
       if (['canceled', 'unpaid', 'incomplete_expired'].includes(subscription.status)) {
         const { data: sub } = await supabase.from('subscriptions').select('listing_id').eq('stripe_subscription_id', subscription.id).maybeSingle();
         if (sub?.listing_id) {
-          await supabase.from('listings').update({ tier: 'free' }).eq('id', sub.listing_id);
+          await supabase.from('listings').update({ tier: 'free', featured: false }).eq('id', sub.listing_id);
           await revalidateListing(supabase, sub.listing_id);
           await supabase.from('subscriptions').update({ status: 'canceled', plan: 'free' }).eq('stripe_subscription_id', subscription.id);
         }
@@ -177,7 +179,7 @@ export async function POST(req: NextRequest) {
       if (sub?.listing_id) {
         await supabase
           .from('listings')
-          .update({ tier: 'free' })
+          .update({ tier: 'free', featured: false })
           .eq('id', sub.listing_id);
         await revalidateListing(supabase, sub.listing_id);
 

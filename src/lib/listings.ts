@@ -85,9 +85,9 @@ export type CityPageRow = {
 };
 
 function compareCityPageRows(a: CityPageRow, b: CityPageRow): number {
-  const featured = Number(!!b.featured) - Number(!!a.featured);
-  if (featured) return featured;
-  const tier = String(b.tier || '').localeCompare(String(a.tier || ''));
+  // Featured first, then Pro, then everyone else (a plain string sort on tier puts 'featured' below 'free').
+  const rank = (r: CityPageRow) => (r.featured || r.tier === 'featured' ? 2 : r.tier === 'pro' ? 1 : 0);
+  const tier = rank(b) - rank(a);
   if (tier) return tier;
   const reviews = Number(b.review_count ?? -1) - Number(a.review_count ?? -1);
   if (reviews) return reviews;
