@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default async function AboutPage() {
   // Live counts (never hardcode: the weekly cleanup changes them).
   const [{ count: listings }, { count: categories }] = await Promise.all([
-    supabase.from('listings').select('id', { count: 'exact', head: true }),
+    supabase.from('listings').select('id', { count: 'exact', head: true }).not('slug', 'like', 'zz-hap-test%'),
     supabase.from('categories').select('id', { count: 'exact', head: true }),
   ]);
   const n = (x: number | null) => (x ? x.toLocaleString('en-US') : 'thousands of');

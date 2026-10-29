@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const st = stateCode(listing.state);
   const title = listing.city ? `${listing.name} - ${cat} in ${listing.city}, ${st} | HireAnyPro` : `${listing.name} - ${cat} in ${stateName(st)} | HireAnyPro`;
   const ratingText = listing.rating && listing.review_count
-    ? ` Rated ${listing.rating}/5 from ${listing.review_count} ${listing.review_count === 1 ? 'review' : 'reviews'}.`
+    ? ` Rated ${listing.rating}/5 from ${Number(listing.review_count).toLocaleString('en-US')} ${listing.review_count === 1 ? 'review' : 'reviews'}.`
     : '';
   const description = `${listing.name} is listed under ${cat} in ${listing.city ? `${listing.city}, ${st}` : stateName(st)}.${ratingText}${metaIsPaid && listing.phone ? ` Call ${listing.phone} for a free quote.` : ' Request a free quote on HireAnyPro.'}`;
 
@@ -204,7 +204,7 @@ export default async function ListingPage({ params }: Props) {
   const cityLine = [listing.city, [stateCode(listing.state), listing.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
   const catLabel = listing.categories?.name ? catText(listing.categories.name) : 'home service';
   const description = (listing.description && String(listing.description).trim())
-    || `${listing.name} is ${/^[aeiou]/i.test(catLabel) ? 'an' : 'a'} ${catLabel} business${listing.city ? ` in ${listing.city}, ${stateCode(listing.state)}` : ''}${listing.rating && listing.review_count ? `, rated ${listing.rating} out of 5 from ${listing.review_count} Google ${listing.review_count === 1 ? 'review' : 'reviews'}` : ''}. Request a free quote below.`;
+    || `${listing.name} is ${/^[aeiou]/i.test(catLabel) ? 'an' : 'a'} ${catLabel} business${listing.city ? ` in ${listing.city}, ${stateCode(listing.state)}` : ''}${listing.rating && listing.review_count ? `, rated ${listing.rating} out of 5 from ${Number(listing.review_count).toLocaleString('en-US')} Google ${listing.review_count === 1 ? 'review' : 'reviews'}` : ''}. Request a free quote below.`;
   const jsonLdItems = buildJsonLd(listing);
   const isPaid = listing.tier === 'pro' || listing.tier === 'featured';
 
@@ -249,7 +249,7 @@ export default async function ListingPage({ params }: Props) {
                         <StarRating rating={listing.rating} size="md" />
                         <span className="font-semibold text-gray-900">{listing.rating}</span>
                         {listing.review_count > 0 && (
-                          <span className="text-gray-400 text-sm">on Google · {listing.review_count} {listing.review_count === 1 ? 'review' : 'reviews'}</span>
+                          <span className="text-gray-400 text-sm">on Google · {Number(listing.review_count).toLocaleString('en-US')} {listing.review_count === 1 ? 'review' : 'reviews'}</span>
                         )}
                       </>
                     ) : (
@@ -424,7 +424,7 @@ export default async function ListingPage({ params }: Props) {
             <div className="flex items-center gap-2 mb-4 pb-4 border-b border-gray-100">
               <StarRating rating={listing.rating} size="md" />
               <span className="font-semibold text-gray-900">{listing.rating}</span>
-              <span className="text-gray-500 text-sm">on Google · {listing.review_count} {listing.review_count === 1 ? 'review' : 'reviews'}</span>
+              <span className="text-gray-500 text-sm">on Google · {Number(listing.review_count).toLocaleString('en-US')} {listing.review_count === 1 ? 'review' : 'reviews'}</span>
             </div>
           )}
           <h2 className="text-xl font-bold text-gray-900 mb-4">

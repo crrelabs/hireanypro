@@ -3,6 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
+import { isAutomatedBrowser } from '@/lib/track';
 
 function VerifyClaimContent() {
   const params = useSearchParams();
@@ -12,6 +13,8 @@ function VerifyClaimContent() {
   const [email, setEmail] = useState('');
   const [reissued, setReissued] = useState(false);
   const [listingId, setListingId] = useState('');
+  const [already, setAlready] = useState(false);
+  const [linkSent, setLinkSent] = useState(false);
 
   useEffect(() => {
     if (!token) {
@@ -20,6 +23,8 @@ function VerifyClaimContent() {
       return;
     }
 
+    // Email security scanners open links in headless browsers; don't let them use up the owner's verification.
+    if (isAutomatedBrowser()) return;
     fetch('/api/verify-claim', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -31,6 +36,7 @@ function VerifyClaimContent() {
         if (data.success) {
           w.gtag?.('event', 'claim_verified', { page_path: '/verify-claim' });
           setStatus('success');
+          setAlready(!!data.alreadyVerified);
           setEmail(data.email || '');
           setListingId(data.listingId || '');
           setMessage('Your claim has been verified! You can now manage your listing.');
@@ -53,7 +59,15 @@ function VerifyClaimContent() {
         <>
           <div className="text-6xl mb-4">✅</div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Claim Verified!</h1>
-          <p className="text-gray-600 mb-6">{message}</p>
+          <p className="text-gray-600 mb-6">{already ? 'This claim was already verified, so the listing is yours. For security, an old verification link does not sign you in; get a fresh sign-in link instead.' : message}</p>
+          {already && email && (
+            <p className="mb-6">
+              {linkSent
+                ? <span className="text-green-700">Sign-in link sent to {email}. Check your inbox.</span>
+                : <button type="button" onClick={() => { fetch('/api/auth/login-link', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) }).finally(() => setLinkSent(true)); }}
+                    className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 py-2 rounded-lg">Email me a sign-in link</button>}
+            </p>
+          )}
           <Link href="/dashboard" className="inline-block bg-blue-800 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium transition-colors">
             Go to Dashboard →
           </Link>
