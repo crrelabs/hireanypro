@@ -48,9 +48,10 @@ export async function getBlogPost(slug: string) {
     .select('*')
     .eq('slug', slug)
     .eq('published', true)
-    .single();
+    .maybeSingle();
 
-  if (error) return null;
+  if (error) throw new Error(`blog ${slug}: ${error.message}`); // retryable 500, not a cached 404
+  if (!data) return null;
   return data as BlogPost;
 }
 
