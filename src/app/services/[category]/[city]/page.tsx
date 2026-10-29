@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { CityIntro, CityStatsBlock, CityFaq, CityTopSpot } from '@/components/CityInsights';
 import CityQuoteForm from '@/components/CityQuoteForm';
-import { getCountyForCity, getCitiesInCounty, countySlug, stateName } from '@/lib/geo';
+import { getCountyData, primaryCitiesInCounty, countySlug, stateName } from '@/lib/geo';
 import {
   toCard,
   getCategoryCities,
@@ -25,7 +25,9 @@ import {
 } from '@/lib/directory-content';
 
 // Cached pages (ISR): rendered on first request, then served from Vercel's cache and refreshed in the background.
-// Returning [] means nothing is prerendered at build time; every path is generated on demand and cached.
+// Returning [] keeps the build from rendering hundreds of city pages (and re-querying Supabase for each).
+// The shared county map is filled when the homepage is statically generated, so a fresh instance does not
+// rescan every Florida listing. generateStaticParams must stay exported: Next 16 ignores revalidate without it.
 export async function generateStaticParams() {
   return [];
 }
@@ -86,6 +88,12 @@ export const revalidate = 3600; // hourly: fewer slow cold renders (crawls were 
 
 export default async function CityLandingPage({ params }: Props) {
   const { category: catSlug, city: cSlug } = await params;
+  // County map does not depend on this category. Start it now so it overlaps the category and city-list reads.
+  // Convert a failure into a value so an early notFound() does not leave a rejected scan unhandled.
+  const countyMapPromise = getCountyData().then(
+    (data) => ({ data, error: null as unknown }),
+    (error: unknown) => ({ data: null, error }),
+  );
 
   const category = await getCategoryBySlug(catSlug);
   if (!category) notFound();
@@ -102,11 +110,15 @@ export default async function CityLandingPage({ params }: Props) {
   const cityName = group.name;
   const stName = stateName(group.state);
 
-  const [rows, siblings, county] = await Promise.all([
+  const [rows, siblings, countyResult] = await Promise.all([
     getCityPageRows(category.id, group.variants, group.state, group.count),
     getCitySiblingCategories(group.variants, group.state, category.id),
-    group.state === 'FL' ? getCountyForCity(cityName) : Promise.resolve(null),
+    countyMapPromise,
   ]);
+  if (!countyResult.data) {
+    throw countyResult.error instanceof Error ? countyResult.error : new Error('county map failed');
+  }
+  const countyMap = countyResult.data;
   const listings = rows.slice(0, 500).map(cityCard);
   if (listings.length === 0) notFound();
 
@@ -114,10 +126,8 @@ export default async function CityLandingPage({ params }: Props) {
   // Neighbor links stay inside the county (Florida) or the same state (GA/AL), so they are not the same 12 cities on every page.
   // A city is a neighbor only when this county is its primary county (the county column on most of its listings).
   // Otherwise one mistagged row would link the whole Sarasota page from a DeSoto page.
-  const countyCities = county ? await getCitiesInCounty(county) : [];
-  const primaryCountyCities = county
-    ? (await Promise.all(countyCities.map(async (name) => ((await getCountyForCity(name)) === county ? name : null)))).filter((name): name is string => !!name)
-    : [];
+  const county = group.state === 'FL' ? (countyMap.primary[cityName.toLowerCase()] || null) : null;
+  const primaryCountyCities = county ? primaryCitiesInCounty(countyMap, county) : [];
   const neighbors = (county
     ? neighborsInCounty(cityGroups, primaryCountyCities, cSlug, group.state)
     : neighborsInState(cityGroups, cSlug, group.state)

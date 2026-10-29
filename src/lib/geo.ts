@@ -1,79 +1,118 @@
+import { unstable_cache } from 'next/cache';
 import { supabase } from './supabase';
+import { fetchOrderedPages, shareInflight } from './paged-read';
 
-// Cache for county/city data (refreshes every 5 min via ISR)
-let _countyCache: Record<string, string[]> | null = null;
-let _cacheTime = 0;
-// city (lowercase) -> county -> number of listings; used to pick a city's primary county (the one with most listings).
-let _cityCounty: Record<string, string> = {};
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+/**
+ * Florida county map. Cached in Next's data cache (shared across serverless instances) and deduped
+ * in-flight so one instance never runs two scans. The cached value is the aggregated city/county
+ * pairs, not the ~27k raw rows, so it stays well under the 2 MB cache item limit.
+ * Primary county = the county with the most listings for that city; ties break by county name.
+ * A failed page throws, so a partial map is never cached.
+ */
+export type CountyMapData = {
+  /** County -> city names (exact spellings, sorted). */
+  byCounty: Record<string, string[]>;
+  /** Lowercase city -> primary county. */
+  primary: Record<string, string>;
+};
 
-async function loadCountyMap(): Promise<Record<string, string[]>> {
-  if (_countyCache && Date.now() - _cacheTime < CACHE_TTL) return _countyCache;
+type CountyRow = { city: string; county: string };
 
-  const map: Record<string, string[]> = {};
-
-  // Paginate through all listings with county data
-  let offset = 0;
+function buildCountyMap(rows: CountyRow[]): CountyMapData {
+  const byCounty: Record<string, string[]> = {};
   const seen = new Set<string>();
   const counts: Record<string, Record<string, number>> = {};
-  while (true) {
-    const { data, error } = await supabase
-      .from('listings')
-      .select('city, county')
-      .eq('state', 'FL') // county pages are Florida-only; GA/AL listings have no county
-      .not('county', 'is', null)
-      .not('city', 'is', null)
-      .order('id') // stable pagination: without an order, pages can skip or repeat rows
-      .range(offset, offset + 999);
 
-    if (error) throw new Error(`county map: ${error.message}`); // never cache a partial map (region pages would 404)
-    if (!data || data.length === 0) break;
-    for (const row of data) {
-      const lc = String(row.city).toLowerCase();
-      (counts[lc] ??= {})[row.county] = (counts[lc][row.county] || 0) + 1;
-      const key = `${row.county}|${row.city}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-      if (!map[row.county]) map[row.county] = [];
-      if (!map[row.county].includes(row.city)) map[row.county].push(row.city);
-    }
-    offset += 1000;
-    if (data.length < 1000) break;
+  for (const row of rows) {
+    const lc = String(row.city).toLowerCase();
+    (counts[lc] ??= {})[row.county] = (counts[lc][row.county] || 0) + 1;
+    const key = `${row.county}|${row.city}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    if (!byCounty[row.county]) byCounty[row.county] = [];
+    if (!byCounty[row.county].includes(row.city)) byCounty[row.county].push(row.city);
   }
 
-  // Sort cities alphabetically
-  for (const county of Object.keys(map)) {
-    map[county].sort();
+  for (const county of Object.keys(byCounty)) {
+    byCounty[county].sort();
   }
 
   const primary: Record<string, string> = {};
-  for (const [city, byCounty] of Object.entries(counts)) {
-    primary[city] = Object.entries(byCounty).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0][0];
+  for (const [city, byName] of Object.entries(counts)) {
+    primary[city] = Object.entries(byName).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0][0];
   }
-  _cityCounty = primary;
-  _countyCache = map;
-  _cacheTime = Date.now();
+  return { byCounty, primary };
+}
+
+async function scanCountyRows(): Promise<CountyRow[]> {
+  const filters = () => supabase
+    .from('listings')
+    .select('city, county')
+    .eq('state', 'FL') // county pages are Florida-only; GA/AL listings have no county
+    .not('county', 'is', null)
+    .not('city', 'is', null);
+
+  return fetchOrderedPages<CountyRow>({
+    label: 'county map',
+    count: () => supabase
+      .from('listings')
+      .select('id', { count: 'exact', head: true })
+      .eq('state', 'FL')
+      .not('county', 'is', null)
+      .not('city', 'is', null),
+    page: async (from, to) => {
+      const { data, error } = await filters().order('id').range(from, to);
+      return { data: (data || null) as CountyRow[] | null, error };
+    },
+  });
+}
+
+const readCountyMap = unstable_cache(async (): Promise<CountyMapData> => {
+  const rows = await scanCountyRows();
+  const map = buildCountyMap(rows);
+  // Refuse to cache an unexpectedly huge payload (Next drops data-cache entries over 2 MB).
+  const bytes = JSON.stringify(map).length;
+  if (bytes > 1_500_000) throw new Error(`county map cache entry is ${bytes} bytes`);
   return map;
+}, ['fl-county-map-v1'], { revalidate: 3600 });
+
+const countyInflight = new Map<string, Promise<CountyMapData>>();
+
+function loadCountyMap(): Promise<CountyMapData> {
+  return shareInflight(countyInflight, 'fl', () => readCountyMap());
+}
+
+export async function getCountyData(): Promise<CountyMapData> {
+  return loadCountyMap();
+}
+
+/** Cities listed in this county whose primary county is this one (sorted). */
+export function primaryCitiesInCounty(data: CountyMapData, county: string): string[] {
+  return (data.byCounty[county] || []).filter((name) => data.primary[name.toLowerCase()] === county);
 }
 
 export async function getCountyMap(): Promise<Record<string, string[]>> {
-  return loadCountyMap();
+  return (await loadCountyMap()).byCounty;
 }
 
 /** A city's primary county: the county where most of its listings are (e.g. Jacksonville -> Duval, not Clay). */
 export async function getCountyForCity(city: string): Promise<string | null> {
-  await loadCountyMap();
-  return _cityCounty[city.toLowerCase()] || null;
+  const map = await loadCountyMap();
+  return map.primary[city.toLowerCase()] || null;
 }
 
 export async function getCitiesInCounty(county: string): Promise<string[]> {
   const map = await loadCountyMap();
-  return map[county] || [];
+  return map.byCounty[county] || [];
+}
+
+export async function getPrimaryCitiesInCounty(county: string): Promise<string[]> {
+  return primaryCitiesInCounty(await loadCountyMap(), county);
 }
 
 export async function getAllCounties(): Promise<string[]> {
   const map = await loadCountyMap();
-  return Object.keys(map).sort();
+  return Object.keys(map.byCounty).sort();
 }
 
 export function countySlug(county: string): string {
