@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
 
     if (claim.verified) {
       // Re-clicking an old verification link no longer signs anyone in; use the dashboard sign-in link instead.
-      return NextResponse.json({ success: true, email: claim.email, message: 'Already verified' });
+      return NextResponse.json({ success: true, alreadyVerified: true, email: claim.email, message: 'Already verified' });
     }
 
     // Check expiration

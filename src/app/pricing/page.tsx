@@ -118,7 +118,8 @@ export default function PricingPage() {
     setQ(v);
     if (v.trim().length < 2) { setResults([]); return; }
     const { data } = await supabase.from('listings').select('id, name, slug, city, state, tier, claimed')
-      .ilike('name', `%${v.trim().replace(/[%_,()]/g, ' ')}%`).limit(8);
+      .ilike('name', `%${v.trim().replace(/[%_,()]/g, ' ')}%`).not('slug', 'like', 'zz-hap-test%')
+      .order('review_count', { ascending: false, nullsFirst: false }).limit(8); // best-known match first, no QA rows
     setResults((data as Biz[]) || []);
   }
 

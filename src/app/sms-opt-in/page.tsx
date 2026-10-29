@@ -19,7 +19,7 @@ export default function SmsOptInPage() {
         <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="email">Your email address</label>
         <input id="email" type="email" name="email" className="w-full px-4 py-3 border border-gray-300 rounded-lg mb-4" placeholder="you@business.com" />
         <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="phone">Mobile phone number</label>
-        <input id="phone" type="tel" name="phone" className="w-full px-4 py-3 border border-gray-300 rounded-lg mb-4" placeholder="(555) 555-5555" />
+        <input id="phone" type="tel" name="phone" className="w-full px-4 py-3 border border-gray-300 rounded-lg mb-4" placeholder="Your mobile number" />
         <label className="flex items-start gap-3 mb-4">
           <input type="checkbox" name="sms" className="mt-1 w-4 h-4" />
           <span className="text-sm text-gray-600">

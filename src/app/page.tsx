@@ -47,13 +47,14 @@ export default async function HomePage() {
   // No Featured subscribers yet: show Pro and top-reviewed pros instead of an empty grid.
   let showcase = featuredListings || [];
   const hasFeatured = showcase.length > 0;
-  if (!hasFeatured) {
+  if (showcase.length < 6) {
+    // Fewer than 6 Featured subscribers: fill the rest of the grid with Pro and top-reviewed pros (Featured stay first).
     const { data: top } = await supabase.from('listings').select('*, categories(name, slug, icon)')
       .gte('rating', 4.7).not('slug', 'like', 'zz-hap-test%')
       .order('tier', { ascending: false }).order('review_count', { ascending: false, nullsFirst: false }).limit(18);
     // Same business can be listed in several categories; show each name once.
-    const seen = new Set<string>();
-    showcase = (top || []).filter((l) => { const k = String(l.name || '').toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, 6);
+    const seen = new Set<string>(showcase.map((l) => String(l.name || '').toLowerCase()));
+    showcase = [...showcase, ...(top || []).filter((l) => { const k = String(l.name || '').toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; })].slice(0, 6);
   }
 
   // Count listings per category using exact counts to avoid 1000-row limit

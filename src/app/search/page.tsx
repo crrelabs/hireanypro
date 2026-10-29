@@ -39,7 +39,10 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   // Build query
   let query = supabase
     .from('listings')
-    .select('*, categories!inner(name, slug, icon)', { count: 'exact' });
+    // The inner join is only needed to filter by category; without one, a plain embed keeps the exact count fast
+    // (the joined count took 10-40 s under load and once returned a 522).
+    .select(category ? '*, categories!inner(name, slug, icon)' : '*, categories(name, slug, icon)', { count: 'exact' })
+    .not('slug', 'like', 'zz-hap-test%'); // internal QA listings never show in search
 
   if (q) {
     // Detect zip code (5 digits) vs text search
@@ -80,7 +83,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
       {q && (
         <p className="text-sm text-gray-500 mb-4">
-          {count || 0} results{q ? ` for "${q}"` : ''}
+          {(count || 0).toLocaleString('en-US')} {count === 1 ? 'result' : 'results'}{q ? ` for "${q}"` : ''}
         </p>
       )}
 
