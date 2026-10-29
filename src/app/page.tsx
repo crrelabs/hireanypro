@@ -4,7 +4,7 @@ import CategoryCard from '@/components/CategoryCard';
 import ListingCard from '@/components/ListingCard';
 import Link from 'next/link';
 import OwnerClaimFinder from '@/components/OwnerClaimFinder';
-import { getAllCounties, countySlug, getCitiesInCounty, getCountyForCity, citySlug } from '@/lib/geo';
+import { getCountyData, primaryCitiesInCounty, countySlug, citySlug } from '@/lib/geo';
 import { getCategoryCities, getCategoryBySlug } from '@/lib/listings';
 import { shouldIndexCityPage } from '@/lib/directory-content';
 import type { Metadata } from 'next';
@@ -159,17 +159,18 @@ export default async function HomePage() {
           {/* Region cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {await (async () => {
-              const counties = await getAllCounties();
-              // Only link cities that actually have a plumbing page (linking every city produced ~175 broken links).
-              const plumbing = await getCategoryBySlug('plumbing');
+              const [countyMap, plumbing] = await Promise.all([
+                getCountyData(),
+                // Only link cities that actually have a plumbing page (linking every city produced ~175 broken links).
+                getCategoryBySlug('plumbing'),
+              ]);
+              const counties = Object.keys(countyMap.byCounty).sort();
               // Thin plumbing pages (fewer than 3 listings) are noindex, so they are not linked from the homepage.
               const plumbingCities = new Map((plumbing ? await getCategoryCities(plumbing.id) : []).filter((g) => shouldIndexCityPage(g.count)).map((g) => [g.slug, g.count]));
-              return Promise.all(counties.map(async (county) => {
-                const allCities = await getCitiesInCounty(county);
+              return counties.map((county) => {
                 // A city can show up under several counties in the raw data (Orlando was linked 21 times);
                 // only show it under its primary county, once.
-                const primary = await Promise.all(allCities.map(async (c) => ((await getCountyForCity(c)) === county ? c : null)));
-                const cities = [...new Map(primary.filter((c): c is string => !!c).map((c) => [citySlug(c), c])).values()];
+                const cities = [...new Map(primaryCitiesInCounty(countyMap, county).map((c) => [citySlug(c), c])).values()];
                 const topCities = cities
                   .filter((c) => plumbingCities.has(citySlug(c)))
                   .sort((a, b) => (plumbingCities.get(citySlug(b)) || 0) - (plumbingCities.get(citySlug(a)) || 0))
@@ -197,7 +198,7 @@ export default async function HomePage() {
                     </div>
                   </div>
                 );
-              }));
+              });
             })()}
           </div>
 

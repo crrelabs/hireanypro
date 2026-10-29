@@ -2,6 +2,7 @@ import { cache } from 'react';
 import { unstable_cache } from 'next/cache';
 import { supabase, type Listing } from './supabase';
 import { cityPageSlug, stateCode } from './geo';
+import { fetchOrderedPages, shareInflight } from './paged-read';
 
 /** Only the columns a ListingCard needs, so list pages don't ship every listing's full record to the browser. */
 export const CARD_COLUMNS =
@@ -22,31 +23,35 @@ export type CityGroup = { name: string; slug: string; variants: string[]; count:
  * Paginates past Supabase's 1,000-row default so large categories are complete. Memoized per request.
  */
 const loadCategoryCities = unstable_cache(async (categoryId: string): Promise<CityGroup[]> => {
-  const groups = new Map<string, { names: Map<string, number>; count: number; state: string }>();
-  for (let offset = 0; ; offset += 1000) {
-    const { data, error } = await supabase
+  const rows = await fetchOrderedPages<{ city: string | null; state: string | null }>({
+    label: 'category cities',
+    count: () => supabase
+      .from('listings')
+      .select('id', { count: 'exact', head: true })
+      .eq('category_id', categoryId)
+      .not('city', 'is', null),
+    page: (from, to) => supabase
       .from('listings')
       .select('city, state')
       .eq('category_id', categoryId)
       .not('city', 'is', null)
       .order('id')
-      .range(offset, offset + 999);
-    // A failed page must not be cached as a short city list (that 404'd real city pages for an hour).
-    if (error) throw new Error(`category cities: ${error.message}`);
-    if (!data || data.length === 0) break;
-    for (const row of data) {
-      const name = (row.city || '').trim();
-      if (!name) continue;
-      // Out-of-state (near-border GA/AL) cities get their own "-ga"/"-al" page, never merged into a Florida namesake.
-      const state = stateCode(row.state);
-      const slug = cityPageSlug(name, state);
-      if (!slug) continue;
-      const g = groups.get(slug) || { names: new Map<string, number>(), count: 0, state };
-      g.names.set(row.city, (g.names.get(row.city) || 0) + 1);
-      g.count += 1;
-      groups.set(slug, g);
-    }
-    if (data.length < 1000) break;
+      .range(from, to),
+  });
+  const groups = new Map<string, { names: Map<string, number>; count: number; state: string }>();
+  for (const row of rows) {
+    const raw = row.city;
+    if (!raw) continue;
+    const name = raw.trim();
+    if (!name) continue;
+    // Out-of-state (near-border GA/AL) cities get their own "-ga"/"-al" page, never merged into a Florida namesake.
+    const state = stateCode(row.state);
+    const slug = cityPageSlug(name, state);
+    if (!slug) continue;
+    const g = groups.get(slug) || { names: new Map<string, number>(), count: 0, state };
+    g.names.set(raw, (g.names.get(raw) || 0) + 1);
+    g.count += 1;
+    groups.set(slug, g);
   }
   return [...groups.entries()].map(([slug, g]) => {
     const variants = [...g.names.keys()];
@@ -56,7 +61,11 @@ const loadCategoryCities = unstable_cache(async (categoryId: string): Promise<Ci
   });
 }, ['category-cities-v2'], { revalidate: 3600 });
 
-export const getCategoryCities = cache((categoryId: string) => loadCategoryCities(categoryId));
+const categoryCityInflight = new Map<string, Promise<CityGroup[]>>();
+
+export const getCategoryCities = cache((categoryId: string) => (
+  shareInflight(categoryCityInflight, categoryId, () => loadCategoryCities(categoryId))
+));
 
 export const getCategoryBySlug = cache(async (slug: string) => {
   const { data, error } = await supabase.from('categories').select('*').eq('slug', slug).maybeSingle();
@@ -111,21 +120,26 @@ export const getCityPageRows = cache(async (
   const st = stateCode(state);
   if (!cities.length) return [];
   if (totalHint > 500) {
-    const all: CityPageRow[] = [];
-    for (let offset = 0; ; offset += 1000) {
-      const { data, error } = await supabase
+    const all = await fetchOrderedPages<CityPageRow>({
+      label: 'city page rows',
+      count: () => supabase
         .from('listings')
-        .select(CITY_PAGE_COLUMNS)
+        .select('id', { count: 'exact', head: true })
         .eq('category_id', categoryId)
         .in('city', cities)
-        .eq('state', st)
-        .order('id')
-        .range(offset, offset + 999);
-      if (error) throw new Error(error.message);
-      if (!data?.length) break;
-      all.push(...(data as CityPageRow[]));
-      if (data.length < 1000) break;
-    }
+        .eq('state', st),
+      page: async (from, to) => {
+        const { data, error } = await supabase
+          .from('listings')
+          .select(CITY_PAGE_COLUMNS)
+          .eq('category_id', categoryId)
+          .in('city', cities)
+          .eq('state', st)
+          .order('id')
+          .range(from, to);
+        return { data: (data || null) as CityPageRow[] | null, error };
+      },
+    });
     all.sort(compareCityPageRows);
     return all;
   }
@@ -161,34 +175,41 @@ const loadSiblingCategories = unstable_cache(async (
 ): Promise<SiblingCategory[]> => {
   const cities = variantsKey.split('\n').map((v) => v.trim()).filter(Boolean);
   if (!cities.length) return [];
-  const counts = new Map<string, SiblingCategory>();
-  for (let offset = 0; ; offset += 1000) {
-    const { data, error } = await supabase
+  const rows = await fetchOrderedPages<{ categories: unknown }>({
+    label: 'sibling categories',
+    count: () => supabase
+      .from('listings')
+      .select('id', { count: 'exact', head: true })
+      .in('city', cities)
+      .eq('state', state)
+      .neq('category_id', excludeCategoryId),
+    page: (from, to) => supabase
       .from('listings')
       .select('category_id, categories(name, slug)')
       .in('city', cities)
       .eq('state', state)
       .neq('category_id', excludeCategoryId)
       .order('id')
-      .range(offset, offset + 999);
-    if (error) throw new Error(error.message);
-    if (!data?.length) break;
-    for (const row of data) {
-      const cat = categoryEmbed(row.categories);
-      if (!cat) continue;
-      const current = counts.get(cat.slug) || { name: cat.name, slug: cat.slug, count: 0 };
-      current.count += 1;
-      counts.set(cat.slug, current);
-    }
-    if (data.length < 1000) break;
+      .range(from, to),
+  });
+  const counts = new Map<string, SiblingCategory>();
+  for (const row of rows) {
+    const cat = categoryEmbed(row.categories);
+    if (!cat) continue;
+    const current = counts.get(cat.slug) || { name: cat.name, slug: cat.slug, count: 0 };
+    current.count += 1;
+    counts.set(cat.slug, current);
   }
   return [...counts.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 }, ['city-sibling-categories-v1'], { revalidate: 3600 });
 
+const siblingInflight = new Map<string, Promise<SiblingCategory[]>>();
+
 /** Other categories that have listings in this city and state, with counts. */
 export const getCitySiblingCategories = cache((variants: string[], state: string, excludeCategoryId: string) => {
   const key = [...new Set(variants.map((v) => v.trim()).filter(Boolean))].sort().join('\n');
-  return loadSiblingCategories(key, stateCode(state), excludeCategoryId);
+  const st = stateCode(state);
+  return shareInflight(siblingInflight, `${st}\0${excludeCategoryId}\0${key}`, () => loadSiblingCategories(key, st, excludeCategoryId));
 });
 
 export type CountyCityCount = { name: string; slug: string; count: number };
@@ -215,21 +236,24 @@ type RollupRow = {
 };
 
 async function fetchCategoryStateRows(categoryId: string, state: string): Promise<RollupRow[]> {
-  const rows: RollupRow[] = [];
-  for (let offset = 0; ; offset += 1000) {
-    const { data, error } = await supabase
+  return fetchOrderedPages<RollupRow>({
+    label: `category rollup ${state}`,
+    count: () => supabase
       .from('listings')
-      .select('city, county, rating, review_count, phone, website')
+      .select('id', { count: 'exact', head: true })
       .eq('category_id', categoryId)
-      .eq('state', state)
-      .order('id')
-      .range(offset, offset + 999);
-    if (error) throw new Error(error.message);
-    if (!data?.length) break;
-    rows.push(...(data as RollupRow[]));
-    if (data.length < 1000) break;
-  }
-  return rows;
+      .eq('state', state),
+    page: async (from, to) => {
+      const { data, error } = await supabase
+        .from('listings')
+        .select('city, county, rating, review_count, phone, website')
+        .eq('category_id', categoryId)
+        .eq('state', state)
+        .order('id')
+        .range(from, to);
+      return { data: (data || null) as RollupRow[] | null, error };
+    },
+  });
 }
 
 function absorbRollup(target: { rated: number; totalReviews: number; weighted: number; withPhone: number; withWebsite: number }, rows: RollupRow[]) {
@@ -326,21 +350,23 @@ export const getCityCategorySnapshot = cache(async (
   const groups = await getCategoryCities(categoryId);
   const group = groups.find((g) => g.state === st && g.variants.some((v) => v.trim().toLowerCase() === city.trim().toLowerCase()));
   if (!group) return null;
-  const rows: { slug: string; name: string | null; rating: number | null; review_count: number | null }[] = [];
-  for (let offset = 0; ; offset += 1000) {
-    const { data, error } = await supabase
+  const rows = await fetchOrderedPages<{ slug: string; name: string | null; rating: number | null; review_count: number | null }>({
+    label: 'city category snapshot',
+    count: () => supabase
+      .from('listings')
+      .select('id', { count: 'exact', head: true })
+      .eq('category_id', categoryId)
+      .eq('state', st)
+      .in('city', group.variants),
+    page: (from, to) => supabase
       .from('listings')
       .select('slug, name, rating, review_count')
       .eq('category_id', categoryId)
       .eq('state', st)
       .in('city', group.variants)
       .order('id')
-      .range(offset, offset + 999);
-    if (error) throw new Error(error.message);
-    if (!data?.length) break;
-    rows.push(...data);
-    if (data.length < 1000) break;
-  }
+      .range(from, to),
+  });
   let rated = 0;
   let totalReviews = 0;
   let weighted = 0;
