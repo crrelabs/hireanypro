@@ -4,7 +4,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { CityIntro, CityStatsBlock, CityFaq } from '@/components/CityInsights';
+import { CityIntro, CityStatsBlock, CityFaq, CityTopSpot } from '@/components/CityInsights';
 import CityQuoteForm from '@/components/CityQuoteForm';
 import { getCountyForCity, getCitiesInCounty, countySlug, stateName } from '@/lib/geo';
 import {
@@ -189,6 +189,10 @@ export default async function CityLandingPage({ params }: Props) {
         <CityStatsBlock categoryName={category.name} cityName={cityName} count={group.count} stats={stats} />
 
         <CityQuoteForm categorySlug={category.slug} categoryName={category.name} citySlug={cSlug} cityName={cityName} />
+
+        {shouldIndexCityPage(group.count) && !rows.some((r) => r.featured || r.tier === 'featured') && (
+          <CityTopSpot categoryName={category.name} categorySlug={category.slug} cityName={cityName} citySlug={cSlug} count={group.count} />
+        )}
 
         <CategoryFilters
           listings={listings}

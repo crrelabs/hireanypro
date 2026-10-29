@@ -4,6 +4,7 @@ import {
   buildCityIntroParts,
   cityStatCards,
   faqPageJsonLd,
+  lowerCategory,
   type CityStats,
   type NeighborCity,
   type SiblingCategory,
@@ -97,5 +98,27 @@ export function CityFaq(props: CityCopy) {
         </Link>
       </section>
     </>
+  );
+}
+
+/**
+ * Shown on indexable city pages that have no Featured pro yet: tells owners the top spot is open and what it costs.
+ * Featured listings (listings.featured, set by the Stripe webhook) sort first on this page. Clicks count as
+ * pricing_click / claim_click (FunnelTracker) with utm_source=city_top_spot.
+ */
+export function CityTopSpot({ categoryName, categorySlug, cityName, citySlug, count }: { categoryName: string; categorySlug: string; cityName: string; citySlug: string; count: number }) {
+  const cat = lowerCategory(categoryName);
+  const utm = `utm_source=city_top_spot&utm_medium=web&utm_campaign=${categorySlug}-${citySlug}`;
+  return (
+    <aside className="mb-6 rounded-xl border-2 border-dashed border-orange-300 bg-white p-4 flex flex-col sm:flex-row sm:items-center gap-3" aria-label="Featured spot available">
+      <div className="flex-1 text-sm text-gray-700">
+        <p className="font-semibold text-gray-900">⭐ The top spot for {cat} in {cityName} is open</p>
+        <p>Featured pros are listed first on this page, above all {count.toLocaleString('en-US')} {cat} pros here, with a highlighted card and badge. $49.99/month, cancel anytime.</p>
+      </div>
+      <div className="flex gap-2 shrink-0">
+        <a href={`/pricing?plan=featured&${utm}`} className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-lg text-sm text-center">Get the top spot</a>
+        <a href={`/claim?${utm}`} className="border border-gray-300 hover:bg-gray-50 text-gray-800 font-medium px-4 py-2 rounded-lg text-sm text-center">Claim free instead</a>
+      </div>
+    </aside>
   );
 }
