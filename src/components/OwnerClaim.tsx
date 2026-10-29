@@ -2,6 +2,7 @@
 
 import { useEffect, useSyncExternalStore } from 'react';
 import { isAutomatedBrowser } from '@/lib/track';
+import ClaimValueCard from '@/components/ClaimValueCard';
 
 /**
  * Owners who open their listing from one of our claim emails arrive with ?ct=<signed token> (and utm_medium=outreach).
@@ -44,6 +45,7 @@ export function OwnerClaimBanner({ slug, name }: { slug: string; name: string })
             ? 'You opened this from our email, so you can claim it in one click: no verification email, free forever.'
             : 'Claim it free to fix your details and receive quote requests from homeowners.'}
         </p>
+        <ClaimValueCard listing={slug} surface="listing_banner" compact />
       </div>
       <a href={claimHref(slug, ct, 'listing_banner')}
         className="shrink-0 text-center bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-lg">

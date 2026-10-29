@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import TurnstileWidget from '@/components/TurnstileWidget';
 import { isAutomatedBrowser } from '@/lib/track';
+import ClaimValueCard from '@/components/ClaimValueCard';
 
 type ListingResult = {
   id: string;
@@ -87,6 +88,8 @@ function ClaimPage() {
   }, [selected, useToken]);
 
   const express = useToken && !!selected && !selected.claimed;
+  // Arrived with a specific listing (email, listing page, home finder): put that business and the form first.
+  const focused = express || (!!preselectedSlug && !!selected && !selected.claimed);
 
   const latestQuery = useRef('');
   async function searchListings(q: string) {
@@ -155,9 +158,9 @@ function ClaimPage() {
   }
 
   const benefitsGrid = (
-      <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm ${express ? 'mt-10' : 'mb-10'}`}>
+      <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm ${focused ? 'mt-10' : 'mb-10'}`}>
         {[
-          ['📨', 'Get customer quote requests', 'Homeowners already request quotes from listings like yours. Claim to receive them.'],
+          ['📨', 'Get customer quote requests', 'When homeowners request quotes in your area, claimed pros receive them by email (and text, if you opt in).'],
           ['✏️', 'Fix your info', 'Update your phone, hours, services, website and description.'],
           ['✅', 'Show as a claimed business', 'Claimed profiles look trustworthy and stand out from unclaimed ones.'],
           ['🔒', 'Stay in control', 'Only you can edit your listing after you verify your email.'],
@@ -217,11 +220,11 @@ function ClaimPage() {
   return (
     <div className="max-w-2xl mx-auto py-16 px-4">
       <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold text-gray-900 mb-3">{express ? `Claim ${selected!.name}` : 'Claim Your Business Listing'}</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-3">{focused ? `Claim ${selected!.name}` : 'Claim Your Business Listing'}</h1>
         <p className="text-gray-600">{express ? 'One click, free forever. No credit card, no verification email.' : 'Free forever. No credit card. Takes about a minute.'}</p>
       </div>
 
-      {!express && benefitsGrid}
+      {!focused && benefitsGrid}
 
       {preselectMissing && !selected && (
         <p className="mb-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3">We couldn&apos;t find that listing link. Search for your business name below.</p>
@@ -278,6 +281,8 @@ function ClaimPage() {
               </button>
             </div>
           </div>
+
+          <ClaimValueCard listing={selected.slug} surface={express ? 'claim_one_click' : 'claim_page'} />
 
           {/* Honeypot */}
           <div className="hidden" aria-hidden="true">
@@ -373,7 +378,7 @@ function ClaimPage() {
         </div>
       )}
 
-      {express && benefitsGrid}
+      {focused && benefitsGrid}
     </div>
   );
 }
