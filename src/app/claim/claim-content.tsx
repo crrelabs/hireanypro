@@ -51,8 +51,9 @@ export function ClaimTrust({ claimedCount }: { claimedCount: number }) {
       )}
       <h2 className="text-lg font-semibold text-gray-900">How claiming works</h2>
       <p>
-        If you open the signed link we emailed you, you can claim in one click. Otherwise we email a verification link.
-        The link expires in 24 hours. By claiming, you confirm you are authorized to manage the business.
+        If you open the signed link we emailed to the address on your listing, you can claim in one click.
+        Otherwise we email you a verification link, which expires in 24 hours. By claiming, you confirm you are
+        authorized to manage the business.
       </p>
       <h2 className="text-lg font-semibold text-gray-900">Email and phone</h2>
       <p>
