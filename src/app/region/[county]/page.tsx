@@ -46,13 +46,14 @@ const loadCounty = cache(async (slug: string) => {
 
   const rows: Row[] = [];
   for (let from = 0; ; from += 1000) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('listings')
       .select('name, slug, city, rating, review_count, categories(name, slug, icon)')
       .eq('state', 'FL') // county hubs are Florida-only
       .eq('county', countyName)
       .order('id')
       .range(from, from + 999);
+    if (error) throw new Error(`county ${countyName}: ${error.message}`);
     if (!data?.length) break;
     rows.push(...(data as unknown as Row[]).filter((r) => !r.slug.startsWith('zz-hap-test')));
     if (data.length < 1000) break;

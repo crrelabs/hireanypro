@@ -17,7 +17,7 @@ async function loadCountyMap(): Promise<Record<string, string[]>> {
   const seen = new Set<string>();
   const counts: Record<string, Record<string, number>> = {};
   while (true) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('listings')
       .select('city, county')
       .eq('state', 'FL') // county pages are Florida-only; GA/AL listings have no county
@@ -26,6 +26,7 @@ async function loadCountyMap(): Promise<Record<string, string[]>> {
       .order('id') // stable pagination: without an order, pages can skip or repeat rows
       .range(offset, offset + 999);
 
+    if (error) throw new Error(`county map: ${error.message}`); // never cache a partial map (region pages would 404)
     if (!data || data.length === 0) break;
     for (const row of data) {
       const lc = String(row.city).toLowerCase();

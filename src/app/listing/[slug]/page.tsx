@@ -35,11 +35,12 @@ const catText = (n: string) => n.split(' ').map((w) => (/^[A-Z]{2,}$/.test(w) ? 
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const { data: listing } = await supabase
+  const { data: listing, error } = await supabase
     .from('listings')
     .select('name, description, city, state, phone, email, website, address, rating, review_count, tier, claimed, categories(name)')
     .eq('slug', slug)
-    .single();
+    .maybeSingle();
+  if (error) throw new Error(`listing meta ${slug}: ${error.message}`);
 
   if (!listing) return { title: 'Listing Not Found' };
 
@@ -149,11 +150,13 @@ function buildJsonLd(listing: Record<string, unknown>) {
 export default async function ListingPage({ params }: Props) {
   const { slug } = await params;
 
-  const { data: listing } = await supabase
+  const { data: listing, error: listingError } = await supabase
     .from('listings')
     .select('*, categories(name, slug, icon)')
     .eq('slug', slug)
-    .single();
+    .maybeSingle();
+  // A database hiccup must not become a cached 404 (ISR would keep it for an hour and Google would drop the URL).
+  if (listingError) throw new Error(`listing ${slug}: ${listingError.message}`);
 
   if (!listing) {
     // Removed listings (merged duplicates, non-business entries, fixed slugs) get a permanent (308) redirect.

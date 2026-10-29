@@ -31,7 +31,9 @@ const loadCategoryCities = unstable_cache(async (categoryId: string): Promise<Ci
       .not('city', 'is', null)
       .order('id')
       .range(offset, offset + 999);
-    if (error || !data || data.length === 0) break;
+    // A failed page must not be cached as a short city list (that 404'd real city pages for an hour).
+    if (error) throw new Error(`category cities: ${error.message}`);
+    if (!data || data.length === 0) break;
     for (const row of data) {
       const name = (row.city || '').trim();
       if (!name) continue;
@@ -57,7 +59,8 @@ const loadCategoryCities = unstable_cache(async (categoryId: string): Promise<Ci
 export const getCategoryCities = cache((categoryId: string) => loadCategoryCities(categoryId));
 
 export const getCategoryBySlug = cache(async (slug: string) => {
-  const { data } = await supabase.from('categories').select('*').eq('slug', slug).single();
+  const { data, error } = await supabase.from('categories').select('*').eq('slug', slug).maybeSingle();
+  if (error) throw new Error(`category ${slug}: ${error.message}`); // DB hiccup = retryable 500, not a cached 404
   return data as { id: string; name: string; slug: string; icon: string } | null;
 });
 
