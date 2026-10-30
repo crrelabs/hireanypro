@@ -28,7 +28,6 @@ export default async function ForProsCategoryPage({ params }: Props) {
   const s = await getProsCategoryStory(category);
   if (!s || s.total === 0) notFound();
   const faqs = prosFaqs(s);
-  const unclaimedShare = s.total ? Math.round(((s.total - s.claimed) / s.total) * 100) : 0;
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageJsonLd(faqs)) }} />
@@ -37,7 +36,7 @@ export default async function ForProsCategoryPage({ params }: Props) {
       <p className="text-lg text-gray-600 mb-8">
         HireAnyPro already lists <b>{formatCount(s.total)}</b> {s.lc} businesses in {formatCount(s.cityCount)} Florida-area cities
         {s.totalReviews ? <>, with {formatCount(s.totalReviews)} Google reviews between them (average {s.avg.toFixed(1)}/5)</> : null}.
-        {' '}{unclaimedShare}% of them are still unclaimed, so their details are whatever public information we found.
+        {' '}{s.claimed === 0 ? 'None of them are claimed yet' : `Only ${formatCount(s.claimed)} ${s.claimed === 1 ? 'has' : 'have'} been claimed so far`}, so most details are whatever public information we found.
       </p>
 
       <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-6 mb-10">
