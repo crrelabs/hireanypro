@@ -69,7 +69,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const rows = await getCityPageRows(cat.id, group.variants, st, count);
   const stats = computeCityStats(rows, count);
 
-  const title = `${count > 1 ? `${count} ` : ''}Best ${cat.name} Pros in ${cityName}, ${st} (${new Date().getFullYear()}) | HireAnyPro`;
+  const title = count > 1
+    ? `${count} Best ${cat.name} Pros in ${cityName}, ${st} (${new Date().getFullYear()}) | HireAnyPro`
+    : `${cat.name} Pro in ${cityName}, ${st} (${new Date().getFullYear()}) | HireAnyPro`;
   const lcName = lowerCategory(cat.name);
   const description = stats.rated > 0
     ? `Compare ${count.toLocaleString('en-US')} ${lcName} ${count === 1 ? 'pro' : 'pros'} in ${cityName}, ${stName}. Average rating ${stats.avg.toFixed(1)}/5 across ${stats.totalReviews.toLocaleString('en-US')} reviews. Free quotes.`

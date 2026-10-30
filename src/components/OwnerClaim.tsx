@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
-import { isAutomatedBrowser } from '@/lib/track';
+import { isAutomatedBrowser, onHuman } from '@/lib/track';
 import ClaimValueCard from '@/components/ClaimValueCard';
 
 /**
@@ -55,7 +55,7 @@ export function OwnerClaimBanner({ slug, name, listingId }: { slug: string; name
   const [state, setState] = useState<TapState>('idle');
   const [err, setErr] = useState('');
   useEffect(() => {
-    if (fromEmail) track('owner_banner_view', { listing_slug: slug, one_click: !!ct });
+    if (fromEmail) return onHuman(() => track('owner_banner_view', { listing_slug: slug, one_click: !!ct }));
   }, [fromEmail, ct, slug]);
   if (!fromEmail) return null;
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { isAutomatedBrowser } from '@/lib/track';
+import { isAutomatedBrowser, onHuman } from '@/lib/track';
 
 type Preview = {
   available: boolean;
@@ -36,9 +36,12 @@ export default function ClaimValueCard({ listing, surface, compact = false }: { 
   }, [listing]);
   useEffect(() => {
     if (!p || tracked.current || isAutomatedBrowser()) return;
-    tracked.current = true;
-    const w = window as unknown as { gtag?: (...a: unknown[]) => void };
-    w.gtag?.('event', 'claim_value_view', { surface, listing_slug: listing, views30: p.views30 || 0, rank: p.rank || 0 });
+    return onHuman(() => {
+      if (tracked.current) return;
+      tracked.current = true;
+      const w = window as unknown as { gtag?: (...a: unknown[]) => void };
+      w.gtag?.('event', 'claim_value_view', { surface, listing_slug: listing, views30: p.views30 || 0, rank: p.rank || 0 });
+    });
   }, [p, surface, listing]);
   if (!p) return null;
 

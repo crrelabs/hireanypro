@@ -253,7 +253,7 @@ export default async function ListingPage({ params }: Props) {
                         )}
                       </>
                     ) : (
-                      <span className="text-gray-400 text-sm">New listing</span>
+                      <span className="text-gray-400 text-sm">No reviews yet</span>
                     )}
                   </div>
                 </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { isAutomatedBrowser } from '@/lib/track';
+import { isAutomatedBrowser, onHuman } from '@/lib/track';
 
 type Spot = {
   available: boolean;
@@ -36,9 +36,12 @@ export default function PlanSpotCard({ listing, onPick }: { listing: string; onP
   }, [listing]);
   useEffect(() => {
     if (!s || tracked.current || isAutomatedBrowser()) return;
-    tracked.current = true;
-    const w = window as unknown as { gtag?: (...a: unknown[]) => void };
-    w.gtag?.('event', 'plan_spot_view', { listing_slug: listing, rank: s.rank || 0, plan: s.tier || '' });
+    return onHuman(() => {
+      if (tracked.current) return;
+      tracked.current = true;
+      const w = window as unknown as { gtag?: (...a: unknown[]) => void };
+      w.gtag?.('event', 'plan_spot_view', { listing_slug: listing, rank: s.rank || 0, plan: s.tier || '' });
+    });
   }, [s, listing]);
   if (!s || !s.cityCount || s.cityCount < 2 || !s.city) return null;
   if (s.tier === 'featured') return null;
