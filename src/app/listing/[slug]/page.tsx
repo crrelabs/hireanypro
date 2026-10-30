@@ -223,7 +223,7 @@ export default async function ListingPage({ params }: Props) {
           { label: listing.name },
         ]} />
 
-        {!listing.claimed && <OwnerClaimBanner slug={listing.slug} name={listing.name} />}
+        {!listing.claimed && <OwnerClaimBanner slug={listing.slug} name={listing.name} listingId={listing.id} />}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
