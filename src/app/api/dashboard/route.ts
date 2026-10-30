@@ -19,7 +19,8 @@ export async function POST(req: NextRequest) {
     // Identity comes only from the signed session cookie (set by the emailed sign-in link or claim verification).
     const email = sessionEmail(req);
     if (!email) {
-      return NextResponse.json({ error: 'Please sign in.' }, { status: 401 });
+      // 200 with signedIn:false (not 401) so signed-out visitors don't get a console error on /dashboard.
+      return NextResponse.json({ signedIn: false, error: 'Please sign in.' }, { headers: { 'Cache-Control': 'no-store' } });
     }
 
     // Get profile

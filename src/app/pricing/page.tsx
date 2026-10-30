@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import { isAutomatedBrowser } from '@/lib/track';
+import { isAutomatedBrowser, onHuman } from '@/lib/track';
 import PlanSpotCard from '@/components/PlanSpotCard';
 
 type Biz = { id: string; name: string; slug: string; city?: string | null; state?: string | null; tier?: string | null; claimed?: boolean | null };
@@ -62,7 +62,6 @@ const plans = [
       'Top placement in all searches',
       'Featured on the homepage',
       'Highlighted listing card',
-      'Lead stats in your dashboard',
       'Featured badge ⭐',
       'Priority customer support',
     ],
@@ -98,7 +97,7 @@ export default function PricingPage() {
     let tokenEmail = '';
     try { const p = JSON.parse(atob((ct.split('.')[0] || '').replace(/-/g, '+').replace(/_/g, '/'))); if (typeof p.e === 'string') tokenEmail = p.e; } catch {}
     if (tokenEmail) setEmail(tokenEmail);
-    track('pricing_view', { has_listing: !!l, from_email_link: !!tokenEmail, plan: plan || '' });
+    const stopView = onHuman(() => track('pricing_view', { has_listing: !!l, from_email_link: !!tokenEmail, plan: plan || '' }));
     if (l) {
       const col = /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(l) ? 'id' : 'slug';
       supabase.from('listings').select('id, name, slug, city, state, tier, claimed').eq(col, l).maybeSingle()
@@ -111,6 +110,7 @@ export default function PricingPage() {
       setOwned(ls);
       if (!l && ls.length === 1) { setBiz(ls[0]); setListingId(ls[0].id); }
     }).catch(() => {});
+    return stopView;
   }, []);
 
   useEffect(() => { if (selectedPlan) track('checkout_open', { plan: selectedPlan }); }, [selectedPlan]);
@@ -118,9 +118,13 @@ export default function PricingPage() {
   async function search(v: string) {
     setQ(v);
     if (v.trim().length < 2) { setResults([]); return; }
-    const { data } = await supabase.from('listings').select('id, name, slug, city, state, tier, claimed')
-      .ilike('name', `%${v.trim().replace(/[%_,()]/g, ' ')}%`).not('slug', 'like', 'zz-hap-test%')
+    // "Name, City" narrows by city, like the claim finder.
+    const [name, city] = v.split(',').map((x) => x.trim().replace(/[%_()]/g, ' '));
+    let query = supabase.from('listings').select('id, name, slug, city, state, tier, claimed')
+      .ilike('name', `%${name}%`).not('slug', 'like', 'zz-hap-test%')
       .order('review_count', { ascending: false, nullsFirst: false }).limit(8); // best-known match first, no QA rows
+    if (city) query = query.ilike('city', `${city}%`);
+    const { data } = await query;
     setResults((data as Biz[]) || []);
   }
 
@@ -260,7 +264,7 @@ export default function PricingPage() {
                   </select>
                 ) : (
                   <div className="mb-4">
-                    <input type="text" value={q} onChange={(e) => search(e.target.value)} placeholder="Type your business name..."
+                    <input type="text" value={q} onChange={(e) => search(e.target.value)} placeholder="Business name, city (city optional)"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800 focus:border-transparent outline-none text-gray-900" />
                     {results.length > 0 && (
                       <div className="mt-2 border border-gray-200 rounded-lg divide-y divide-gray-100 bg-white shadow-sm max-h-56 overflow-y-auto">
@@ -273,7 +277,7 @@ export default function PricingPage() {
                         ))}
                       </div>
                     )}
-                    <p className="text-xs text-gray-500 mt-2">Not listed yet? <Link href="/contact" className="text-blue-800 hover:underline">Contact us</Link> and we&apos;ll add you.</p>
+                    <p className="text-xs text-gray-500 mt-2">Not listed yet? Email <a href="mailto:iris@hireanypro.com?subject=Please%20add%20my%20business" className="text-blue-800 hover:underline">iris@hireanypro.com</a> and we&apos;ll add you.</p>
                   </div>
                 )}
                 <label className="block text-sm font-medium text-gray-700 mb-2">

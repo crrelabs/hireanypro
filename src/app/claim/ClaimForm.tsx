@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useSyncExternalStore, type ReactNode } fro
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import TurnstileWidget from '@/components/TurnstileWidget';
-import { isAutomatedBrowser } from '@/lib/track';
+import { isAutomatedBrowser, onHuman } from '@/lib/track';
 import ClaimValueCard from '@/components/ClaimValueCard';
 
 type ListingResult = {
@@ -102,8 +102,12 @@ export default function ClaimForm({
   const mountedAt = useRef(Date.now());
   useEffect(() => {
     if (!selected || viewedRef.current) return;
-    viewedRef.current = true;
-    track('claim_view', { listing_slug: selected.slug, method: useToken ? 'one_click' : 'email_link', already_claimed: !!selected.claimed });
+    // Counted only once the visitor interacts, so email scanners that render the page don't inflate claim_view.
+    return onHuman(() => {
+      if (viewedRef.current) return;
+      viewedRef.current = true;
+      track('claim_view', { listing_slug: selected.slug, method: useToken ? 'one_click' : 'email_link', already_claimed: !!selected.claimed });
+    });
   }, [selected, useToken]);
 
   const express = useToken && !!selected && !selected.claimed;

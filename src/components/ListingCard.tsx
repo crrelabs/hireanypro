@@ -43,11 +43,11 @@ export default function ListingCard({ listing }: { listing: Listing & { categori
             <StarRating rating={listing.rating} />
             <span className="text-sm text-gray-600">{listing.rating}</span>
             {listing.review_count > 0 && (
-              <span className="text-xs text-gray-400">({listing.review_count})</span>
+              <span className="text-xs text-gray-400">({Number(listing.review_count).toLocaleString('en-US')})</span>
             )}
           </div>
         ) : (
-          <p className="text-xs text-gray-400 mt-2">New listing</p>
+          <p className="text-xs text-gray-400 mt-2">No reviews yet</p>
         )}
         {isPaid && listing.phone && (
           <p className="text-sm text-gray-600 mt-2 flex items-center gap-1">

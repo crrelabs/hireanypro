@@ -46,7 +46,7 @@ function maxLastmod(values: Array<string | null | undefined>): string | undefine
 // Page templates were rewritten on these dates (PR #52: city + category pages; 2026-10-28: county hubs). The page content
 // changed even where no listing row did, so lastmod must not be older than the rewrite or crawlers skip the new copy.
 export const CITY_PAGES_REVISED = '2026-10-27';
-export const CATEGORY_PAGES_REVISED = '2026-10-27';
+export const CATEGORY_PAGES_REVISED = '2026-10-30';
 export const COUNTY_PAGES_REVISED = '2026-10-28';
 export function withFloor(lastmod: string | null | undefined, floor: string): string {
   return lastmod && lastmod > floor ? lastmod : floor;

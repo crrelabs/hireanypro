@@ -4,10 +4,11 @@ export const revalidate = 86400;
 
 // Plain-text site summary for AI assistants (llmstxt.org). Counts come live from the database.
 export async function GET() {
-  const [{ count: listingCount }, { data: cats }] = await Promise.all([
+  const [{ count: listingCount, error: countError }, { data: cats, error: catError }] = await Promise.all([
     supabase.from('listings').select('id', { count: 'exact', head: true }).not('slug', 'like', 'zz-hap-test%'),
     supabase.from('categories').select('name, slug').order('name'),
   ]);
+  if (countError || catError) throw new Error(`llms.txt: ${(countError || catError)?.message}`); // keep the last good copy
   const n = (listingCount || 0).toLocaleString('en-US');
   const catLines = (cats || []).map((c) => `- [${c.name}](https://hireanypro.com/category/${c.slug})`).join('\n');
   const body = `# HireAnyPro
@@ -27,6 +28,7 @@ Key facts:
 - [About HireAnyPro](https://hireanypro.com/about)
 - [Pricing for businesses](https://hireanypro.com/pricing)
 - [Claim a listing](https://hireanypro.com/claim)
+- [For pros: list your business free](https://hireanypro.com/for-pros)
 - [Blog](https://hireanypro.com/blog)
 
 ## Service categories

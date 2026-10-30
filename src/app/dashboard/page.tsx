@@ -58,6 +58,7 @@ function DashboardPage() {
       if (res.status === 401) { setAuthed(false); setData(null); return; }
       if (!res.ok) { setData(null); return; }
       const result = await res.json();
+      if (result.signedIn === false) { setAuthed(false); setData(null); return; }
       setAuthed(true);
       setEmail(result.email || '');
       setData({
