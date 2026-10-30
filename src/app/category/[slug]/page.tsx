@@ -198,6 +198,10 @@ export default async function CategoryPage({ params }: Props) {
 
         <CategoryFaq {...story} />
 
+        <p className="mt-8 text-sm text-gray-600 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          Are you a {lowerCategory(category.name)} pro in Florida? <Link href={`/for-pros/${category.slug}`} className="text-blue-800 font-semibold hover:underline">Find and claim your free listing</Link>.
+        </p>
+
         {popularCities.length > 0 && (
           <section className="mt-16">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Popular Cities for {category.name}</h2>
