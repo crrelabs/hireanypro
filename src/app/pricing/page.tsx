@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { isAutomatedBrowser } from '@/lib/track';
+import PlanSpotCard from '@/components/PlanSpotCard';
 
 type Biz = { id: string; name: string; slug: string; city?: string | null; state?: string | null; tier?: string | null; claimed?: boolean | null };
 const track = (name: string, p: Record<string, unknown> = {}) => {
@@ -49,7 +50,7 @@ const plans = [
     plan: 'pro' as const,
     style: 'border-blue-800 bg-white ring-2 ring-blue-800',
     buttonStyle: 'bg-blue-800 text-white hover:bg-blue-700',
-    badge: 'Most Popular',
+    badge: 'Best Value',
   },
   {
     name: 'Featured',
@@ -173,6 +174,10 @@ export default function PricingPage() {
             <button onClick={() => { setSelectedPlan('pro'); track('upgrade_banner_click', { listing_slug: biz.slug }); }}
               className="shrink-0 bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-lg">Upgrade to Pro: $9/mo</button>
           </div>
+        )}
+
+        {biz && !selectedPlan && (
+          <PlanSpotCard listing={biz.id} onPick={(plan) => { setSelectedPlan(plan); track('plan_spot_click', { plan, listing_slug: biz.slug }); }} />
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
