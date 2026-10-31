@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: 'Florida Contractor Ratings by City and Category (2026 Data)',
   description: `How Florida home service pros are rated: ${fmt(o.listings)} businesses, ${fmt(o.totalReviews)} Google reviews, average ${o.avgRating} stars. Ratings and counts by category, city and county, with methodology.`,
   alternates: { canonical: URL },
-  openGraph: { title: 'Florida Contractor Ratings by City and Category (2026)', url: URL, type: 'article' },
+  openGraph: { title: 'Florida Contractor Ratings by City and Category (2026)', url: URL, type: 'article', images: [{ url: '/logo.png', alt: 'HireAnyPro' }] },
 };
 
 export default function FloridaRatingsReport() {

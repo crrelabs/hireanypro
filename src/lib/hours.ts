@@ -36,15 +36,24 @@ export function normalizeHours(raw: unknown): Record<string, DayHours> | null {
 export const formatDayHours = (h: DayHours) =>
   (h.open === '00:00' && h.close === '00:00') || (h.open === '00:00' && h.close === '23:59')
     ? 'Open 24 hours'
-    : `${h.open} - ${h.close}`;
+    : `${to12h(h.open)} - ${to12h(h.close)}`;
+
+/** "17:30" -> "5:30 PM"; most visitors read 12-hour time, and "08:00 - 17:00" looked like raw data. */
+export function to12h(t: string): string {
+  const [hh, mm] = t.split(':').map(Number);
+  if (!Number.isFinite(hh) || !Number.isFinite(mm)) return t;
+  const h = hh % 24;
+  const suffix = h < 12 ? 'AM' : 'PM';
+  return `${h % 12 === 0 ? 12 : h % 12}:${String(mm).padStart(2, '0')} ${suffix}`;
+}
 
 /** One sentence about a normalized week. Null when hours are missing or junk. */
 export function hoursSummary(hours: Record<string, DayHours> | null): string | null {
   if (!hours) return null;
   const openDays = DAY_ORDER.filter((d) => hours[d]);
   if (openDays.length < 2) return null;
-  const weekend = !!(hours.saturday || hours.sunday);
+  const weekendDays = [hours.saturday && 'Saturday', hours.sunday && 'Sunday'].filter(Boolean).join(' and ');
   const allWeekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].every((d) => hours[d]);
-  const when = weekend ? ', including Saturday or Sunday' : allWeekdays ? ' (Monday through Friday)' : '';
+  const when = openDays.length === 7 ? ' (open every day)' : weekendDays ? `, including ${weekendDays}` : allWeekdays ? ' (Monday through Friday)' : '';
   return `Weekly hours are published for ${openDays.length} days${when}.`;
 }

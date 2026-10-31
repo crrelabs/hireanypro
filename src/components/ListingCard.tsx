@@ -41,7 +41,7 @@ export default function ListingCard({ listing }: { listing: Listing & { categori
         {listing.rating ? (
           <div className="flex items-center gap-2 mt-2">
             <StarRating rating={listing.rating} />
-            <span className="text-sm text-gray-600">{listing.rating}</span>
+            <span className="text-sm text-gray-600">{Number(listing.rating).toFixed(1)}</span>
             {listing.review_count > 0 && (
               <span className="text-xs text-gray-400">({Number(listing.review_count).toLocaleString('en-US')})</span>
             )}

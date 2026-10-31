@@ -69,8 +69,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const rows = await getCityPageRows(cat.id, group.variants, st, count);
   const stats = computeCityStats(rows, count);
 
+  // "Moving Companies Pros" read badly; names that already name the business type don't get "Pros".
+  const plural = /(companies|services)$/i.test(cat.name) ? cat.name : `${cat.name} Pros`;
   const title = count > 1
-    ? `${count} Best ${cat.name} Pros in ${cityName}, ${st} (${new Date().getFullYear()}) | HireAnyPro`
+    ? `${count} Best ${plural} in ${cityName}, ${st} (${new Date().getFullYear()}) | HireAnyPro`
     : `${cat.name} Pro in ${cityName}, ${st} (${new Date().getFullYear()}) | HireAnyPro`;
   const lcName = lowerCategory(cat.name);
   const description = stats.rated > 0
@@ -82,7 +84,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description,
     ...(shouldIndexCityPage(count) ? {} : { robots: { index: false, follow: true } }),
     alternates: { canonical: `https://hireanypro.com/services/${catSlug}/${cSlug}` },
-    openGraph: { title, description, url: `https://hireanypro.com/services/${catSlug}/${cSlug}`, siteName: 'HireAnyPro' },
+    openGraph: { title, description, url: `https://hireanypro.com/services/${catSlug}/${cSlug}`, siteName: 'HireAnyPro', images: [{ url: '/logo.png', alt: 'HireAnyPro' }] },
   };
 }
 
