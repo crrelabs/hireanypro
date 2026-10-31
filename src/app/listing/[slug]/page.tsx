@@ -17,6 +17,7 @@ import { isBoilerplateDescription, MIN_INDEXABLE_CITY_LISTINGS } from '@/lib/dir
 import { getCityCategorySnapshot } from '@/lib/listings';
 import ListingMarketContext from '@/components/ListingMarketContext';
 import StickyQuoteBar from '@/components/StickyQuoteBar';
+import { buildListingFaq, faqJsonLd } from '@/lib/listing-faq';
 
 export const revalidate = 3600;
 
@@ -206,8 +207,39 @@ export default async function ListingPage({ params }: Props) {
   const catLabel = listing.categories?.name ? catText(listing.categories.name) : 'home service';
   const description = (listing.description && String(listing.description).trim())
     || `${listing.name} is ${/^[aeiou]/i.test(catLabel) ? 'an' : 'a'} ${catLabel} business${listing.city ? ` in ${listing.city}, ${stateCode(listing.state)}` : ''}${listing.rating && listing.review_count ? `, rated ${listing.rating} out of 5 from ${Number(listing.review_count).toLocaleString('en-US')} Google ${listing.review_count === 1 ? 'review' : 'reviews'}` : ''}. Request a free quote below.`;
-  const jsonLdItems = buildJsonLd(listing);
   const isPaid = listing.tier === 'pro' || listing.tier === 'featured';
+
+  // Peer rank for the FAQ: same category + city + state, ranked by Google review count. Non-critical: on a read
+  // error the rank sentence is simply left out (the rest of the page is unaffected).
+  let peers: number | null = null, rankByReviews: number | null = null;
+  if (listing.category_id && listing.city) {
+    const base = () => supabase.from('listings').select('id', { count: 'exact', head: true })
+      .eq('category_id', listing.category_id).eq('city', listing.city).eq('state', stateCode(listing.state));
+    const [all, above] = await Promise.all([
+      base(),
+      Number(listing.review_count || 0) > 0 ? base().gt('review_count', Number(listing.review_count)) : Promise.resolve({ count: null, error: null }),
+    ]);
+    if (!all.error && all.count != null) peers = all.count;
+    if (!above.error && above.count != null && Number(listing.review_count || 0) > 0) rankByReviews = above.count + 1;
+  }
+  const faq = buildListingFaq({
+    name: listing.name,
+    catText: catLabel,
+    city: listing.city || null,
+    stateCode: stateCode(listing.state),
+    county: listingCounty,
+    address: address || null,
+    zip: listing.zip || null,
+    rating: listing.rating ? Number(listing.rating) : null,
+    reviewCount: Number(listing.review_count || 0),
+    peers,
+    rankByReviews,
+    hours,
+    claimed: !!listing.claimed,
+    isPaid,
+    offersOthers: !isPaid && !!(listing.categories && listing.city && nearby && nearby.length > 0),
+  });
+  const jsonLdItems = [...buildJsonLd(listing), faqJsonLd(faq)];
 
   return (
     <>
@@ -462,6 +494,19 @@ export default async function ListingPage({ params }: Props) {
             <ReviewForm listingId={listing.id} businessName={listing.name} />
           </div>
         </div>
+
+        {/* FAQ from the listing's own facts (mirrored in FAQPage JSON-LD above). */}
+        <section className="mt-8 bg-white rounded-xl border border-gray-200 p-6" aria-labelledby="listing-faq">
+          <h2 id="listing-faq" className="text-lg font-bold text-gray-900 mb-4">{listing.name}: common questions</h2>
+          <div className="divide-y divide-gray-100">
+            {faq.map((f) => (
+              <div key={f.q} className="py-3 first:pt-0 last:pb-0">
+                <h3 className="font-semibold text-gray-900 text-sm">{f.q}</h3>
+                <p className="text-gray-600 text-sm mt-1 leading-relaxed">{f.a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
 
         {nearby && nearby.length > 0 && listing.categories && (
           <div className="mt-8 bg-white rounded-xl border border-gray-200 p-6">
