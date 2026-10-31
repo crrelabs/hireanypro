@@ -3,6 +3,7 @@ import SearchBar from '@/components/SearchBar';
 import CategoryCard from '@/components/CategoryCard';
 import ListingCard from '@/components/ListingCard';
 import Link from 'next/link';
+import QuoteFinder from '@/components/QuoteFinder';
 import OwnerClaimFinder from '@/components/OwnerClaimFinder';
 import { getCountyData, primaryCitiesInCounty, countySlug, citySlug } from '@/lib/geo';
 import { getCategoryCities, getCategoryBySlug } from '@/lib/listings';
@@ -93,6 +94,11 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Quote finder: homeowners who don't want to browse can ask up to 3 pros at once (form=home_multi_quote). */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-10">
+        <QuoteFinder source="home" categories={(categories || []).map((c) => ({ slug: c.slug, name: c.name, icon: c.icon }))} className="shadow-lg bg-white" />
       </section>
 
       {/* Categories */}

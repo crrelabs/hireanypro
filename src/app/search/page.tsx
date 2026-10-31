@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import QuoteFinder from '@/components/QuoteFinder';
 import { Suspense } from 'react';
 import { supabase, type Listing } from '@/lib/supabase';
 import SearchBar from '@/components/SearchBar';
@@ -23,6 +24,17 @@ function pageWindow(page: number, total: number): (number | null)[] {
   const out: (number | null)[] = [];
   sorted.forEach((p, i) => { if (i > 0 && p - sorted[i - 1] > 1) out.push(null); out.push(p); });
   return out;
+}
+
+/** Preselect the quote finder's service from ?category= or a search like "plumber" / "ac repair". */
+function guessCategory(cats: { slug: string; name: string }[], category: string, q: string): string | undefined {
+  if (category && cats.some((c) => c.slug === category)) return category;
+  const t = q.toLowerCase().replace(/[^a-z ]/g, ' ').trim();
+  if (t.length < 3) return undefined;
+  const alias: Record<string, string> = { ac: 'hvac', 'air conditioning': 'hvac', plumber: 'plumbing', electrician: 'electrical', roofer: 'roofing', painter: 'painting', mover: 'moving-companies', movers: 'moving-companies', exterminator: 'pest-control' };
+  for (const [k, v] of Object.entries(alias)) if (new RegExp(`\\b${k}s?\\b`).test(t) && cats.some((c) => c.slug === v)) return v;
+  const stem = t.split(' ')[0].slice(0, 5);
+  return cats.find((c) => c.name.toLowerCase().includes(t) || (stem.length >= 4 && (c.slug.startsWith(stem) || c.name.toLowerCase().startsWith(stem))))?.slug;
 }
 
 export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string; category?: string; city?: string; rating?: string; page?: string }> }) {
@@ -93,6 +105,10 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         </Suspense>
 
         <div className="flex-1">
+          {/* Ask up to 3 pros at once instead of contacting them one by one (form=search_multi_quote). */}
+          <QuoteFinder source="search" className="mb-6" initialCategory={guessCategory(categories || [], category, q)}
+            categories={(categories || []).map((c: { slug: string; name: string; icon: string | null }) => ({ slug: c.slug, name: c.name, icon: c.icon }))} />
+
           {/* Map */}
           {listings && listings.length > 0 && (
             <div className="h-64 mb-6 rounded-xl overflow-hidden border border-gray-200">
