@@ -16,6 +16,7 @@ import { DAY_LABELS, formatDayHours, normalizeHours } from '@/lib/hours';
 import { isBoilerplateDescription, MIN_INDEXABLE_CITY_LISTINGS } from '@/lib/directory-content';
 import { getCityCategorySnapshot } from '@/lib/listings';
 import ListingMarketContext from '@/components/ListingMarketContext';
+import StickyQuoteBar from '@/components/StickyQuoteBar';
 import { buildListingFaq, faqJsonLd } from '@/lib/listing-faq';
 
 export const revalidate = 3600;
@@ -252,6 +253,7 @@ export default async function ListingPage({ params }: Props) {
       ))}
 
       {!slug.startsWith('zz-hap-test') && <ListingViewBeacon listingId={listing.id} />}
+      <StickyQuoteBar targetId="quote" form="listing" label={`Get a free quote from ${listing.name.length > 28 ? 'this pro' : listing.name}`} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Breadcrumbs items={[
           { label: 'Home', href: '/' },
@@ -379,7 +381,7 @@ export default async function ListingPage({ params }: Props) {
                     <span>{address}{address && !addressHasCity ? <><br />{cityLine}</> : null}{!address ? cityLine : null}</span>
                   </div>
                   {/* Quote form for paid listings */}
-                  <div className="mt-4 pt-4 border-t border-gray-100">
+                  <div id="quote" className="mt-4 pt-4 border-t border-gray-100">
                     <QuoteRequestForm listingId={listing.id} businessName={listing.name} tier={listing.tier} />
                   </div>
                 </div>
@@ -408,7 +410,7 @@ export default async function ListingPage({ params }: Props) {
                     <span>{address}{address && !addressHasCity ? <><br />{cityLine}</> : null}{!address ? cityLine : null}</span>
                   </div>
                   {/* Quote form right here for free/unclaimed */}
-                  <div className="mt-4 pt-4 border-t border-gray-100">
+                  <div id="quote" className="mt-4 pt-4 border-t border-gray-100">
                     <QuoteRequestForm listingId={listing.id} businessName={listing.name} tier={listing.tier}
                       othersLabel={listing.categories && listing.city && nearby && nearby.length > 0 ? `${catText(listing.categories.name)} pros in ${listing.city}` : undefined} />
                   </div>
