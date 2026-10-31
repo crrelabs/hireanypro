@@ -4,6 +4,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
+import QuoteFinder from '@/components/QuoteFinder';
 import { CategorySummary, CategoryCounties, CategoryFaq } from '@/components/CategoryHub';
 import { supabase } from '@/lib/supabase';
 import { stateName } from '@/lib/geo';
@@ -151,6 +152,10 @@ export default async function CategoryPage({ params }: Props) {
         </div>
 
         <CategorySummary {...story} />
+
+        <QuoteFinder source="category" initialCategory={category.slug} className="mb-10"
+          categories={[{ slug: category.slug, name: category.name, icon: category.icon }]}
+          title={`Get up to 3 free quotes from ${lcCat} pros near you`} />
 
         {listings.length > 0 ? (
           <>
