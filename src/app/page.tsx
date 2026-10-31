@@ -196,9 +196,14 @@ export default async function HomePage() {
                           {city}
                         </Link>
                       ))}
-                      {cities.length > topCities.length && (
+                      {topCities.length === 0 ? (
+                        // No city here has a full plumbing page yet; a bare "+N more" read like a broken card.
                         <Link href={`/region/${countySlug(county)}`} className="text-sm text-blue-800 font-medium px-2 py-1">
-                          +{cities.length - topCities.length} more
+                          See all pros in {county} County{cities.length > 1 ? ` (${cities.length} cities)` : ''} →
+                        </Link>
+                      ) : cities.length > topCities.length && (
+                        <Link href={`/region/${countySlug(county)}`} className="text-sm text-blue-800 font-medium px-2 py-1">
+                          +{cities.length - topCities.length} more {cities.length - topCities.length === 1 ? 'city' : 'cities'}
                         </Link>
                       )}
                     </div>

@@ -29,7 +29,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
       publishedTime: post.published_at || undefined,
       authors: [post.author],
-      ...(post.featured_image && { images: [post.featured_image] }),
+      images: post.featured_image ? [post.featured_image] : [{ url: '/logo.png', alt: 'HireAnyPro' }],
+      url: `https://hireanypro.com/blog/${slug}`,
+      siteName: 'HireAnyPro',
     },
   };
 }

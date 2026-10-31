@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Home Service Tips & Guides | HireAnyPro Blog',
     description: 'Expert tips and guides for hiring home service professionals in Florida.',
+    url: 'https://hireanypro.com/blog',
+    siteName: 'HireAnyPro',
+    images: [{ url: '/logo.png', alt: 'HireAnyPro' }],
   },
 };
 

@@ -46,7 +46,9 @@ function maxLastmod(values: Array<string | null | undefined>): string | undefine
 // Page templates were rewritten on these dates (PR #52: city + category pages; 2026-10-28: county hubs). The page content
 // changed even where no listing row did, so lastmod must not be older than the rewrite or crawlers skip the new copy.
 export const CITY_PAGES_REVISED = '2026-10-27';
-export const CATEGORY_PAGES_REVISED = '2026-10-30';
+export const CATEGORY_PAGES_REVISED = '2026-10-31'; // 2026-10-31: quote finder on category hubs
+// 2026-10-31: every listing page gained an FAQ section + FAQPage markup, so listing lastmod is floored to that date.
+export const LISTING_PAGES_REVISED = '2026-10-31';
 export const COUNTY_PAGES_REVISED = '2026-10-28';
 export function withFloor(lastmod: string | null | undefined, floor: string): string {
   return lastmod && lastmod > floor ? lastmod : floor;
@@ -134,7 +136,7 @@ export async function getListingChunkUrls(chunk: number): Promise<SitemapUrl[]> 
     .filter((row) => SAFE_SLUG.test(row.slug) && !row.slug.startsWith('zz-hap-test'))
     .map((row) => ({
       loc: `${BASE_URL}/listing/${row.slug}`,
-      lastmod: toLastmod(row.updated_at),
+      lastmod: withFloor(toLastmod(row.updated_at), LISTING_PAGES_REVISED),
       changefreq: 'weekly' as const,
       priority: 0.9,
     }));
@@ -179,7 +181,7 @@ export async function getPagesSitemapUrls(): Promise<SitemapUrl[]> {
   const latestBlog = maxLastmod(blogSlugs.map((b) => b.updated_at));
 
   const urls: SitemapUrl[] = [
-    { loc: BASE_URL, lastmod: latestListing, changefreq: 'daily', priority: 1 },
+    { loc: BASE_URL, lastmod: withFloor(latestListing, LISTING_PAGES_REVISED), changefreq: 'daily', priority: 1 },
     { loc: `${BASE_URL}/categories`, lastmod: latestCategory, changefreq: 'weekly', priority: 0.8 },
     { loc: `${BASE_URL}/pricing`, changefreq: 'monthly', priority: 0.6 },
     { loc: `${BASE_URL}/blog`, lastmod: latestBlog, changefreq: 'daily', priority: 0.8 },
@@ -283,7 +285,7 @@ export function buildSitemapIndexEntries(
   ];
 
   for (let chunk = 0; chunk < listingChunks; chunk++) {
-    entries.push({ loc: listingSitemapPath(chunk), lastmod: latestListing });
+    entries.push({ loc: listingSitemapPath(chunk), lastmod: withFloor(latestListing, LISTING_PAGES_REVISED) });
   }
 
   return entries;

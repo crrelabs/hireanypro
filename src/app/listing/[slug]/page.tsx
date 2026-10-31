@@ -50,9 +50,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cat = categories?.name || 'Service Provider';
   const metaIsPaid = listing.tier === 'pro' || listing.tier === 'featured';
   const st = stateCode(listing.state);
-  const title = listing.city ? `${listing.name} - ${cat} in ${listing.city}, ${st} | HireAnyPro` : `${listing.name} - ${cat} in ${stateName(st)} | HireAnyPro`;
+  const baseTitle = listing.city ? `${listing.name} - ${cat} in ${listing.city}, ${st}` : `${listing.name} - ${cat} in ${stateName(st)}`;
+  // Google cuts titles around 60-65 characters; drop the brand suffix rather than lose the city.
+  const title = baseTitle.length + 13 > 65 ? baseTitle : `${baseTitle} | HireAnyPro`;
   const ratingText = listing.rating && listing.review_count
-    ? ` Rated ${listing.rating}/5 from ${Number(listing.review_count).toLocaleString('en-US')} ${listing.review_count === 1 ? 'review' : 'reviews'}.`
+    ? ` Rated ${Number(listing.rating).toFixed(1)}/5 from ${Number(listing.review_count).toLocaleString('en-US')} ${listing.review_count === 1 ? 'review' : 'reviews'}.`
     : '';
   const description = `${listing.name} is listed under ${cat} in ${listing.city ? `${listing.city}, ${st}` : stateName(st)}.${ratingText}${metaIsPaid && listing.phone ? ` Call ${listing.phone} for a free quote.` : ' Request a free quote on HireAnyPro.'}`;
 
@@ -76,6 +78,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://hireanypro.com/listing/${slug}`,
       siteName: 'HireAnyPro',
       type: 'website',
+      images: [{ url: '/logo.png', alt: 'HireAnyPro' }],
     },
   };
 }
@@ -182,6 +185,8 @@ export default async function ListingPage({ params }: Props) {
         .eq('city', listing.city)
         .eq('state', stateCode(listing.state))
         .neq('id', listing.id)
+        // Most-reviewed first: rating-only put 5.0 listings with 2 reviews ahead of 4.8 with 900.
+        .order('review_count', { ascending: false, nullsFirst: false })
         .order('rating', { ascending: false, nullsFirst: false })
         .limit(8)
     : { data: null };
@@ -206,7 +211,7 @@ export default async function ListingPage({ params }: Props) {
   const cityLine = [listing.city, [stateCode(listing.state), listing.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
   const catLabel = listing.categories?.name ? catText(listing.categories.name) : 'home service';
   const description = (listing.description && String(listing.description).trim())
-    || `${listing.name} is ${/^[aeiou]/i.test(catLabel) ? 'an' : 'a'} ${catLabel} business${listing.city ? ` in ${listing.city}, ${stateCode(listing.state)}` : ''}${listing.rating && listing.review_count ? `, rated ${listing.rating} out of 5 from ${Number(listing.review_count).toLocaleString('en-US')} Google ${listing.review_count === 1 ? 'review' : 'reviews'}` : ''}. Request a free quote below.`;
+    || `${listing.name} is ${/^[aeiou]/i.test(catLabel) ? 'an' : 'a'} ${catLabel} business${listing.city ? ` in ${listing.city}, ${stateCode(listing.state)}` : ''}${listing.rating && listing.review_count ? `, rated ${Number(listing.rating).toFixed(1)} out of 5 from ${Number(listing.review_count).toLocaleString('en-US')} Google ${listing.review_count === 1 ? 'review' : 'reviews'}` : ''}. Request a free quote below.`;
   const isPaid = listing.tier === 'pro' || listing.tier === 'featured';
 
   // Peer rank for the FAQ: same category + city + state, ranked by Google review count. Non-critical: on a read
@@ -281,7 +286,7 @@ export default async function ListingPage({ params }: Props) {
                     {listing.rating ? (
                       <>
                         <StarRating rating={listing.rating} size="md" />
-                        <span className="font-semibold text-gray-900">{listing.rating}</span>
+                        <span className="font-semibold text-gray-900">{Number(listing.rating).toFixed(1)}</span>
                         {listing.review_count > 0 && (
                           <span className="text-gray-400 text-sm">on Google · {Number(listing.review_count).toLocaleString('en-US')} {listing.review_count === 1 ? 'review' : 'reviews'}</span>
                         )}
@@ -457,7 +462,7 @@ export default async function ListingPage({ params }: Props) {
           {listing.rating && listing.review_count > 0 && (
             <div className="flex items-center gap-2 mb-4 pb-4 border-b border-gray-100">
               <StarRating rating={listing.rating} size="md" />
-              <span className="font-semibold text-gray-900">{listing.rating}</span>
+              <span className="font-semibold text-gray-900">{Number(listing.rating).toFixed(1)}</span>
               <span className="text-gray-500 text-sm">on Google · {Number(listing.review_count).toLocaleString('en-US')} {listing.review_count === 1 ? 'review' : 'reviews'}</span>
             </div>
           )}
@@ -520,7 +525,7 @@ export default async function ListingPage({ params }: Props) {
                     {n.name}
                   </Link>
                   {n.rating ? (
-                    <span className="text-xs text-gray-500 ml-2">{n.rating}★ ({n.review_count || 0})</span>
+                    <span className="text-xs text-gray-500 ml-2">{Number(n.rating).toFixed(1)}★ ({Number(n.review_count || 0).toLocaleString('en-US')})</span>
                   ) : null}
                 </li>
               ))}

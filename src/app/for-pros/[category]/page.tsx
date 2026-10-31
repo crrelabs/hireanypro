@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = `List Your ${s.name} Business Free in Florida | HireAnyPro for Pros`;
   const description = `${formatCount(s.total)} Florida ${s.lc} businesses are listed on HireAnyPro. Find yours, claim it free, fix your details and get quote requests from homeowners. Pro $9/mo, Featured $49.99/mo.`;
   const url = `https://hireanypro.com/for-pros/${s.slug}`;
-  return { title, description, alternates: { canonical: url }, openGraph: { title, description, url, siteName: 'HireAnyPro' } };
+  return { title, description, alternates: { canonical: url }, openGraph: { title, description, url, siteName: 'HireAnyPro', images: [{ url: '/logo.png', alt: 'HireAnyPro' }] } };
 }
 
 export default async function ForProsCategoryPage({ params }: Props) {

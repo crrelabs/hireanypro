@@ -63,7 +63,7 @@ export function buildListingFaq(x: ListingFaqInput): FaqItem[] {
 
   // 2. Rating (+ rank among peers when there is something to compare)
   if (x.rating && x.reviewCount > 0) {
-    let a = `${x.name} has a ${x.rating} out of 5 rating on Google from ${fmt(x.reviewCount)} ${x.reviewCount === 1 ? 'review' : 'reviews'}.`;
+    let a = `${x.name} has a ${Number(x.rating).toFixed(1)} out of 5 rating on Google from ${fmt(x.reviewCount)} ${x.reviewCount === 1 ? 'review' : 'reviews'}.`;
     // Only mention the rank when it is a real distinction (top 10 or top quarter of the city), never to rank-shame a business.
     if (x.peers && x.peers >= 3 && x.rankByReviews && x.city && (x.rankByReviews <= 10 || x.rankByReviews <= Math.ceil(x.peers / 4))) {
       a += x.rankByReviews === 1
