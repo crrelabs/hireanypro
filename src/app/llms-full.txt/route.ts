@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase';
 import report from '@/data/florida-ratings-2026-by-category.json';
 import overall from '@/data/florida-ratings-2026.json';
 import { lowerCategory } from '@/lib/directory-content';
+import { prosLabel } from '@/lib/pros-label';
 
 export const revalidate = 86400;
 
@@ -26,7 +27,7 @@ export async function GET() {
 
 - Florida ${lc} businesses listed: ${fmt(c.listings)} in ${fmt(c.cityCount)} cities (${fmt(c.rated)} with Google ratings, ${fmt(c.totalReviews)} reviews in total).
 - Average Google rating: ${c.avgRating} (median ${c.medianRating}); ${c.pct45}% rated 4.5 or higher; ${c.pctUnder4}% below 4.0; median ${fmt(c.medianReviews)} reviews per business.
-- All ${lc} pros by city: ${SITE}/category/${c.slug}
+- All ${prosLabel(lc)} by city: ${SITE}/category/${c.slug}
 - Ratings data by city and county: ${SITE}/data/florida-contractor-ratings-2026/${c.slug}
 - Business owners (claim a free listing): ${SITE}/for-pros/${c.slug}
 

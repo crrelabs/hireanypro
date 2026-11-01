@@ -10,7 +10,7 @@ import { supabase } from '@/lib/supabase';
 import tradeReport from '@/data/florida-ratings-2026-by-category.json';
 import { stateName } from '@/lib/geo';
 import { CARD_COLUMNS, toCard, getCategoryCities, getCategoryBySlug, getCategoryRollup, type CardListing } from '@/lib/listings';
-import { formatCount, lowerCategory, shouldIndexCityPage, type CategoryNarrativeInput } from '@/lib/directory-content';
+import { formatCount, lowerCategory, shouldIndexCityPage, type CategoryNarrativeInput, prosLabel } from '@/lib/directory-content';
 const TRADE_DATA = new Set(tradeReport.categories.map((c) => c.slug)); // trades with a /data ratings page
 
 // Cached pages (ISR): rendered on first request, then served from Vercel's cache and refreshed in the background.
@@ -53,10 +53,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const story = await categoryNarrative(category);
   const lcName = lowerCategory(category.name);
   const top = story.topCities[0];
-  const title = `${category.name} Pros in Florida: ${formatCount(story.total)} Listings by City | HireAnyPro`;
+  const title = `${/(companies|services)$/i.test(category.name) ? category.name : `${category.name} Pros`} in Florida: ${formatCount(story.total)} Listings by City | HireAnyPro`;
   const description = top
-    ? `Compare ${formatCount(story.total)} ${lcName} pros in ${formatCount(story.cityCount)} cities${story.counties[0] ? `, led by ${story.counties[0].county} County` : ''}. Most listings are in ${top.name}. Ratings and free quotes.`
-    : `Compare ${lcName} pros in Florida. Ratings and free quotes on HireAnyPro.`;
+    ? `Compare ${formatCount(story.total)} ${prosLabel(lcName)} in ${formatCount(story.cityCount)} cities${story.counties[0] ? `, led by ${story.counties[0].county} County` : ''}. Most listings are in ${top.name}. Ratings and free quotes.`
+    : `Compare ${prosLabel(lcName)} in Florida. Ratings and free quotes on HireAnyPro.`;
   return {
     title,
     description,
@@ -157,7 +157,7 @@ export default async function CategoryPage({ params }: Props) {
 
         <QuoteFinder source="category" initialCategory={category.slug} className="mb-10"
           categories={[{ slug: category.slug, name: category.name, icon: category.icon }]}
-          title={`Get up to 3 free quotes from ${lcCat} pros near you`} />
+          title={`Get up to 3 free quotes from ${prosLabel(lcCat)} near you`} />
 
         {listings.length > 0 ? (
           <>
@@ -167,7 +167,7 @@ export default async function CategoryPage({ params }: Props) {
             />
             {totalCount > listings.length && (
               <p className="mt-6 text-sm text-gray-500 text-center">
-                Showing the {listings.length} most-reviewed {lcCat} pros in Florida. Pick a city below to see all {formatCount(totalCount)}.
+                Showing the {listings.length} most-reviewed {prosLabel(lcCat)} in Florida. Pick a city below to see all {formatCount(totalCount)}.
               </p>
             )}
           </>

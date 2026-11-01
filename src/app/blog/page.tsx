@@ -1,5 +1,10 @@
 import Link from 'next/link';
-import { getBlogPosts, getCategories, formatCategory } from '@/lib/blog';
+import { getBlogPosts as getBlogPostsRaw, getCategories as getCategoriesRaw, formatCategory } from '@/lib/blog';
+import { unstable_cache } from 'next/cache';
+
+// The blog index renders per request (searchParams). Cache the DB reads so a slow Supabase moment cannot stall it for a minute.
+const getBlogPosts = unstable_cache(getBlogPostsRaw, ['blog-posts-v1'], { revalidate: 900 });
+const getCategories = unstable_cache(getCategoriesRaw, ['blog-categories-v1'], { revalidate: 900 });
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {

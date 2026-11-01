@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { prosLabel } from '@/lib/pros-label';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -6,6 +7,7 @@ import report from '@/data/florida-ratings-2026-by-category.json';
 import overall from '@/data/florida-ratings-2026.json';
 import { countySlug } from '@/lib/geo';
 import { lowerCategory } from '@/lib/directory-content';
+import { clampDescription } from '@/lib/meta';
 
 // Per-trade cut of the dated Florida ratings snapshot (regenerate with scripts/build-category-ratings-report.py).
 // Aggregates only: no per-business "best of" lists, so miscategorized rows can't end up named on a citable page.
@@ -31,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   const title = `Florida ${c.name} Ratings and Reviews by City (2026 Data)`;
   return {
     title,
-    description: `${fmt(c.listings)} Florida ${lowerCategory(c.name)} businesses: average Google rating ${one(c.avgRating)}, ${c.pct45}% rated 4.5+, median ${fmt(c.medianReviews)} reviews. Breakdown by city and county.`,
+    description: clampDescription(`${fmt(c.listings)} Florida ${lowerCategory(c.name)} businesses: average Google rating ${one(c.avgRating)}, ${c.pct45}% rated 4.5+, median ${fmt(c.medianReviews)} reviews. Breakdown by city and county.`),
     alternates: { canonical: url },
     openGraph: { title, url, type: 'article', images: [{ url: '/logo.png', alt: 'HireAnyPro' }] },
   };
@@ -54,7 +56,7 @@ export default async function CategoryRatings({ params }: { params: Promise<{ ca
     { q: `How many ${lc} businesses are in Florida?`, a: `HireAnyPro lists ${fmt(c.listings)} ${lc} businesses in ${fmt(c.cityCount)} Florida cities (data as of ${asOf}). ${top ? `${top.city} has the most, with ${fmt(top.listings)}.` : ''}` },
     { q: `What is the average Google rating for Florida ${lc} companies?`, a: `${one(c.avgRating)} stars across ${fmt(c.rated)} rated businesses (median ${c.medianRating}). ${c.pct45}% are rated 4.5 or higher and ${c.pctUnder4}% are below 4.0. The statewide average across all 22 home service categories is ${stateAvg}.` },
     { q: `How many reviews does a typical Florida ${lc} business have?`, a: `The median rated ${lc} business has ${fmt(c.medianReviews)} Google reviews. Because most businesses are rated 4.5+, the number of reviews tells you more than the star rating alone.` },
-    { q: `How should I choose a ${lc} pro in Florida?`, a: `Compare several local pros: look for a 4.5+ rating backed by many reviews, check the license with the Florida DBPR (myfloridalicense.com), and get at least 3 written quotes. HireAnyPro lets you request free quotes from up to 3 ${lc} pros at once.` },
+    { q: `How should I choose a ${lc.replace(/ (companies|services)$/i, "")} pro in Florida?`, a: `Compare several local pros: look for a 4.5+ rating backed by many reviews, check the license with the Florida DBPR (myfloridalicense.com), and get at least 3 written quotes. HireAnyPro lets you request free quotes from up to 3 ${prosLabel(lc)} at once.` },
   ];
   const jsonLd = [
     {
@@ -141,7 +143,7 @@ export default async function CategoryRatings({ params }: { params: Promise<{ ca
       <p className="mb-4">Journalists and bloggers are welcome to quote these numbers with a link to this page. Need another cut? Email <a href="mailto:iris@hireanypro.com" className="text-blue-800 hover:underline">iris@hireanypro.com</a>.</p>
 
       <div className="flex flex-wrap gap-3 mt-6">
-        <Link href={`/category/${c.slug}`} className="bg-blue-800 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-700">Find {lc} pros near you</Link>
+        <Link href={`/category/${c.slug}`} className="bg-blue-800 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-700">Find {prosLabel(lc)} near you</Link>
         <Link href={`/for-pros/${c.slug}`} className="border border-blue-800 text-blue-800 px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-50">Own a {lc} business? List it free</Link>
       </div>
       <p className="text-sm text-gray-500 mt-6">Other trades: {all.filter((x) => x.slug !== c.slug).map((x, i) => (<span key={x.slug}>{i ? ' · ' : ''}<Link href={`/data/florida-contractor-ratings-2026/${x.slug}`} className="text-blue-800 hover:underline">{x.name}</Link></span>))}</p>

@@ -1,4 +1,5 @@
 import { hoursSummary, normalizeHours, type DayHours } from './hours';
+import { prosLabel } from '@/lib/pros-label';
 
 /**
  * City x category pages with fewer listings than this are noindex,follow and omitted from the cities sitemap.
@@ -22,6 +23,8 @@ export function shouldIndexCityPage(count: number): boolean {
 export function cityHref(categorySlug: string, citySlug: string, count: number): string | undefined {
   return shouldIndexCityPage(count) ? `/services/${categorySlug}/${citySlug}` : undefined;
 }
+
+export { prosLabel } from '@/lib/pros-label';
 
 /** "Plumbing" -> "plumbing", but keep acronyms like "HVAC". */
 export function lowerCategory(name: string): string {
@@ -337,8 +340,8 @@ export function buildCityFaqs(input: {
 
   if (input.stats.topRated.length > 0) {
     faqs.push({
-      q: `Which ${cat} pros in ${input.cityName} have the strongest public ratings?`,
-      a: `Among businesses with at least ${MIN_REVIEWS_FOR_RANK} reviews, the highest-rated ${cat} pros in ${input.cityName} are ${listJoin(input.stats.topRated.map(proPhrase))}.`,
+      q: `Which ${prosLabel(cat)} in ${input.cityName} have the strongest public ratings?`,
+      a: `Among businesses with at least ${MIN_REVIEWS_FOR_RANK} reviews, the highest-rated ${prosLabel(cat)} in ${input.cityName} are ${listJoin(input.stats.topRated.map(proPhrase))}.`,
     });
   }
 
@@ -353,7 +356,7 @@ export function buildCityFaqs(input: {
   }
   if (contactBits.length > 0 && base > 0) {
     faqs.push({
-      q: `How many ${cat} pros in ${input.cityName} list a phone, website, or hours?`,
+      q: `How many ${prosLabel(cat)} in ${input.cityName} list a phone, website, or hours?`,
       a: `Of the ${formatCount(base)} ${cat} ${base === 1 ? 'listing' : 'listings'} counted in ${input.cityName}, ${listJoin(contactBits)}. You can request a quote from any listing on this page.`,
     });
   }
@@ -366,8 +369,8 @@ export function buildCityFaqs(input: {
       : '';
     faqs.push({
       q: input.county
-        ? `Which other ${input.county} County cities have ${cat} pros?`
-        : `Which other ${input.stateName} cities have ${cat} pros?`,
+        ? `Which other ${input.county} County cities have ${prosLabel(cat)}?`
+        : `Which other ${input.stateName} cities have ${prosLabel(cat)}?`,
       a: `In ${where}, ${cat} listings also appear in ${listJoin(neighborBits.map((n) => `${n.name} (${formatCount(n.count)})`))}.${more}`,
     });
   }
@@ -382,7 +385,7 @@ export function buildCityFaqs(input: {
 
   faqs.push({
     q: `How do I request ${cat} quotes in ${input.cityName}?`,
-    a: `Use the free quote form on this page to send one description of the job to up to three ${cat} pros in ${input.cityName}, or open a listing and request a quote from that business. There is no charge to request a quote.`,
+    a: `Use the free quote form on this page to send one description of the job to up to three ${prosLabel(cat)} in ${input.cityName}, or open a listing and request a quote from that business. There is no charge to request a quote.`,
   });
 
   return faqs;
@@ -499,14 +502,14 @@ export function buildCategoryFaqs(input: CategoryNarrativeInput): { q: string; a
   const faqs: { q: string; a: string }[] = [];
   const topCities = input.topCities.slice(0, 5);
   faqs.push({
-    q: `How many ${cat} pros does HireAnyPro list?`,
+    q: `How many ${prosLabel(cat)} does HireAnyPro list?`,
     a: `HireAnyPro lists ${formatCount(input.total)} ${cat} ${input.total === 1 ? 'business' : 'businesses'} in ${formatCount(input.cityCount)} ${input.cityCount === 1 ? 'city' : 'cities'}${input.counties.length ? ` and ${formatCount(input.counties.length)} Florida ${input.counties.length === 1 ? 'county' : 'counties'}` : ''}${topCities.length ? `. The most are in ${listJoin(topCities.map((c) => `${c.name}${c.state !== 'FL' ? `, ${c.state}` : ''} (${formatCount(c.count)})`))}` : ''}.`,
   });
 
   if (input.counties.length > 0) {
     const top = input.counties.slice(0, 5);
     faqs.push({
-      q: `Which Florida counties have the most ${cat} pros?`,
+      q: `Which Florida counties have the most ${prosLabel(cat)}?`,
       a: `The most ${cat} listings are in ${listJoin(top.map((c) => {
         const city = c.cities[0];
         return `${c.county} County (${formatCount(c.count)}${city ? `, led by ${city.name} with ${formatCount(city.count)}` : ''})`;
@@ -516,7 +519,7 @@ export function buildCategoryFaqs(input: CategoryNarrativeInput): { q: string; a
 
   if (input.rated > 0 && input.totalReviews > 0) {
     faqs.push({
-      q: `What is the average rating for ${cat} pros?`,
+      q: `What is the average rating for ${prosLabel(cat)}?`,
       a: `${formatCount(input.rated)} ${cat} ${input.rated === 1 ? 'business has' : 'businesses have'} a public rating. Across ${formatCount(input.totalReviews)} reviews, the review-weighted average is ${input.avg.toFixed(1)} out of 5.`,
     });
   }
@@ -533,7 +536,7 @@ export function buildCategoryFaqs(input: CategoryNarrativeInput): { q: string; a
 
   faqs.push({
     q: `How do I get a ${cat} quote?`,
-    a: `Open a city below and use the free quote form to send the job to up to three ${cat} pros there, or request a quote from a single listing. Choosing a city shows every ${cat} business we list in that city.`,
+    a: `Open a city below and use the free quote form to send the job to up to three ${prosLabel(cat)} there, or request a quote from a single listing. Choosing a city shows every ${cat} business we list in that city.`,
   });
 
   return faqs;
@@ -618,7 +621,7 @@ export function listingMarketLinks(input: {
   if (input.count === undefined || shouldIndexCityPage(input.count)) {
     links.push({ href: `/services/${input.categorySlug}/${input.citySlug}`, label: `${input.categoryName} in ${input.cityName}` });
   }
-  links.push({ href: `/category/${input.categorySlug}`, label: `All ${cat} pros` });
+  links.push({ href: `/category/${input.categorySlug}`, label: `All ${prosLabel(cat)}` });
   if (input.county) {
     links.push({
       href: `/region/${countyPath(input.county)}`,

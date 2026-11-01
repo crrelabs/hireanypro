@@ -9,7 +9,7 @@ export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: 'For Pros: List Your Florida Home Service Business Free | HireAnyPro',
-  description: 'Find your business on HireAnyPro, claim it free and get quote requests from Florida homeowners. Plumbers, electricians, roofers, HVAC and more. Pro $9/mo, Featured $49.99/mo.',
+  description: 'Find your business on HireAnyPro, claim it free and get quote requests from Florida homeowners. For plumbers, electricians, roofers, HVAC pros and more.',
   alternates: { canonical: 'https://hireanypro.com/for-pros' },
 };
 

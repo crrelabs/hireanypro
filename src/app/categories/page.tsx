@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'All Home Service Categories in Florida — HireAnyPro',
-  description: 'Browse every home service category on HireAnyPro: plumbing, electrical, HVAC, roofing, painting, pest control and more. Compare rated Florida pros and get free quotes.',
+  description: 'Browse every home service category on HireAnyPro: plumbing, electrical, HVAC, roofing, pest control and more. Compare rated Florida pros and get free quotes.',
   alternates: { canonical: 'https://hireanypro.com/categories' },
 };
 

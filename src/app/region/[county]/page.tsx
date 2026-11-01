@@ -12,6 +12,7 @@ import {
   listJoin,
   lowerCategory,
 } from '@/lib/directory-content';
+import { clampDescription } from '@/lib/meta';
 
 export const revalidate = 3600;
 
@@ -129,7 +130,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const topCats = listJoin(categories.slice(0, 3).map((c) => lowerCategory(c.name)));
   const ratingBit = avgRating ? ` Average rating ${avgRating.toFixed(1)}/5 across ${formatCount(reviews)} Google reviews.` : '';
   const title = `${countyName} County, FL Home Service Pros (${formatCount(total)} Listed) | HireAnyPro`;
-  const description = `Compare ${plural(total, 'local pro', 'local pros')} in ${countyName} County, Florida, including ${topCats}.${ratingBit} Request free quotes.`;
+  const description = clampDescription(`Compare ${plural(total, 'local pro', 'local pros')} in ${countyName} County, Florida, including ${topCats}.${ratingBit} Request free quotes.`);
   const url = `https://hireanypro.com/region/${county}`;
   return {
     title,

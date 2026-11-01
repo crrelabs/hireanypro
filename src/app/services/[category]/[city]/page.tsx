@@ -22,8 +22,7 @@ import {
   lowerCategory,
   neighborsInCounty,
   neighborsInState,
-  shouldIndexCityPage,
-} from '@/lib/directory-content';
+  shouldIndexCityPage, prosLabel } from '@/lib/directory-content';
 
 // Cached pages (ISR): rendered on first request, then served from Vercel's cache and refreshed in the background.
 // Returning [] keeps the build from rendering hundreds of city pages (and re-querying Supabase for each).
@@ -77,8 +76,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : `${cat.name} Pro in ${cityName}, ${st} (${new Date().getFullYear()}) | HireAnyPro`;
   const lcName = lowerCategory(cat.name);
   const description = stats.rated > 0
-    ? `Compare ${count.toLocaleString('en-US')} ${lcName} ${count === 1 ? 'pro' : 'pros'} in ${cityName}, ${stName}. Average rating ${stats.avg.toFixed(1)}/5 across ${stats.totalReviews.toLocaleString('en-US')} reviews. Free quotes.`
-    : `Compare ${count.toLocaleString('en-US')} ${lcName} ${count === 1 ? 'pro' : 'pros'} in ${cityName}, ${stName}. See who lists a phone or website and request free quotes.`;
+    ? `Compare ${count.toLocaleString('en-US')} ${count === 1 ? `${lcName} pro` : prosLabel(lcName)} in ${cityName}, ${stName}. Average rating ${stats.avg.toFixed(1)}/5 across ${stats.totalReviews.toLocaleString('en-US')} reviews. Free quotes.`
+    : `Compare ${count.toLocaleString('en-US')} ${count === 1 ? `${lcName} pro` : prosLabel(lcName)} in ${cityName}, ${stName}. See who lists a phone or website and request free quotes.`;
 
   return {
     title,
