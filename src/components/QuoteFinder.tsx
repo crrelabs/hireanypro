@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import CityQuoteForm from '@/components/CityQuoteForm';
 import { isAutomatedBrowser } from '@/lib/track';
+import { prosLabel } from '@/lib/pros-label';
 
 /**
  * "Get up to 3 free quotes" for visitors who aren't on a city page yet (home, category hubs, /search):
@@ -73,7 +74,7 @@ export default function QuoteFinder({ categories, initialCategory, source, title
     const exact = cities.find((c) => norm(c.name) === q || norm(label(c)) === q);
     const one = exact || (matches.length === 1 ? matches[0] : null);
     if (one) { pick(one); return; }
-    setErr(q ? `We don't list ${catText(catObj.name)} pros in "${cityText}" yet. Pick a nearby city from the list.` : 'Type your city.');
+    setErr(q ? `We don't list ${prosLabel(catText(catObj.name))} in "${cityText}" yet. Pick a nearby city from the list.` : 'Type your city.');
   }
 
   const input = 'w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-blue-800 focus:border-transparent outline-none text-gray-900 bg-white';

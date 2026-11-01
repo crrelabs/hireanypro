@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import BlogContent from './BlogContent';
+import { clampDescription } from '@/lib/meta';
 
 export const revalidate = 86400;
 
@@ -20,8 +21,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) return { title: 'Post Not Found' };
 
   return {
-    title: `${post.title} | HireAnyPro Blog`,
-    description: post.excerpt || post.title,
+    title: post.title.length > 46 ? post.title : `${post.title} | HireAnyPro Blog`, // keep titles under ~65 chars
+    description: clampDescription(post.excerpt || post.title),
     alternates: { canonical: `https://hireanypro.com/blog/${slug}` },
     openGraph: {
       title: post.title,

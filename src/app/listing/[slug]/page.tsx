@@ -13,7 +13,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { cityPageSlug, getCountyForCity, countySlug, stateCode, stateName } from '@/lib/geo';
 import { DAY_LABELS, formatDayHours, normalizeHours } from '@/lib/hours';
-import { isBoilerplateDescription, MIN_INDEXABLE_CITY_LISTINGS } from '@/lib/directory-content';
+import { isBoilerplateDescription, MIN_INDEXABLE_CITY_LISTINGS, prosLabel } from '@/lib/directory-content';
 import { getCityCategorySnapshot } from '@/lib/listings';
 import ListingMarketContext from '@/components/ListingMarketContext';
 import StickyQuoteBar from '@/components/StickyQuoteBar';
@@ -412,7 +412,7 @@ export default async function ListingPage({ params }: Props) {
                   {/* Quote form right here for free/unclaimed */}
                   <div id="quote" className="mt-4 pt-4 border-t border-gray-100">
                     <QuoteRequestForm listingId={listing.id} businessName={listing.name} tier={listing.tier}
-                      othersLabel={listing.categories && listing.city && nearby && nearby.length > 0 ? `${catText(listing.categories.name)} pros in ${listing.city}` : undefined} />
+                      othersLabel={listing.categories && listing.city && nearby && nearby.length > 0 ? `${prosLabel(catText(listing.categories.name))} in ${listing.city}` : undefined} />
                   </div>
 
                   {!listing.claimed && (
@@ -516,7 +516,7 @@ export default async function ListingPage({ params }: Props) {
         {nearby && nearby.length > 0 && listing.categories && (
           <div className="mt-8 bg-white rounded-xl border border-gray-200 p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">
-              Other {catText(listing.categories.name)} pros in {listing.city}
+              Other {prosLabel(catText(listing.categories.name))} in {listing.city}
             </h2>
             <ul className="grid sm:grid-cols-2 gap-3">
               {nearby.map((n: { slug: string; name: string; rating: number | null; review_count: number | null }) => (
@@ -545,7 +545,7 @@ export default async function ListingPage({ params }: Props) {
           {listing.categories && listing.city && cityLinkOk && (
             <p className="text-sm text-gray-600">
               <Link href={`/services/${listing.categories.slug}/${cityPageSlug(listing.city, listing.state)}`} className="text-blue-800 hover:underline font-medium">
-                More {catText(listing.categories.name)} pros in {listing.city} →
+                More {prosLabel(catText(listing.categories.name))} in {listing.city} →
               </Link>
             </p>
           )}

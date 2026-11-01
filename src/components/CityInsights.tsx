@@ -8,8 +8,7 @@ import {
   type CityStats,
   type NeighborCity,
   type SiblingCategory,
-  type TextPart,
-} from '@/lib/directory-content';
+  type TextPart, prosLabel } from '@/lib/directory-content';
 
 function Parts({ parts }: { parts: TextPart[] }) {
   return (
@@ -113,7 +112,7 @@ export function CityTopSpot({ categoryName, categorySlug, cityName, citySlug, co
     <aside className="mb-6 rounded-xl border-2 border-dashed border-orange-300 bg-white p-4 flex flex-col sm:flex-row sm:items-center gap-3" aria-label="Featured spot available">
       <div className="flex-1 text-sm text-gray-700">
         <p className="font-semibold text-gray-900">⭐ The top spot for {cat} in {cityName} is open</p>
-        <p>Featured pros are listed first on this page, above all {count.toLocaleString('en-US')} {cat} pros here, with a highlighted card and badge. $49.99/month, cancel anytime.</p>
+        <p>Featured pros are listed first on this page, above all {count.toLocaleString('en-US')} {prosLabel(cat)} here, with a highlighted card and badge. $49.99/month, cancel anytime.</p>
       </div>
       <div className="flex gap-2 shrink-0">
         <a href={`/pricing?plan=featured&${utm}`} className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-lg text-sm text-center">Get the top spot</a>

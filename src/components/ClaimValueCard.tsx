@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { isAutomatedBrowser, onHuman } from '@/lib/track';
+import { prosLabel } from '@/lib/pros-label';
 
 type Preview = {
   available: boolean;
@@ -51,7 +52,7 @@ export default function ClaimValueCard({ listing, surface, compact = false }: { 
     facts.push(<><b>{p.views30}</b> {p.views30 === 1 ? 'person' : 'people'} viewed this listing in the last 30 days.</>);
   }
   if (p.rank && p.cityCount && p.cityCount > 1 && p.city) {
-    const list = p.cityPage ? <a href={p.cityPage} className="text-blue-800 underline">{p.cityCount} {cat} pros in {p.city}</a> : <>{p.cityCount} {cat} pros in {p.city}</>;
+    const list = p.cityPage ? <a href={p.cityPage} className="text-blue-800 underline">{p.cityCount} {prosLabel(cat)} in {p.city}</a> : <>{p.cityCount} {prosLabel(cat)} in {p.city}</>;
     facts.push(<>Homeowners compare you with {list}. You rank <b>#{p.rank}</b> by Google reviews.</>);
   }
   if (p.city && p.cityCount && p.cityCount > 1) {

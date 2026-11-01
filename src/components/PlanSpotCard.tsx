@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { isAutomatedBrowser, onHuman } from '@/lib/track';
+import { prosLabel } from '@/lib/pros-label';
 
 type Spot = {
   available: boolean;
@@ -49,8 +50,8 @@ export default function PlanSpotCard({ listing, onPick }: { listing: string; onP
   const cat = s.category ? lower(s.category) : 'home service';
   const paid = (s.proCount || 0) + (s.featuredCount || 0);
   const list = s.cityPage
-    ? <a href={s.cityPage} className="text-blue-800 underline">{s.cityCount} {cat} pros in {s.city}</a>
-    : <>{s.cityCount} {cat} pros in {s.city}</>;
+    ? <a href={s.cityPage} className="text-blue-800 underline">{s.cityCount} {prosLabel(cat)} in {s.city}</a>
+    : <>{s.cityCount} {prosLabel(cat)} in {s.city}</>;
   return (
     <div className="max-w-3xl mx-auto mb-10 bg-white border border-gray-200 rounded-2xl p-6">
       <p className="text-xs font-bold uppercase tracking-wide text-blue-800 mb-1">Your spot in {s.city}</p>

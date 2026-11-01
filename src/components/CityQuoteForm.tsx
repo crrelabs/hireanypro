@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import TurnstileWidget from '@/components/TurnstileWidget';
 import { isAutomatedBrowser } from '@/lib/track';
+import { prosLabel } from '@/lib/pros-label';
 
 /** "Get up to 3 free quotes" on category+city pages. The server picks which pros receive it. */
 export default function CityQuoteForm({ categorySlug, categoryName, citySlug, cityName, formName = 'city_multi_quote', compact = false }: {
@@ -57,7 +58,7 @@ export default function CityQuoteForm({ categorySlug, categoryName, citySlug, ci
   const input = 'w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-800 focus:border-transparent outline-none text-gray-900 bg-white';
   return (
     <section id={compact ? undefined : 'get-quotes'} className={compact ? '' : 'mb-10 rounded-xl border-2 border-orange-200 bg-orange-50 p-6'}>
-      <h2 className="text-xl font-bold text-gray-900">Get up to 3 free quotes from {cityName} {cat} pros</h2>
+      <h2 className="text-xl font-bold text-gray-900">Get up to 3 free quotes from {cityName} {prosLabel(cat)}</h2>
       <p className="text-sm text-gray-600 mt-1 mb-4">Tell us what you need once. We send it to top-rated local pros. Free, no obligation.</p>
       <form onSubmit={submit} onFocus={() => { if (!started) { setStarted(true); track('quote_form_start'); } }} className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="hidden" aria-hidden="true">
