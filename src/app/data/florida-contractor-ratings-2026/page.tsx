@@ -68,13 +68,14 @@ export default function FloridaRatingsReport() {
       </div>
 
       <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-2">Ratings by service category</h2>
+      <p className="mb-2 text-sm">Click a category for its own city and county breakdown.</p>
       <div className="overflow-x-auto mb-6">
         <table className="min-w-full text-sm bg-white border border-gray-200 rounded-lg">
           <thead><tr><th className={th}>Category</th><th className={th}>Businesses</th><th className={th}>Avg rating</th><th className={th}>Rated 4.5+</th><th className={th}>Median reviews</th><th className={th}>City with most</th></tr></thead>
           <tbody>
             {cats.map((c) => (
               <tr key={c.slug}>
-                <td className={td}><Link href={`/category/${c.slug}`} className="text-blue-800 hover:underline">{c.name}</Link></td>
+                <td className={td}><Link href={`/data/florida-contractor-ratings-2026/${c.slug}`} className="text-blue-800 hover:underline">{c.name}</Link> <Link href={`/category/${c.slug}`} className="text-xs text-gray-500 hover:underline">(pros)</Link></td>
                 <td className={td}>{fmt(c.listings)}</td><td className={td}>{c.avgRating}</td><td className={td}>{c.pct45}%</td><td className={td}>{fmt(c.medianReviews)}</td><td className={td}>{c.topCity}</td>
               </tr>
             ))}
