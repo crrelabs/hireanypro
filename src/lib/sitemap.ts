@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import tradeReport from '@/data/florida-ratings-2026-by-category.json';
 import { getAllBlogSlugs } from '@/lib/blog';
 import { cityPageSlug, countySlug } from '@/lib/geo';
 import { shouldIndexCityPage } from '@/lib/directory-content';
@@ -7,6 +8,9 @@ import type { SitemapIndexEntry, SitemapUrl } from '@/lib/sitemap-xml';
 
 export { renderSitemapIndex, renderUrlset };
 export type { SitemapIndexEntry, SitemapUrl };
+
+// Trades with a /data/florida-contractor-ratings-2026/<slug> page (static, from the dated snapshot).
+const DATA_TRADES = new Set(tradeReport.categories.map((c) => c.slug));
 
 export const BASE_URL = 'https://hireanypro.com';
 
@@ -187,7 +191,7 @@ export async function getPagesSitemapUrls(): Promise<SitemapUrl[]> {
     { loc: `${BASE_URL}/blog`, lastmod: latestBlog, changefreq: 'daily', priority: 0.8 },
     { loc: `${BASE_URL}/contact`, changefreq: 'yearly', priority: 0.3 },
     { loc: `${BASE_URL}/about`, changefreq: 'yearly', priority: 0.4 },
-    { loc: `${BASE_URL}/data/florida-contractor-ratings-2026`, lastmod: '2026-10-27', changefreq: 'monthly', priority: 0.6 },
+    { loc: `${BASE_URL}/data/florida-contractor-ratings-2026`, lastmod: '2026-11-01', changefreq: 'monthly', priority: 0.6 },
     { loc: `${BASE_URL}/claim`, changefreq: 'monthly', priority: 0.5 },
     { loc: `${BASE_URL}/for-pros`, lastmod: '2026-10-30', changefreq: 'monthly', priority: 0.6 },
   ];
@@ -206,6 +210,7 @@ export async function getPagesSitemapUrls(): Promise<SitemapUrl[]> {
   // Owner landing pages, one per trade (added 2026-10-30).
   for (const category of categories) {
     urls.push({ loc: `${BASE_URL}/for-pros/${category.slug}`, lastmod: '2026-10-30', changefreq: 'monthly', priority: 0.5 });
+    if (DATA_TRADES.has(category.slug)) urls.push({ loc: `${BASE_URL}/data/florida-contractor-ratings-2026/${category.slug}`, lastmod: '2026-11-01', changefreq: 'monthly', priority: 0.5 });
   }
 
   for (const post of blogSlugs) {

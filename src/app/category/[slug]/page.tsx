@@ -7,9 +7,11 @@ import Image from 'next/image';
 import QuoteFinder from '@/components/QuoteFinder';
 import { CategorySummary, CategoryCounties, CategoryFaq } from '@/components/CategoryHub';
 import { supabase } from '@/lib/supabase';
+import tradeReport from '@/data/florida-ratings-2026-by-category.json';
 import { stateName } from '@/lib/geo';
 import { CARD_COLUMNS, toCard, getCategoryCities, getCategoryBySlug, getCategoryRollup, type CardListing } from '@/lib/listings';
 import { formatCount, lowerCategory, shouldIndexCityPage, type CategoryNarrativeInput } from '@/lib/directory-content';
+const TRADE_DATA = new Set(tradeReport.categories.map((c) => c.slug)); // trades with a /data ratings page
 
 // Cached pages (ISR): rendered on first request, then served from Vercel's cache and refreshed in the background.
 // Returning [] means nothing is prerendered at build time; every path is generated on demand and cached.
@@ -205,6 +207,9 @@ export default async function CategoryPage({ params }: Props) {
 
         <p className="mt-8 text-sm text-gray-600 bg-blue-50 border border-blue-200 rounded-lg p-4">
           Are you a {lowerCategory(category.name)} pro in Florida? <Link href={`/for-pros/${category.slug}`} className="text-blue-800 font-semibold hover:underline">Find and claim your free listing</Link>.
+          {TRADE_DATA.has(category.slug) && (
+            <> See how Florida {lowerCategory(category.name)} businesses are rated by city: <Link href={`/data/florida-contractor-ratings-2026/${category.slug}`} className="text-blue-800 font-semibold hover:underline">2026 ratings data</Link>.</>
+          )}
         </p>
 
         {popularCities.length > 0 && (

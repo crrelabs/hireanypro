@@ -1,0 +1,7266 @@
+{
+ "asOf": "2026-11-01",
+ "state": "FL",
+ "categories": [
+  {
+   "name": "General Contractor",
+   "slug": "general-contractor",
+   "listings": 2853,
+   "rated": 2677,
+   "avgRating": 4.73,
+   "medianRating": 5.0,
+   "pct45": 82.3,
+   "pctUnder4": 6.9,
+   "medianReviews": 10,
+   "totalReviews": 68780,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 1913
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 289
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 289
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 156
+    },
+    {
+     "band": "Below 3.0",
+     "count": 30
+    }
+   ],
+   "cityCount": 281,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/general-contractor/miami",
+     "listings": 316,
+     "rated": 299,
+     "avgRating": 4.87,
+     "medianRating": 5.0,
+     "pct45": 91.3,
+     "pctUnder4": 1.7,
+     "medianReviews": 8,
+     "totalReviews": 5783
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/general-contractor/orlando",
+     "listings": 85,
+     "rated": 79,
+     "avgRating": 4.76,
+     "medianRating": 4.9,
+     "pct45": 84.8,
+     "pctUnder4": 5.1,
+     "medianReviews": 19,
+     "totalReviews": 2684
+    },
+    {
+     "city": "Homestead",
+     "href": "/services/general-contractor/homestead",
+     "listings": 56,
+     "rated": 54,
+     "avgRating": 4.86,
+     "medianRating": 5.0,
+     "pct45": 92.6,
+     "pctUnder4": 3.7,
+     "medianReviews": 5,
+     "totalReviews": 1761
+    },
+    {
+     "city": "Hialeah",
+     "href": "/services/general-contractor/hialeah",
+     "listings": 54,
+     "rated": 50,
+     "avgRating": 4.86,
+     "medianRating": 5.0,
+     "pct45": 86.0,
+     "pctUnder4": 4.0,
+     "medianReviews": 6,
+     "totalReviews": 759
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/general-contractor/kissimmee",
+     "listings": 53,
+     "rated": 46,
+     "avgRating": 4.74,
+     "medianRating": 5.0,
+     "pct45": 84.8,
+     "pctUnder4": 8.7,
+     "medianReviews": 8,
+     "totalReviews": 1551
+    },
+    {
+     "city": "Sanford",
+     "href": "/services/general-contractor/sanford",
+     "listings": 50,
+     "rated": 44,
+     "avgRating": 4.48,
+     "medianRating": 4.6,
+     "pct45": 63.6,
+     "pctUnder4": 20.5,
+     "medianReviews": 9,
+     "totalReviews": 1008
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/general-contractor/west-palm-beach",
+     "listings": 48,
+     "rated": 41,
+     "avgRating": 4.67,
+     "medianRating": 5.0,
+     "pct45": 68.3,
+     "pctUnder4": 7.3,
+     "medianReviews": 13,
+     "totalReviews": 582
+    },
+    {
+     "city": "Ocoee",
+     "href": "/services/general-contractor/ocoee",
+     "listings": 45,
+     "rated": 37,
+     "avgRating": 4.38,
+     "medianRating": 4.6,
+     "pct45": 62.2,
+     "pctUnder4": 16.2,
+     "medianReviews": 10,
+     "totalReviews": 1010
+    },
+    {
+     "city": "Oviedo",
+     "href": "/services/general-contractor/oviedo",
+     "listings": 44,
+     "rated": 40,
+     "avgRating": 4.43,
+     "medianRating": 5.0,
+     "pct45": 65.0,
+     "pctUnder4": 25.0,
+     "medianReviews": 5,
+     "totalReviews": 764
+    },
+    {
+     "city": "Winter Garden",
+     "href": "/services/general-contractor/winter-garden",
+     "listings": 40,
+     "rated": 36,
+     "avgRating": 4.76,
+     "medianRating": 5.0,
+     "pct45": 72.2,
+     "pctUnder4": 2.8,
+     "medianReviews": 7,
+     "totalReviews": 408
+    },
+    {
+     "city": "Altamonte Springs",
+     "href": "/services/general-contractor/altamonte-springs",
+     "listings": 39,
+     "rated": 32,
+     "avgRating": 4.18,
+     "medianRating": 4.8,
+     "pct45": 53.1,
+     "pctUnder4": 28.1,
+     "medianReviews": 11,
+     "totalReviews": 1513
+    },
+    {
+     "city": "Longwood",
+     "href": "/services/general-contractor/longwood",
+     "listings": 38,
+     "rated": 35,
+     "avgRating": 4.64,
+     "medianRating": 4.9,
+     "pct45": 77.1,
+     "pctUnder4": 11.4,
+     "medianReviews": 10,
+     "totalReviews": 813
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/general-contractor/jacksonville",
+     "listings": 34,
+     "rated": 32,
+     "avgRating": 4.74,
+     "medianRating": 4.9,
+     "pct45": 81.2,
+     "pctUnder4": 6.2,
+     "medianReviews": 31,
+     "totalReviews": 1564
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/general-contractor/tampa",
+     "listings": 33,
+     "rated": 33,
+     "avgRating": 4.84,
+     "medianRating": 5.0,
+     "pct45": 87.9,
+     "pctUnder4": 0.0,
+     "medianReviews": 23,
+     "totalReviews": 1522
+    },
+    {
+     "city": "St Cloud",
+     "href": "/services/general-contractor/st-cloud",
+     "listings": 32,
+     "rated": 25,
+     "avgRating": 4.82,
+     "medianRating": 5.0,
+     "pct45": 92.0,
+     "pctUnder4": 4.0,
+     "medianReviews": 10,
+     "totalReviews": 529
+    }
+   ],
+   "countyCount": 65,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 639,
+     "rated": 610,
+     "avgRating": 4.84,
+     "medianRating": 5.0,
+     "pct45": 89.5,
+     "pctUnder4": 3.1,
+     "medianReviews": 7,
+     "totalReviews": 12329
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 274,
+     "rated": 253,
+     "avgRating": 4.77,
+     "medianRating": 5.0,
+     "pct45": 83.4,
+     "pctUnder4": 5.9,
+     "medianReviews": 11,
+     "totalReviews": 5524
+    },
+    {
+     "county": "Broward",
+     "listings": 272,
+     "rated": 266,
+     "avgRating": 4.79,
+     "medianRating": 5.0,
+     "pct45": 86.8,
+     "pctUnder4": 4.5,
+     "medianReviews": 13,
+     "totalReviews": 8526
+    },
+    {
+     "county": "Orange",
+     "listings": 265,
+     "rated": 238,
+     "avgRating": 4.62,
+     "medianRating": 4.9,
+     "pct45": 74.8,
+     "pctUnder4": 10.1,
+     "medianReviews": 11,
+     "totalReviews": 5526
+    },
+    {
+     "county": "Seminole",
+     "listings": 252,
+     "rated": 226,
+     "avgRating": 4.45,
+     "medianRating": 4.9,
+     "pct45": 65.9,
+     "pctUnder4": 19.5,
+     "medianReviews": 9,
+     "totalReviews": 5323
+    },
+    {
+     "county": "Pinellas",
+     "listings": 120,
+     "rated": 117,
+     "avgRating": 4.8,
+     "medianRating": 4.9,
+     "pct45": 88.0,
+     "pctUnder4": 2.6,
+     "medianReviews": 18,
+     "totalReviews": 4281
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 97,
+     "rated": 95,
+     "avgRating": 4.77,
+     "medianRating": 4.9,
+     "pct45": 84.2,
+     "pctUnder4": 2.1,
+     "medianReviews": 16,
+     "totalReviews": 3625
+    },
+    {
+     "county": "Lee",
+     "listings": 90,
+     "rated": 90,
+     "avgRating": 4.87,
+     "medianRating": 5.0,
+     "pct45": 93.3,
+     "pctUnder4": 1.1,
+     "medianReviews": 16,
+     "totalReviews": 4070
+    },
+    {
+     "county": "Osceola",
+     "listings": 84,
+     "rated": 70,
+     "avgRating": 4.78,
+     "medianRating": 5.0,
+     "pct45": 87.1,
+     "pctUnder4": 5.7,
+     "medianReviews": 9,
+     "totalReviews": 2092
+    },
+    {
+     "county": "Duval",
+     "listings": 66,
+     "rated": 61,
+     "avgRating": 4.69,
+     "medianRating": 4.9,
+     "pct45": 77.0,
+     "pctUnder4": 8.2,
+     "medianReviews": 12,
+     "totalReviews": 1986
+    }
+   ]
+  },
+  {
+   "name": "Roofing",
+   "slug": "roofing",
+   "listings": 2097,
+   "rated": 1975,
+   "avgRating": 4.8,
+   "medianRating": 4.9,
+   "pct45": 89.5,
+   "pctUnder4": 2.3,
+   "medianReviews": 40,
+   "totalReviews": 198360,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 1484
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 283
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 162
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 35
+    },
+    {
+     "band": "Below 3.0",
+     "count": 11
+    }
+   ],
+   "cityCount": 286,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/roofing/miami",
+     "listings": 142,
+     "rated": 137,
+     "avgRating": 4.9,
+     "medianRating": 5.0,
+     "pct45": 96.4,
+     "pctUnder4": 0.0,
+     "medianReviews": 30,
+     "totalReviews": 8922
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/roofing/orlando",
+     "listings": 107,
+     "rated": 102,
+     "avgRating": 4.81,
+     "medianRating": 4.9,
+     "pct45": 90.2,
+     "pctUnder4": 0.0,
+     "medianReviews": 53,
+     "totalReviews": 12426
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/roofing/jacksonville",
+     "listings": 47,
+     "rated": 47,
+     "avgRating": 4.86,
+     "medianRating": 4.9,
+     "pct45": 97.9,
+     "pctUnder4": 2.1,
+     "medianReviews": 125,
+     "totalReviews": 8036
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/roofing/kissimmee",
+     "listings": 45,
+     "rated": 39,
+     "avgRating": 4.7,
+     "medianRating": 4.9,
+     "pct45": 82.1,
+     "pctUnder4": 7.7,
+     "medianReviews": 20,
+     "totalReviews": 1508
+    },
+    {
+     "city": "Longwood",
+     "href": "/services/roofing/longwood",
+     "listings": 41,
+     "rated": 41,
+     "avgRating": 4.66,
+     "medianRating": 4.9,
+     "pct45": 85.4,
+     "pctUnder4": 4.9,
+     "medianReviews": 45,
+     "totalReviews": 5696
+    },
+    {
+     "city": "St Cloud",
+     "href": "/services/roofing/st-cloud",
+     "listings": 36,
+     "rated": 32,
+     "avgRating": 4.72,
+     "medianRating": 4.9,
+     "pct45": 81.2,
+     "pctUnder4": 3.1,
+     "medianReviews": 25,
+     "totalReviews": 911
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/roofing/fort-lauderdale",
+     "listings": 35,
+     "rated": 35,
+     "avgRating": 4.88,
+     "medianRating": 4.9,
+     "pct45": 97.1,
+     "pctUnder4": 0.0,
+     "medianReviews": 30,
+     "totalReviews": 2822
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/roofing/west-palm-beach",
+     "listings": 33,
+     "rated": 32,
+     "avgRating": 4.88,
+     "medianRating": 5.0,
+     "pct45": 93.8,
+     "pctUnder4": 0.0,
+     "medianReviews": 45,
+     "totalReviews": 3020
+    },
+    {
+     "city": "Fort Myers",
+     "href": "/services/roofing/fort-myers",
+     "listings": 31,
+     "rated": 31,
+     "avgRating": 4.84,
+     "medianRating": 4.9,
+     "pct45": 96.8,
+     "pctUnder4": 0.0,
+     "medianReviews": 98,
+     "totalReviews": 4173
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/roofing/tampa",
+     "listings": 29,
+     "rated": 29,
+     "avgRating": 4.79,
+     "medianRating": 4.9,
+     "pct45": 93.1,
+     "pctUnder4": 3.4,
+     "medianReviews": 152,
+     "totalReviews": 7269
+    },
+    {
+     "city": "Pompano Beach",
+     "href": "/services/roofing/pompano-beach",
+     "listings": 28,
+     "rated": 27,
+     "avgRating": 4.91,
+     "medianRating": 5.0,
+     "pct45": 96.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 65,
+     "totalReviews": 3572
+    },
+    {
+     "city": "Sanford",
+     "href": "/services/roofing/sanford",
+     "listings": 27,
+     "rated": 26,
+     "avgRating": 4.75,
+     "medianRating": 4.9,
+     "pct45": 88.5,
+     "pctUnder4": 7.7,
+     "medianReviews": 38,
+     "totalReviews": 1107
+    },
+    {
+     "city": "Naples",
+     "href": "/services/roofing/naples",
+     "listings": 26,
+     "rated": 26,
+     "avgRating": 4.85,
+     "medianRating": 4.9,
+     "pct45": 92.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 67,
+     "totalReviews": 3457
+    },
+    {
+     "city": "Homestead",
+     "href": "/services/roofing/homestead",
+     "listings": 26,
+     "rated": 19,
+     "avgRating": 4.95,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 24,
+     "totalReviews": 664
+    },
+    {
+     "city": "Hialeah",
+     "href": "/services/roofing/hialeah",
+     "listings": 25,
+     "rated": 24,
+     "avgRating": 4.83,
+     "medianRating": 5.0,
+     "pct45": 87.5,
+     "pctUnder4": 0.0,
+     "medianReviews": 33,
+     "totalReviews": 1079
+    }
+   ],
+   "countyCount": 63,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 305,
+     "rated": 281,
+     "avgRating": 4.9,
+     "medianRating": 5.0,
+     "pct45": 96.1,
+     "pctUnder4": 0.7,
+     "medianReviews": 19,
+     "totalReviews": 13668
+    },
+    {
+     "county": "Broward",
+     "listings": 259,
+     "rated": 248,
+     "avgRating": 4.89,
+     "medianRating": 5.0,
+     "pct45": 95.6,
+     "pctUnder4": 0.0,
+     "medianReviews": 31,
+     "totalReviews": 20434
+    },
+    {
+     "county": "Orange",
+     "listings": 191,
+     "rated": 177,
+     "avgRating": 4.82,
+     "medianRating": 4.9,
+     "pct45": 89.8,
+     "pctUnder4": 1.7,
+     "medianReviews": 41,
+     "totalReviews": 19205
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 173,
+     "rated": 156,
+     "avgRating": 4.82,
+     "medianRating": 4.9,
+     "pct45": 89.7,
+     "pctUnder4": 1.3,
+     "medianReviews": 35,
+     "totalReviews": 10450
+    },
+    {
+     "county": "Seminole",
+     "listings": 145,
+     "rated": 137,
+     "avgRating": 4.71,
+     "medianRating": 4.9,
+     "pct45": 84.7,
+     "pctUnder4": 5.8,
+     "medianReviews": 38,
+     "totalReviews": 13123
+    },
+    {
+     "county": "Osceola",
+     "listings": 83,
+     "rated": 73,
+     "avgRating": 4.72,
+     "medianRating": 4.9,
+     "pct45": 82.2,
+     "pctUnder4": 5.5,
+     "medianReviews": 23,
+     "totalReviews": 2571
+    },
+    {
+     "county": "Pinellas",
+     "listings": 80,
+     "rated": 80,
+     "avgRating": 4.72,
+     "medianRating": 4.8,
+     "pct45": 82.5,
+     "pctUnder4": 2.5,
+     "medianReviews": 78,
+     "totalReviews": 14602
+    },
+    {
+     "county": "Lee",
+     "listings": 78,
+     "rated": 76,
+     "avgRating": 4.81,
+     "medianRating": 4.9,
+     "pct45": 94.7,
+     "pctUnder4": 2.6,
+     "medianReviews": 68,
+     "totalReviews": 9275
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 70,
+     "rated": 69,
+     "avgRating": 4.82,
+     "medianRating": 4.9,
+     "pct45": 92.8,
+     "pctUnder4": 1.4,
+     "medianReviews": 91,
+     "totalReviews": 12394
+    },
+    {
+     "county": "Duval",
+     "listings": 61,
+     "rated": 59,
+     "avgRating": 4.86,
+     "medianRating": 4.9,
+     "pct45": 98.3,
+     "pctUnder4": 1.7,
+     "medianReviews": 90,
+     "totalReviews": 8727
+    }
+   ]
+  },
+  {
+   "name": "HVAC",
+   "slug": "hvac",
+   "listings": 2080,
+   "rated": 2028,
+   "avgRating": 4.82,
+   "medianRating": 4.9,
+   "pct45": 92.1,
+   "pctUnder4": 3.0,
+   "medianReviews": 80,
+   "totalReviews": 761377,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 1615
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 252
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 101
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 50
+    },
+    {
+     "band": "Below 3.0",
+     "count": 10
+    }
+   ],
+   "cityCount": 304,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/hvac/miami",
+     "listings": 116,
+     "rated": 116,
+     "avgRating": 4.78,
+     "medianRating": 4.9,
+     "pct45": 87.9,
+     "pctUnder4": 4.3,
+     "medianReviews": 33,
+     "totalReviews": 15945
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/hvac/orlando",
+     "listings": 101,
+     "rated": 98,
+     "avgRating": 4.79,
+     "medianRating": 4.9,
+     "pct45": 90.8,
+     "pctUnder4": 5.1,
+     "medianReviews": 55,
+     "totalReviews": 21561
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/hvac/kissimmee",
+     "listings": 48,
+     "rated": 46,
+     "avgRating": 4.82,
+     "medianRating": 5.0,
+     "pct45": 87.0,
+     "pctUnder4": 2.2,
+     "medianReviews": 19,
+     "totalReviews": 2728
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/hvac/jacksonville",
+     "listings": 44,
+     "rated": 44,
+     "avgRating": 4.87,
+     "medianRating": 4.9,
+     "pct45": 97.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 747,
+     "totalReviews": 64402
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/hvac/tampa",
+     "listings": 42,
+     "rated": 42,
+     "avgRating": 4.84,
+     "medianRating": 4.8,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 534,
+     "totalReviews": 57695
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/hvac/west-palm-beach",
+     "listings": 36,
+     "rated": 35,
+     "avgRating": 4.83,
+     "medianRating": 4.9,
+     "pct45": 94.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 207,
+     "totalReviews": 25047
+    },
+    {
+     "city": "Fort Myers",
+     "href": "/services/hvac/fort-myers",
+     "listings": 36,
+     "rated": 36,
+     "avgRating": 4.88,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 499,
+     "totalReviews": 31806
+    },
+    {
+     "city": "Longwood",
+     "href": "/services/hvac/longwood",
+     "listings": 29,
+     "rated": 28,
+     "avgRating": 4.59,
+     "medianRating": 4.9,
+     "pct45": 75.0,
+     "pctUnder4": 14.3,
+     "medianReviews": 45,
+     "totalReviews": 5665
+    },
+    {
+     "city": "Hialeah",
+     "href": "/services/hvac/hialeah",
+     "listings": 28,
+     "rated": 27,
+     "avgRating": 4.81,
+     "medianRating": 5.0,
+     "pct45": 92.6,
+     "pctUnder4": 7.4,
+     "medianReviews": 42,
+     "totalReviews": 2633
+    },
+    {
+     "city": "St Cloud",
+     "href": "/services/hvac/st-cloud",
+     "listings": 28,
+     "rated": 26,
+     "avgRating": 4.87,
+     "medianRating": 5.0,
+     "pct45": 92.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 60,
+     "totalReviews": 7078
+    },
+    {
+     "city": "Sanford",
+     "href": "/services/hvac/sanford",
+     "listings": 26,
+     "rated": 26,
+     "avgRating": 4.58,
+     "medianRating": 4.9,
+     "pct45": 76.9,
+     "pctUnder4": 11.5,
+     "medianReviews": 35,
+     "totalReviews": 9341
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/hvac/fort-lauderdale",
+     "listings": 26,
+     "rated": 26,
+     "avgRating": 4.9,
+     "medianRating": 5.0,
+     "pct45": 96.2,
+     "pctUnder4": 0.0,
+     "medianReviews": 41,
+     "totalReviews": 2667
+    },
+    {
+     "city": "Tallahassee",
+     "href": "/services/hvac/tallahassee",
+     "listings": 26,
+     "rated": 26,
+     "avgRating": 4.89,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 189,
+     "totalReviews": 9758
+    },
+    {
+     "city": "Naples",
+     "href": "/services/hvac/naples",
+     "listings": 24,
+     "rated": 24,
+     "avgRating": 4.9,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 366,
+     "totalReviews": 17024
+    },
+    {
+     "city": "Apopka",
+     "href": "/services/hvac/apopka",
+     "listings": 23,
+     "rated": 20,
+     "avgRating": 4.46,
+     "medianRating": 4.9,
+     "pct45": 70.0,
+     "pctUnder4": 20.0,
+     "medianReviews": 68,
+     "totalReviews": 2787
+    }
+   ],
+   "countyCount": 65,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 261,
+     "rated": 256,
+     "avgRating": 4.79,
+     "medianRating": 5.0,
+     "pct45": 89.5,
+     "pctUnder4": 3.9,
+     "medianReviews": 29,
+     "totalReviews": 29108
+    },
+    {
+     "county": "Broward",
+     "listings": 244,
+     "rated": 243,
+     "avgRating": 4.89,
+     "medianRating": 5.0,
+     "pct45": 96.7,
+     "pctUnder4": 0.8,
+     "medianReviews": 57,
+     "totalReviews": 83163
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 203,
+     "rated": 196,
+     "avgRating": 4.87,
+     "medianRating": 5.0,
+     "pct45": 94.4,
+     "pctUnder4": 1.5,
+     "medianReviews": 77,
+     "totalReviews": 54295
+    },
+    {
+     "county": "Orange",
+     "listings": 176,
+     "rated": 160,
+     "avgRating": 4.76,
+     "medianRating": 4.9,
+     "pct45": 87.5,
+     "pctUnder4": 6.2,
+     "medianReviews": 40,
+     "totalReviews": 28401
+    },
+    {
+     "county": "Seminole",
+     "listings": 126,
+     "rated": 120,
+     "avgRating": 4.66,
+     "medianRating": 4.9,
+     "pct45": 78.3,
+     "pctUnder4": 10.0,
+     "medianReviews": 30,
+     "totalReviews": 28957
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 94,
+     "rated": 94,
+     "avgRating": 4.83,
+     "medianRating": 4.9,
+     "pct45": 97.9,
+     "pctUnder4": 2.1,
+     "medianReviews": 193,
+     "totalReviews": 68444
+    },
+    {
+     "county": "Pinellas",
+     "listings": 92,
+     "rated": 92,
+     "avgRating": 4.87,
+     "medianRating": 4.9,
+     "pct45": 98.9,
+     "pctUnder4": 0.0,
+     "medianReviews": 307,
+     "totalReviews": 39967
+    },
+    {
+     "county": "Lee",
+     "listings": 83,
+     "rated": 83,
+     "avgRating": 4.88,
+     "medianRating": 4.9,
+     "pct45": 96.4,
+     "pctUnder4": 0.0,
+     "medianReviews": 302,
+     "totalReviews": 44515
+    },
+    {
+     "county": "Osceola",
+     "listings": 76,
+     "rated": 72,
+     "avgRating": 4.83,
+     "medianRating": 5.0,
+     "pct45": 87.5,
+     "pctUnder4": 1.4,
+     "medianReviews": 20,
+     "totalReviews": 9805
+    },
+    {
+     "county": "Duval",
+     "listings": 55,
+     "rated": 54,
+     "avgRating": 4.87,
+     "medianRating": 4.9,
+     "pct45": 98.1,
+     "pctUnder4": 0.0,
+     "medianReviews": 670,
+     "totalReviews": 72598
+    }
+   ]
+  },
+  {
+   "name": "Plumbing",
+   "slug": "plumbing",
+   "listings": 1600,
+   "rated": 1571,
+   "avgRating": 4.71,
+   "medianRating": 4.9,
+   "pct45": 83.9,
+   "pctUnder4": 6.0,
+   "medianReviews": 61,
+   "totalReviews": 465049,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 1082
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 236
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 158
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 81
+    },
+    {
+     "band": "Below 3.0",
+     "count": 14
+    }
+   ],
+   "cityCount": 281,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/plumbing/miami",
+     "listings": 126,
+     "rated": 120,
+     "avgRating": 4.69,
+     "medianRating": 4.9,
+     "pct45": 82.5,
+     "pctUnder4": 9.2,
+     "medianReviews": 38,
+     "totalReviews": 11992
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/plumbing/orlando",
+     "listings": 65,
+     "rated": 65,
+     "avgRating": 4.68,
+     "medianRating": 4.8,
+     "pct45": 87.7,
+     "pctUnder4": 6.2,
+     "medianReviews": 87,
+     "totalReviews": 35211
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/plumbing/tampa",
+     "listings": 29,
+     "rated": 29,
+     "avgRating": 4.81,
+     "medianRating": 4.8,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 414,
+     "totalReviews": 19167
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/plumbing/jacksonville",
+     "listings": 27,
+     "rated": 27,
+     "avgRating": 4.89,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 375,
+     "totalReviews": 21770
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/plumbing/west-palm-beach",
+     "listings": 26,
+     "rated": 25,
+     "avgRating": 4.79,
+     "medianRating": 4.9,
+     "pct45": 84.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 127,
+     "totalReviews": 7695
+    },
+    {
+     "city": "Fort Myers",
+     "href": "/services/plumbing/fort-myers",
+     "listings": 24,
+     "rated": 24,
+     "avgRating": 4.83,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 419,
+     "totalReviews": 15830
+    },
+    {
+     "city": "Boca Raton",
+     "href": "/services/plumbing/boca-raton",
+     "listings": 22,
+     "rated": 22,
+     "avgRating": 4.89,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 118,
+     "totalReviews": 6114
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/plumbing/kissimmee",
+     "listings": 21,
+     "rated": 20,
+     "avgRating": 4.79,
+     "medianRating": 4.8,
+     "pct45": 90.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 64,
+     "totalReviews": 9768
+    },
+    {
+     "city": "Sanford",
+     "href": "/services/plumbing/sanford",
+     "listings": 20,
+     "rated": 19,
+     "avgRating": 4.58,
+     "medianRating": 4.8,
+     "pct45": 68.4,
+     "pctUnder4": 10.5,
+     "medianReviews": 24,
+     "totalReviews": 19585
+    },
+    {
+     "city": "Pompano Beach",
+     "href": "/services/plumbing/pompano-beach",
+     "listings": 20,
+     "rated": 20,
+     "avgRating": 4.83,
+     "medianRating": 5.0,
+     "pct45": 90.0,
+     "pctUnder4": 5.0,
+     "medianReviews": 44,
+     "totalReviews": 7919
+    },
+    {
+     "city": "Tallahassee",
+     "href": "/services/plumbing/tallahassee",
+     "listings": 19,
+     "rated": 19,
+     "avgRating": 4.74,
+     "medianRating": 4.8,
+     "pct45": 89.5,
+     "pctUnder4": 0.0,
+     "medianReviews": 78,
+     "totalReviews": 7879
+    },
+    {
+     "city": "Winter Garden",
+     "href": "/services/plumbing/winter-garden",
+     "listings": 18,
+     "rated": 18,
+     "avgRating": 4.76,
+     "medianRating": 4.9,
+     "pct45": 88.9,
+     "pctUnder4": 5.6,
+     "medianReviews": 39,
+     "totalReviews": 3156
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/plumbing/fort-lauderdale",
+     "listings": 18,
+     "rated": 18,
+     "avgRating": 4.86,
+     "medianRating": 4.8,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 161,
+     "totalReviews": 14302
+    },
+    {
+     "city": "Winter Park",
+     "href": "/services/plumbing/winter-park",
+     "listings": 18,
+     "rated": 17,
+     "avgRating": 4.58,
+     "medianRating": 4.9,
+     "pct45": 82.4,
+     "pctUnder4": 17.6,
+     "medianReviews": 111,
+     "totalReviews": 5759
+    },
+    {
+     "city": "Clearwater",
+     "href": "/services/plumbing/clearwater",
+     "listings": 18,
+     "rated": 18,
+     "avgRating": 4.78,
+     "medianRating": 4.9,
+     "pct45": 83.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 187,
+     "totalReviews": 6148
+    }
+   ],
+   "countyCount": 65,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 227,
+     "rated": 220,
+     "avgRating": 4.7,
+     "medianRating": 4.9,
+     "pct45": 81.8,
+     "pctUnder4": 9.1,
+     "medianReviews": 35,
+     "totalReviews": 26303
+    },
+    {
+     "county": "Broward",
+     "listings": 178,
+     "rated": 177,
+     "avgRating": 4.86,
+     "medianRating": 5.0,
+     "pct45": 95.5,
+     "pctUnder4": 1.7,
+     "medianReviews": 45,
+     "totalReviews": 40856
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 166,
+     "rated": 164,
+     "avgRating": 4.75,
+     "medianRating": 4.9,
+     "pct45": 86.6,
+     "pctUnder4": 4.3,
+     "medianReviews": 47,
+     "totalReviews": 39300
+    },
+    {
+     "county": "Orange",
+     "listings": 128,
+     "rated": 124,
+     "avgRating": 4.63,
+     "medianRating": 4.8,
+     "pct45": 82.3,
+     "pctUnder4": 11.3,
+     "medianReviews": 62,
+     "totalReviews": 47490
+    },
+    {
+     "county": "Pinellas",
+     "listings": 87,
+     "rated": 87,
+     "avgRating": 4.82,
+     "medianRating": 4.9,
+     "pct45": 89.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 176,
+     "totalReviews": 32318
+    },
+    {
+     "county": "Seminole",
+     "listings": 72,
+     "rated": 71,
+     "avgRating": 4.69,
+     "medianRating": 4.9,
+     "pct45": 81.7,
+     "pctUnder4": 7.0,
+     "medianReviews": 49,
+     "totalReviews": 38777
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 61,
+     "rated": 61,
+     "avgRating": 4.83,
+     "medianRating": 4.9,
+     "pct45": 93.4,
+     "pctUnder4": 0.0,
+     "medianReviews": 258,
+     "totalReviews": 30939
+    },
+    {
+     "county": "Lee",
+     "listings": 53,
+     "rated": 53,
+     "avgRating": 4.83,
+     "medianRating": 4.9,
+     "pct45": 94.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 238,
+     "totalReviews": 25706
+    },
+    {
+     "county": "Duval",
+     "listings": 38,
+     "rated": 38,
+     "avgRating": 4.86,
+     "medianRating": 4.9,
+     "pct45": 97.4,
+     "pctUnder4": 0.0,
+     "medianReviews": 215,
+     "totalReviews": 23008
+    },
+    {
+     "county": "Osceola",
+     "listings": 38,
+     "rated": 37,
+     "avgRating": 4.71,
+     "medianRating": 4.9,
+     "pct45": 81.1,
+     "pctUnder4": 8.1,
+     "medianReviews": 50,
+     "totalReviews": 10701
+    }
+   ]
+  },
+  {
+   "name": "Landscaping",
+   "slug": "landscaping",
+   "listings": 1525,
+   "rated": 1480,
+   "avgRating": 4.67,
+   "medianRating": 4.9,
+   "pct45": 80.1,
+   "pctUnder4": 8.0,
+   "medianReviews": 22,
+   "totalReviews": 90650,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 913
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 272
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 177
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 95
+    },
+    {
+     "band": "Below 3.0",
+     "count": 23
+    }
+   ],
+   "cityCount": 263,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/landscaping/miami",
+     "listings": 134,
+     "rated": 132,
+     "avgRating": 4.62,
+     "medianRating": 5.0,
+     "pct45": 78.8,
+     "pctUnder4": 11.4,
+     "medianReviews": 9,
+     "totalReviews": 4810
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/landscaping/orlando",
+     "listings": 54,
+     "rated": 50,
+     "avgRating": 4.49,
+     "medianRating": 4.8,
+     "pct45": 64.0,
+     "pctUnder4": 16.0,
+     "medianReviews": 41,
+     "totalReviews": 4631
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/landscaping/tampa",
+     "listings": 28,
+     "rated": 27,
+     "avgRating": 4.72,
+     "medianRating": 4.9,
+     "pct45": 85.2,
+     "pctUnder4": 3.7,
+     "medianReviews": 40,
+     "totalReviews": 2492
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/landscaping/kissimmee",
+     "listings": 25,
+     "rated": 25,
+     "avgRating": 4.66,
+     "medianRating": 4.9,
+     "pct45": 76.0,
+     "pctUnder4": 12.0,
+     "medianReviews": 19,
+     "totalReviews": 1210
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/landscaping/west-palm-beach",
+     "listings": 24,
+     "rated": 21,
+     "avgRating": 4.78,
+     "medianRating": 4.9,
+     "pct45": 85.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 33,
+     "totalReviews": 1201
+    },
+    {
+     "city": "Boynton Beach",
+     "href": "/services/landscaping/boynton-beach",
+     "listings": 23,
+     "rated": 22,
+     "avgRating": 4.66,
+     "medianRating": 4.9,
+     "pct45": 81.8,
+     "pctUnder4": 18.2,
+     "medianReviews": 25,
+     "totalReviews": 1441
+    },
+    {
+     "city": "Hialeah",
+     "href": "/services/landscaping/hialeah",
+     "listings": 22,
+     "rated": 22,
+     "avgRating": 4.68,
+     "medianRating": 4.8,
+     "pct45": 77.3,
+     "pctUnder4": 4.5,
+     "medianReviews": 14,
+     "totalReviews": 385
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/landscaping/jacksonville",
+     "listings": 21,
+     "rated": 21,
+     "avgRating": 4.71,
+     "medianRating": 4.8,
+     "pct45": 85.7,
+     "pctUnder4": 4.8,
+     "medianReviews": 58,
+     "totalReviews": 3368
+    },
+    {
+     "city": "Sanford",
+     "href": "/services/landscaping/sanford",
+     "listings": 20,
+     "rated": 20,
+     "avgRating": 4.74,
+     "medianRating": 4.8,
+     "pct45": 90.0,
+     "pctUnder4": 5.0,
+     "medianReviews": 18,
+     "totalReviews": 646
+    },
+    {
+     "city": "Naples",
+     "href": "/services/landscaping/naples",
+     "listings": 19,
+     "rated": 15,
+     "avgRating": 4.73,
+     "medianRating": 4.8,
+     "pct45": 86.7,
+     "pctUnder4": 6.7,
+     "medianReviews": 39,
+     "totalReviews": 1592
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/landscaping/fort-lauderdale",
+     "listings": 19,
+     "rated": 19,
+     "avgRating": 4.87,
+     "medianRating": 5.0,
+     "pct45": 94.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 31,
+     "totalReviews": 1054
+    },
+    {
+     "city": "St. Petersburg",
+     "href": "/services/landscaping/st-petersburg",
+     "listings": 17,
+     "rated": 17,
+     "avgRating": 4.71,
+     "medianRating": 4.8,
+     "pct45": 82.4,
+     "pctUnder4": 5.9,
+     "medianReviews": 61,
+     "totalReviews": 1423
+    },
+    {
+     "city": "Davie",
+     "href": "/services/landscaping/davie",
+     "listings": 17,
+     "rated": 17,
+     "avgRating": 4.71,
+     "medianRating": 5.0,
+     "pct45": 88.2,
+     "pctUnder4": 5.9,
+     "medianReviews": 26,
+     "totalReviews": 961
+    },
+    {
+     "city": "Fort Myers",
+     "href": "/services/landscaping/fort-myers",
+     "listings": 17,
+     "rated": 17,
+     "avgRating": 4.61,
+     "medianRating": 4.7,
+     "pct45": 82.4,
+     "pctUnder4": 17.6,
+     "medianReviews": 50,
+     "totalReviews": 1736
+    },
+    {
+     "city": "St. Augustine",
+     "href": "/services/landscaping/st-augustine",
+     "listings": 17,
+     "rated": 17,
+     "avgRating": 4.72,
+     "medianRating": 4.8,
+     "pct45": 88.2,
+     "pctUnder4": 0.0,
+     "medianReviews": 32,
+     "totalReviews": 1041
+    }
+   ],
+   "countyCount": 64,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 210,
+     "rated": 206,
+     "avgRating": 4.63,
+     "medianRating": 5.0,
+     "pct45": 78.6,
+     "pctUnder4": 11.2,
+     "medianReviews": 10,
+     "totalReviews": 6743
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 153,
+     "rated": 144,
+     "avgRating": 4.64,
+     "medianRating": 4.9,
+     "pct45": 76.4,
+     "pctUnder4": 11.8,
+     "medianReviews": 20,
+     "totalReviews": 6689
+    },
+    {
+     "county": "Broward",
+     "listings": 142,
+     "rated": 140,
+     "avgRating": 4.74,
+     "medianRating": 4.9,
+     "pct45": 86.4,
+     "pctUnder4": 4.3,
+     "medianReviews": 25,
+     "totalReviews": 8299
+    },
+    {
+     "county": "Orange",
+     "listings": 118,
+     "rated": 110,
+     "avgRating": 4.51,
+     "medianRating": 4.7,
+     "pct45": 63.6,
+     "pctUnder4": 15.5,
+     "medianReviews": 35,
+     "totalReviews": 8662
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 73,
+     "rated": 72,
+     "avgRating": 4.74,
+     "medianRating": 4.8,
+     "pct45": 86.1,
+     "pctUnder4": 2.8,
+     "medianReviews": 47,
+     "totalReviews": 8129
+    },
+    {
+     "county": "Seminole",
+     "listings": 72,
+     "rated": 70,
+     "avgRating": 4.66,
+     "medianRating": 4.8,
+     "pct45": 80.0,
+     "pctUnder4": 10.0,
+     "medianReviews": 19,
+     "totalReviews": 3976
+    },
+    {
+     "county": "Pinellas",
+     "listings": 71,
+     "rated": 71,
+     "avgRating": 4.72,
+     "medianRating": 4.8,
+     "pct45": 84.5,
+     "pctUnder4": 4.2,
+     "medianReviews": 51,
+     "totalReviews": 8232
+    },
+    {
+     "county": "Lee",
+     "listings": 62,
+     "rated": 62,
+     "avgRating": 4.67,
+     "medianRating": 4.8,
+     "pct45": 83.9,
+     "pctUnder4": 9.7,
+     "medianReviews": 30,
+     "totalReviews": 4486
+    },
+    {
+     "county": "Duval",
+     "listings": 45,
+     "rated": 44,
+     "avgRating": 4.68,
+     "medianRating": 4.8,
+     "pct45": 81.8,
+     "pctUnder4": 6.8,
+     "medianReviews": 34,
+     "totalReviews": 4904
+    },
+    {
+     "county": "Osceola",
+     "listings": 42,
+     "rated": 42,
+     "avgRating": 4.71,
+     "medianRating": 4.9,
+     "pct45": 81.0,
+     "pctUnder4": 9.5,
+     "medianReviews": 23,
+     "totalReviews": 3429
+    }
+   ]
+  },
+  {
+   "name": "Electrical",
+   "slug": "electrical",
+   "listings": 1508,
+   "rated": 1438,
+   "avgRating": 4.73,
+   "medianRating": 4.9,
+   "pct45": 85.3,
+   "pctUnder4": 6.0,
+   "medianReviews": 25,
+   "totalReviews": 242360,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 1016
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 211
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 125
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 65
+    },
+    {
+     "band": "Below 3.0",
+     "count": 21
+    }
+   ],
+   "cityCount": 272,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/electrical/miami",
+     "listings": 136,
+     "rated": 129,
+     "avgRating": 4.86,
+     "medianRating": 5.0,
+     "pct45": 93.0,
+     "pctUnder4": 3.1,
+     "medianReviews": 12,
+     "totalReviews": 6281
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/electrical/orlando",
+     "listings": 52,
+     "rated": 50,
+     "avgRating": 4.62,
+     "medianRating": 4.9,
+     "pct45": 78.0,
+     "pctUnder4": 16.0,
+     "medianReviews": 33,
+     "totalReviews": 20409
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/electrical/jacksonville",
+     "listings": 36,
+     "rated": 36,
+     "avgRating": 4.73,
+     "medianRating": 4.9,
+     "pct45": 86.1,
+     "pctUnder4": 5.6,
+     "medianReviews": 63,
+     "totalReviews": 12542
+    },
+    {
+     "city": "Tallahassee",
+     "href": "/services/electrical/tallahassee",
+     "listings": 25,
+     "rated": 24,
+     "avgRating": 4.67,
+     "medianRating": 4.8,
+     "pct45": 79.2,
+     "pctUnder4": 0.0,
+     "medianReviews": 24,
+     "totalReviews": 1699
+    },
+    {
+     "city": "Hialeah",
+     "href": "/services/electrical/hialeah",
+     "listings": 25,
+     "rated": 24,
+     "avgRating": 4.72,
+     "medianRating": 5.0,
+     "pct45": 83.3,
+     "pctUnder4": 4.2,
+     "medianReviews": 10,
+     "totalReviews": 806
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/electrical/west-palm-beach",
+     "listings": 24,
+     "rated": 23,
+     "avgRating": 4.59,
+     "medianRating": 4.9,
+     "pct45": 73.9,
+     "pctUnder4": 8.7,
+     "medianReviews": 44,
+     "totalReviews": 2358
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/electrical/tampa",
+     "listings": 24,
+     "rated": 24,
+     "avgRating": 4.85,
+     "medianRating": 4.9,
+     "pct45": 95.8,
+     "pctUnder4": 0.0,
+     "medianReviews": 127,
+     "totalReviews": 16524
+    },
+    {
+     "city": "Fort Myers",
+     "href": "/services/electrical/fort-myers",
+     "listings": 22,
+     "rated": 22,
+     "avgRating": 4.83,
+     "medianRating": 4.8,
+     "pct45": 95.5,
+     "pctUnder4": 0.0,
+     "medianReviews": 50,
+     "totalReviews": 14511
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/electrical/kissimmee",
+     "listings": 22,
+     "rated": 20,
+     "avgRating": 4.82,
+     "medianRating": 4.9,
+     "pct45": 90.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 19,
+     "totalReviews": 968
+    },
+    {
+     "city": "Altamonte Springs",
+     "href": "/services/electrical/altamonte-springs",
+     "listings": 21,
+     "rated": 21,
+     "avgRating": 4.53,
+     "medianRating": 4.7,
+     "pct45": 57.1,
+     "pctUnder4": 19.0,
+     "medianReviews": 19,
+     "totalReviews": 1016
+    },
+    {
+     "city": "St. Augustine",
+     "href": "/services/electrical/st-augustine",
+     "listings": 19,
+     "rated": 19,
+     "avgRating": 4.78,
+     "medianRating": 4.9,
+     "pct45": 84.2,
+     "pctUnder4": 0.0,
+     "medianReviews": 68,
+     "totalReviews": 3971
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/electrical/fort-lauderdale",
+     "listings": 19,
+     "rated": 18,
+     "avgRating": 4.76,
+     "medianRating": 4.9,
+     "pct45": 83.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 19,
+     "totalReviews": 739
+    },
+    {
+     "city": "Gainesville",
+     "href": "/services/electrical/gainesville",
+     "listings": 16,
+     "rated": 16,
+     "avgRating": 4.53,
+     "medianRating": 4.8,
+     "pct45": 81.2,
+     "pctUnder4": 6.2,
+     "medianReviews": 20,
+     "totalReviews": 2718
+    },
+    {
+     "city": "Apopka",
+     "href": "/services/electrical/apopka",
+     "listings": 16,
+     "rated": 14,
+     "avgRating": 4.26,
+     "medianRating": 4.7,
+     "pct45": 57.1,
+     "pctUnder4": 28.6,
+     "medianReviews": 10,
+     "totalReviews": 283
+    },
+    {
+     "city": "Jupiter",
+     "href": "/services/electrical/jupiter",
+     "listings": 16,
+     "rated": 15,
+     "avgRating": 4.73,
+     "medianRating": 4.6,
+     "pct45": 93.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 19,
+     "totalReviews": 330
+    }
+   ],
+   "countyCount": 67,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 243,
+     "rated": 230,
+     "avgRating": 4.83,
+     "medianRating": 5.0,
+     "pct45": 89.6,
+     "pctUnder4": 3.0,
+     "medianReviews": 12,
+     "totalReviews": 9774
+    },
+    {
+     "county": "Broward",
+     "listings": 158,
+     "rated": 153,
+     "avgRating": 4.88,
+     "medianRating": 5.0,
+     "pct45": 92.8,
+     "pctUnder4": 0.0,
+     "medianReviews": 21,
+     "totalReviews": 14392
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 125,
+     "rated": 118,
+     "avgRating": 4.74,
+     "medianRating": 4.9,
+     "pct45": 88.1,
+     "pctUnder4": 5.9,
+     "medianReviews": 28,
+     "totalReviews": 14489
+    },
+    {
+     "county": "Orange",
+     "listings": 98,
+     "rated": 93,
+     "avgRating": 4.57,
+     "medianRating": 4.9,
+     "pct45": 75.3,
+     "pctUnder4": 16.1,
+     "medianReviews": 18,
+     "totalReviews": 21934
+    },
+    {
+     "county": "Seminole",
+     "listings": 83,
+     "rated": 77,
+     "avgRating": 4.54,
+     "medianRating": 4.7,
+     "pct45": 68.8,
+     "pctUnder4": 14.3,
+     "medianReviews": 23,
+     "totalReviews": 4999
+    },
+    {
+     "county": "Pinellas",
+     "listings": 68,
+     "rated": 68,
+     "avgRating": 4.78,
+     "medianRating": 4.8,
+     "pct45": 89.7,
+     "pctUnder4": 1.5,
+     "medianReviews": 64,
+     "totalReviews": 23262
+    },
+    {
+     "county": "Lee",
+     "listings": 62,
+     "rated": 62,
+     "avgRating": 4.82,
+     "medianRating": 4.9,
+     "pct45": 93.5,
+     "pctUnder4": 0.0,
+     "medianReviews": 56,
+     "totalReviews": 22252
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 59,
+     "rated": 59,
+     "avgRating": 4.77,
+     "medianRating": 4.9,
+     "pct45": 91.5,
+     "pctUnder4": 5.1,
+     "medianReviews": 87,
+     "totalReviews": 22225
+    },
+    {
+     "county": "Duval",
+     "listings": 47,
+     "rated": 46,
+     "avgRating": 4.74,
+     "medianRating": 4.9,
+     "pct45": 84.8,
+     "pctUnder4": 4.3,
+     "medianReviews": 51,
+     "totalReviews": 20748
+    },
+    {
+     "county": "Clay",
+     "listings": 31,
+     "rated": 29,
+     "avgRating": 4.65,
+     "medianRating": 4.9,
+     "pct45": 79.3,
+     "pctUnder4": 10.3,
+     "medianReviews": 14,
+     "totalReviews": 2944
+    }
+   ]
+  },
+  {
+   "name": "Moving Companies",
+   "slug": "moving-companies",
+   "listings": 1359,
+   "rated": 1300,
+   "avgRating": 4.65,
+   "medianRating": 4.8,
+   "pct45": 79.5,
+   "pctUnder4": 7.7,
+   "medianReviews": 83,
+   "totalReviews": 311858,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 799
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 235
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 166
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 75
+    },
+    {
+     "band": "Below 3.0",
+     "count": 25
+    }
+   ],
+   "cityCount": 254,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/moving-companies/miami",
+     "listings": 91,
+     "rated": 89,
+     "avgRating": 4.71,
+     "medianRating": 4.9,
+     "pct45": 80.9,
+     "pctUnder4": 4.5,
+     "medianReviews": 101,
+     "totalReviews": 23549
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/moving-companies/fort-lauderdale",
+     "listings": 42,
+     "rated": 42,
+     "avgRating": 4.4,
+     "medianRating": 4.6,
+     "pct45": 64.3,
+     "pctUnder4": 11.9,
+     "medianReviews": 198,
+     "totalReviews": 13082
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/moving-companies/orlando",
+     "listings": 42,
+     "rated": 40,
+     "avgRating": 4.67,
+     "medianRating": 4.8,
+     "pct45": 87.5,
+     "pctUnder4": 5.0,
+     "medianReviews": 148,
+     "totalReviews": 19516
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/moving-companies/tampa",
+     "listings": 38,
+     "rated": 38,
+     "avgRating": 4.73,
+     "medianRating": 4.8,
+     "pct45": 92.1,
+     "pctUnder4": 5.3,
+     "medianReviews": 249,
+     "totalReviews": 16418
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/moving-companies/jacksonville",
+     "listings": 34,
+     "rated": 34,
+     "avgRating": 4.69,
+     "medianRating": 4.8,
+     "pct45": 82.4,
+     "pctUnder4": 2.9,
+     "medianReviews": 287,
+     "totalReviews": 20909
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/moving-companies/west-palm-beach",
+     "listings": 25,
+     "rated": 24,
+     "avgRating": 4.5,
+     "medianRating": 4.8,
+     "pct45": 70.8,
+     "pctUnder4": 16.7,
+     "medianReviews": 79,
+     "totalReviews": 8745
+    },
+    {
+     "city": "Naples",
+     "href": "/services/moving-companies/naples",
+     "listings": 21,
+     "rated": 21,
+     "avgRating": 4.85,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 139,
+     "totalReviews": 5971
+    },
+    {
+     "city": "Hialeah",
+     "href": "/services/moving-companies/hialeah",
+     "listings": 20,
+     "rated": 20,
+     "avgRating": 4.87,
+     "medianRating": 4.9,
+     "pct45": 95.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 92,
+     "totalReviews": 7597
+    },
+    {
+     "city": "Sanford",
+     "href": "/services/moving-companies/sanford",
+     "listings": 19,
+     "rated": 17,
+     "avgRating": 4.38,
+     "medianRating": 4.7,
+     "pct45": 70.6,
+     "pctUnder4": 29.4,
+     "medianReviews": 79,
+     "totalReviews": 2254
+    },
+    {
+     "city": "Tallahassee",
+     "href": "/services/moving-companies/tallahassee",
+     "listings": 18,
+     "rated": 18,
+     "avgRating": 4.66,
+     "medianRating": 4.8,
+     "pct45": 72.2,
+     "pctUnder4": 5.6,
+     "medianReviews": 122,
+     "totalReviews": 3375
+    },
+    {
+     "city": "Pompano Beach",
+     "href": "/services/moving-companies/pompano-beach",
+     "listings": 18,
+     "rated": 18,
+     "avgRating": 4.4,
+     "medianRating": 4.7,
+     "pct45": 55.6,
+     "pctUnder4": 16.7,
+     "medianReviews": 116,
+     "totalReviews": 11152
+    },
+    {
+     "city": "Winter Garden",
+     "href": "/services/moving-companies/winter-garden",
+     "listings": 16,
+     "rated": 16,
+     "avgRating": 4.19,
+     "medianRating": 4.8,
+     "pct45": 62.5,
+     "pctUnder4": 25.0,
+     "medianReviews": 44,
+     "totalReviews": 1371
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/moving-companies/kissimmee",
+     "listings": 16,
+     "rated": 14,
+     "avgRating": 4.56,
+     "medianRating": 4.7,
+     "pct45": 78.6,
+     "pctUnder4": 14.3,
+     "medianReviews": 130,
+     "totalReviews": 4094
+    },
+    {
+     "city": "Fort Myers",
+     "href": "/services/moving-companies/fort-myers",
+     "listings": 16,
+     "rated": 16,
+     "avgRating": 4.77,
+     "medianRating": 4.8,
+     "pct45": 93.8,
+     "pctUnder4": 0.0,
+     "medianReviews": 97,
+     "totalReviews": 7973
+    },
+    {
+     "city": "Clearwater",
+     "href": "/services/moving-companies/clearwater",
+     "listings": 16,
+     "rated": 16,
+     "avgRating": 4.82,
+     "medianRating": 4.9,
+     "pct45": 87.5,
+     "pctUnder4": 0.0,
+     "medianReviews": 141,
+     "totalReviews": 3950
+    }
+   ],
+   "countyCount": 63,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 197,
+     "rated": 192,
+     "avgRating": 4.73,
+     "medianRating": 4.9,
+     "pct45": 82.3,
+     "pctUnder4": 4.7,
+     "medianReviews": 71,
+     "totalReviews": 43854
+    },
+    {
+     "county": "Broward",
+     "listings": 166,
+     "rated": 166,
+     "avgRating": 4.55,
+     "medianRating": 4.8,
+     "pct45": 70.5,
+     "pctUnder4": 10.8,
+     "medianReviews": 112,
+     "totalReviews": 44240
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 119,
+     "rated": 112,
+     "avgRating": 4.55,
+     "medianRating": 4.8,
+     "pct45": 73.2,
+     "pctUnder4": 11.6,
+     "medianReviews": 110,
+     "totalReviews": 32344
+    },
+    {
+     "county": "Orange",
+     "listings": 88,
+     "rated": 83,
+     "avgRating": 4.59,
+     "medianRating": 4.8,
+     "pct45": 81.9,
+     "pctUnder4": 10.8,
+     "medianReviews": 91,
+     "totalReviews": 26969
+    },
+    {
+     "county": "Seminole",
+     "listings": 83,
+     "rated": 75,
+     "avgRating": 4.56,
+     "medianRating": 4.8,
+     "pct45": 74.7,
+     "pctUnder4": 13.3,
+     "medianReviews": 90,
+     "totalReviews": 13753
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 64,
+     "rated": 64,
+     "avgRating": 4.68,
+     "medianRating": 4.7,
+     "pct45": 89.1,
+     "pctUnder4": 7.8,
+     "medianReviews": 222,
+     "totalReviews": 22725
+    },
+    {
+     "county": "Pinellas",
+     "listings": 61,
+     "rated": 60,
+     "avgRating": 4.76,
+     "medianRating": 4.9,
+     "pct45": 88.3,
+     "pctUnder4": 1.7,
+     "medianReviews": 134,
+     "totalReviews": 14481
+    },
+    {
+     "county": "Duval",
+     "listings": 46,
+     "rated": 43,
+     "avgRating": 4.6,
+     "medianRating": 4.8,
+     "pct45": 76.7,
+     "pctUnder4": 9.3,
+     "medianReviews": 207,
+     "totalReviews": 21992
+    },
+    {
+     "county": "Lee",
+     "listings": 40,
+     "rated": 40,
+     "avgRating": 4.74,
+     "medianRating": 4.8,
+     "pct45": 85.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 82,
+     "totalReviews": 11603
+    },
+    {
+     "county": "Osceola",
+     "listings": 30,
+     "rated": 27,
+     "avgRating": 4.55,
+     "medianRating": 4.8,
+     "pct45": 77.8,
+     "pctUnder4": 14.8,
+     "medianReviews": 112,
+     "totalReviews": 8860
+    }
+   ]
+  },
+  {
+   "name": "Flooring",
+   "slug": "flooring",
+   "listings": 1333,
+   "rated": 1276,
+   "avgRating": 4.76,
+   "medianRating": 4.9,
+   "pct45": 85.9,
+   "pctUnder4": 3.4,
+   "medianReviews": 27,
+   "totalReviews": 93687,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 902
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 194
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 137
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 33
+    },
+    {
+     "band": "Below 3.0",
+     "count": 10
+    }
+   ],
+   "cityCount": 220,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/flooring/miami",
+     "listings": 98,
+     "rated": 93,
+     "avgRating": 4.85,
+     "medianRating": 5.0,
+     "pct45": 89.2,
+     "pctUnder4": 2.2,
+     "medianReviews": 9,
+     "totalReviews": 4772
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/flooring/orlando",
+     "listings": 63,
+     "rated": 58,
+     "avgRating": 4.76,
+     "medianRating": 4.9,
+     "pct45": 91.4,
+     "pctUnder4": 1.7,
+     "medianReviews": 43,
+     "totalReviews": 6203
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/flooring/tampa",
+     "listings": 37,
+     "rated": 36,
+     "avgRating": 4.82,
+     "medianRating": 4.9,
+     "pct45": 86.1,
+     "pctUnder4": 0.0,
+     "medianReviews": 66,
+     "totalReviews": 4086
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/flooring/jacksonville",
+     "listings": 33,
+     "rated": 33,
+     "avgRating": 4.78,
+     "medianRating": 4.9,
+     "pct45": 81.8,
+     "pctUnder4": 0.0,
+     "medianReviews": 71,
+     "totalReviews": 4276
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/flooring/west-palm-beach",
+     "listings": 25,
+     "rated": 23,
+     "avgRating": 4.85,
+     "medianRating": 5.0,
+     "pct45": 95.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 25,
+     "totalReviews": 1173
+    },
+    {
+     "city": "Fort Myers",
+     "href": "/services/flooring/fort-myers",
+     "listings": 25,
+     "rated": 25,
+     "avgRating": 4.7,
+     "medianRating": 4.9,
+     "pct45": 80.0,
+     "pctUnder4": 8.0,
+     "medianReviews": 73,
+     "totalReviews": 3435
+    },
+    {
+     "city": "Winter Garden",
+     "href": "/services/flooring/winter-garden",
+     "listings": 23,
+     "rated": 23,
+     "avgRating": 4.63,
+     "medianRating": 4.9,
+     "pct45": 78.3,
+     "pctUnder4": 4.3,
+     "medianReviews": 17,
+     "totalReviews": 883
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/flooring/kissimmee",
+     "listings": 22,
+     "rated": 20,
+     "avgRating": 4.76,
+     "medianRating": 5.0,
+     "pct45": 85.0,
+     "pctUnder4": 5.0,
+     "medianReviews": 16,
+     "totalReviews": 1413
+    },
+    {
+     "city": "Hialeah",
+     "href": "/services/flooring/hialeah",
+     "listings": 22,
+     "rated": 20,
+     "avgRating": 4.51,
+     "medianRating": 4.9,
+     "pct45": 75.0,
+     "pctUnder4": 15.0,
+     "medianReviews": 10,
+     "totalReviews": 649
+    },
+    {
+     "city": "St Cloud",
+     "href": "/services/flooring/st-cloud",
+     "listings": 21,
+     "rated": 21,
+     "avgRating": 4.56,
+     "medianRating": 4.9,
+     "pct45": 71.4,
+     "pctUnder4": 9.5,
+     "medianReviews": 23,
+     "totalReviews": 577
+    },
+    {
+     "city": "Naples",
+     "href": "/services/flooring/naples",
+     "listings": 18,
+     "rated": 18,
+     "avgRating": 4.77,
+     "medianRating": 4.8,
+     "pct45": 94.4,
+     "pctUnder4": 0.0,
+     "medianReviews": 44,
+     "totalReviews": 2617
+    },
+    {
+     "city": "Boca Raton",
+     "href": "/services/flooring/boca-raton",
+     "listings": 17,
+     "rated": 17,
+     "avgRating": 4.89,
+     "medianRating": 4.9,
+     "pct45": 94.1,
+     "pctUnder4": 0.0,
+     "medianReviews": 43,
+     "totalReviews": 1473
+    },
+    {
+     "city": "Boynton Beach",
+     "href": "/services/flooring/boynton-beach",
+     "listings": 17,
+     "rated": 16,
+     "avgRating": 4.7,
+     "medianRating": 4.8,
+     "pct45": 81.2,
+     "pctUnder4": 6.2,
+     "medianReviews": 78,
+     "totalReviews": 3021
+    },
+    {
+     "city": "Jupiter",
+     "href": "/services/flooring/jupiter",
+     "listings": 17,
+     "rated": 17,
+     "avgRating": 4.81,
+     "medianRating": 4.9,
+     "pct45": 88.2,
+     "pctUnder4": 0.0,
+     "medianReviews": 27,
+     "totalReviews": 463
+    },
+    {
+     "city": "Cape Coral",
+     "href": "/services/flooring/cape-coral",
+     "listings": 16,
+     "rated": 16,
+     "avgRating": 4.62,
+     "medianRating": 4.8,
+     "pct45": 75.0,
+     "pctUnder4": 6.2,
+     "medianReviews": 33,
+     "totalReviews": 1113
+    }
+   ],
+   "countyCount": 56,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 191,
+     "rated": 182,
+     "avgRating": 4.8,
+     "medianRating": 5.0,
+     "pct45": 87.9,
+     "pctUnder4": 3.8,
+     "medianReviews": 13,
+     "totalReviews": 11601
+    },
+    {
+     "county": "Broward",
+     "listings": 152,
+     "rated": 150,
+     "avgRating": 4.79,
+     "medianRating": 4.9,
+     "pct45": 85.3,
+     "pctUnder4": 2.7,
+     "medianReviews": 31,
+     "totalReviews": 14578
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 132,
+     "rated": 127,
+     "avgRating": 4.81,
+     "medianRating": 4.9,
+     "pct45": 89.8,
+     "pctUnder4": 0.8,
+     "medianReviews": 31,
+     "totalReviews": 10924
+    },
+    {
+     "county": "Orange",
+     "listings": 126,
+     "rated": 118,
+     "avgRating": 4.71,
+     "medianRating": 4.9,
+     "pct45": 83.9,
+     "pctUnder4": 5.1,
+     "medianReviews": 28,
+     "totalReviews": 8682
+    },
+    {
+     "county": "Pinellas",
+     "listings": 71,
+     "rated": 69,
+     "avgRating": 4.87,
+     "medianRating": 5.0,
+     "pct45": 94.2,
+     "pctUnder4": 0.0,
+     "medianReviews": 45,
+     "totalReviews": 5932
+    },
+    {
+     "county": "Lee",
+     "listings": 69,
+     "rated": 67,
+     "avgRating": 4.76,
+     "medianRating": 4.9,
+     "pct45": 86.6,
+     "pctUnder4": 4.5,
+     "medianReviews": 31,
+     "totalReviews": 5641
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 65,
+     "rated": 61,
+     "avgRating": 4.82,
+     "medianRating": 5.0,
+     "pct45": 88.5,
+     "pctUnder4": 1.6,
+     "medianReviews": 48,
+     "totalReviews": 5738
+    },
+    {
+     "county": "Seminole",
+     "listings": 60,
+     "rated": 56,
+     "avgRating": 4.48,
+     "medianRating": 4.8,
+     "pct45": 73.2,
+     "pctUnder4": 16.1,
+     "medianReviews": 17,
+     "totalReviews": 3315
+    },
+    {
+     "county": "Duval",
+     "listings": 47,
+     "rated": 46,
+     "avgRating": 4.69,
+     "medianRating": 4.9,
+     "pct45": 80.4,
+     "pctUnder4": 4.3,
+     "medianReviews": 51,
+     "totalReviews": 4466
+    },
+    {
+     "county": "Osceola",
+     "listings": 44,
+     "rated": 42,
+     "avgRating": 4.66,
+     "medianRating": 4.9,
+     "pct45": 78.6,
+     "pctUnder4": 7.1,
+     "medianReviews": 19,
+     "totalReviews": 2078
+    }
+   ]
+  },
+  {
+   "name": "Pool Service",
+   "slug": "pool-service",
+   "listings": 1264,
+   "rated": 1189,
+   "avgRating": 4.64,
+   "medianRating": 4.8,
+   "pct45": 77.5,
+   "pctUnder4": 8.4,
+   "medianReviews": 32,
+   "totalReviews": 82962,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 723
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 199
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 167
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 79
+    },
+    {
+     "band": "Below 3.0",
+     "count": 21
+    }
+   ],
+   "cityCount": 251,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/pool-service/miami",
+     "listings": 100,
+     "rated": 93,
+     "avgRating": 4.66,
+     "medianRating": 4.9,
+     "pct45": 83.9,
+     "pctUnder4": 7.5,
+     "medianReviews": 23,
+     "totalReviews": 5625
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/pool-service/orlando",
+     "listings": 37,
+     "rated": 34,
+     "avgRating": 4.62,
+     "medianRating": 4.8,
+     "pct45": 70.6,
+     "pctUnder4": 5.9,
+     "medianReviews": 35,
+     "totalReviews": 2035
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/pool-service/kissimmee",
+     "listings": 26,
+     "rated": 23,
+     "avgRating": 4.78,
+     "medianRating": 4.9,
+     "pct45": 87.0,
+     "pctUnder4": 8.7,
+     "medianReviews": 23,
+     "totalReviews": 1264
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/pool-service/tampa",
+     "listings": 24,
+     "rated": 23,
+     "avgRating": 4.62,
+     "medianRating": 4.9,
+     "pct45": 78.3,
+     "pctUnder4": 13.0,
+     "medianReviews": 37,
+     "totalReviews": 2135
+    },
+    {
+     "city": "Hialeah",
+     "href": "/services/pool-service/hialeah",
+     "listings": 23,
+     "rated": 22,
+     "avgRating": 4.78,
+     "medianRating": 5.0,
+     "pct45": 81.8,
+     "pctUnder4": 4.5,
+     "medianReviews": 13,
+     "totalReviews": 1610
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/pool-service/jacksonville",
+     "listings": 21,
+     "rated": 20,
+     "avgRating": 4.51,
+     "medianRating": 4.7,
+     "pct45": 80.0,
+     "pctUnder4": 10.0,
+     "medianReviews": 19,
+     "totalReviews": 1744
+    },
+    {
+     "city": "Naples",
+     "href": "/services/pool-service/naples",
+     "listings": 20,
+     "rated": 20,
+     "avgRating": 4.61,
+     "medianRating": 4.7,
+     "pct45": 65.0,
+     "pctUnder4": 5.0,
+     "medianReviews": 77,
+     "totalReviews": 2425
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/pool-service/fort-lauderdale",
+     "listings": 19,
+     "rated": 17,
+     "avgRating": 4.75,
+     "medianRating": 4.8,
+     "pct45": 88.2,
+     "pctUnder4": 0.0,
+     "medianReviews": 89,
+     "totalReviews": 3079
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/pool-service/west-palm-beach",
+     "listings": 19,
+     "rated": 19,
+     "avgRating": 4.75,
+     "medianRating": 4.9,
+     "pct45": 78.9,
+     "pctUnder4": 0.0,
+     "medianReviews": 34,
+     "totalReviews": 1244
+    },
+    {
+     "city": "Pompano Beach",
+     "href": "/services/pool-service/pompano-beach",
+     "listings": 17,
+     "rated": 15,
+     "avgRating": 4.98,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 15,
+     "totalReviews": 386
+    },
+    {
+     "city": "Cape Coral",
+     "href": "/services/pool-service/cape-coral",
+     "listings": 17,
+     "rated": 17,
+     "avgRating": 4.62,
+     "medianRating": 4.8,
+     "pct45": 82.4,
+     "pctUnder4": 17.6,
+     "medianReviews": 87,
+     "totalReviews": 2686
+    },
+    {
+     "city": "Boca Raton",
+     "href": "/services/pool-service/boca-raton",
+     "listings": 17,
+     "rated": 17,
+     "avgRating": 4.91,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 62,
+     "totalReviews": 1763
+    },
+    {
+     "city": "Hollywood",
+     "href": "/services/pool-service/hollywood",
+     "listings": 17,
+     "rated": 16,
+     "avgRating": 4.59,
+     "medianRating": 4.8,
+     "pct45": 75.0,
+     "pctUnder4": 12.5,
+     "medianReviews": 36,
+     "totalReviews": 1005
+    },
+    {
+     "city": "St Cloud",
+     "href": "/services/pool-service/st-cloud",
+     "listings": 16,
+     "rated": 15,
+     "avgRating": 4.38,
+     "medianRating": 5.0,
+     "pct45": 66.7,
+     "pctUnder4": 20.0,
+     "medianReviews": 11,
+     "totalReviews": 605
+    },
+    {
+     "city": "St. Petersburg",
+     "href": "/services/pool-service/st-petersburg",
+     "listings": 15,
+     "rated": 14,
+     "avgRating": 4.71,
+     "medianRating": 4.8,
+     "pct45": 78.6,
+     "pctUnder4": 7.1,
+     "medianReviews": 43,
+     "totalReviews": 2424
+    }
+   ],
+   "countyCount": 64,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 202,
+     "rated": 182,
+     "avgRating": 4.68,
+     "medianRating": 4.9,
+     "pct45": 81.3,
+     "pctUnder4": 7.7,
+     "medianReviews": 26,
+     "totalReviews": 11604
+    },
+    {
+     "county": "Broward",
+     "listings": 179,
+     "rated": 168,
+     "avgRating": 4.69,
+     "medianRating": 4.9,
+     "pct45": 81.0,
+     "pctUnder4": 6.5,
+     "medianReviews": 26,
+     "totalReviews": 13942
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 118,
+     "rated": 114,
+     "avgRating": 4.66,
+     "medianRating": 4.8,
+     "pct45": 74.6,
+     "pctUnder4": 7.9,
+     "medianReviews": 36,
+     "totalReviews": 7964
+    },
+    {
+     "county": "Orange",
+     "listings": 90,
+     "rated": 82,
+     "avgRating": 4.56,
+     "medianRating": 4.8,
+     "pct45": 67.1,
+     "pctUnder4": 11.0,
+     "medianReviews": 42,
+     "totalReviews": 4486
+    },
+    {
+     "county": "Pinellas",
+     "listings": 66,
+     "rated": 63,
+     "avgRating": 4.7,
+     "medianRating": 4.8,
+     "pct45": 85.7,
+     "pctUnder4": 6.3,
+     "medianReviews": 47,
+     "totalReviews": 6092
+    },
+    {
+     "county": "Seminole",
+     "listings": 59,
+     "rated": 54,
+     "avgRating": 4.63,
+     "medianRating": 4.7,
+     "pct45": 68.5,
+     "pctUnder4": 5.6,
+     "medianReviews": 40,
+     "totalReviews": 3000
+    },
+    {
+     "county": "Lee",
+     "listings": 53,
+     "rated": 53,
+     "avgRating": 4.67,
+     "medianRating": 4.9,
+     "pct45": 83.0,
+     "pctUnder4": 11.3,
+     "medianReviews": 36,
+     "totalReviews": 4893
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 53,
+     "rated": 51,
+     "avgRating": 4.63,
+     "medianRating": 4.8,
+     "pct45": 74.5,
+     "pctUnder4": 7.8,
+     "medianReviews": 37,
+     "totalReviews": 4606
+    },
+    {
+     "county": "Osceola",
+     "listings": 44,
+     "rated": 40,
+     "avgRating": 4.63,
+     "medianRating": 4.9,
+     "pct45": 80.0,
+     "pctUnder4": 12.5,
+     "medianReviews": 18,
+     "totalReviews": 2940
+    },
+    {
+     "county": "Collier",
+     "listings": 31,
+     "rated": 28,
+     "avgRating": 4.62,
+     "medianRating": 4.7,
+     "pct45": 67.9,
+     "pctUnder4": 7.1,
+     "medianReviews": 57,
+     "totalReviews": 2655
+    }
+   ]
+  },
+  {
+   "name": "Pest Control",
+   "slug": "pest-control",
+   "listings": 1257,
+   "rated": 1221,
+   "avgRating": 4.76,
+   "medianRating": 4.9,
+   "pct45": 88.9,
+   "pctUnder4": 3.4,
+   "medianReviews": 88,
+   "totalReviews": 430280,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 850
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 235
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 94
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 34
+    },
+    {
+     "band": "Below 3.0",
+     "count": 8
+    }
+   ],
+   "cityCount": 271,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/pest-control/miami",
+     "listings": 95,
+     "rated": 88,
+     "avgRating": 4.58,
+     "medianRating": 4.9,
+     "pct45": 76.1,
+     "pctUnder4": 14.8,
+     "medianReviews": 17,
+     "totalReviews": 11104
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/pest-control/orlando",
+     "listings": 49,
+     "rated": 48,
+     "avgRating": 4.78,
+     "medianRating": 4.9,
+     "pct45": 87.5,
+     "pctUnder4": 0.0,
+     "medianReviews": 113,
+     "totalReviews": 15180
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/pest-control/jacksonville",
+     "listings": 35,
+     "rated": 33,
+     "avgRating": 4.83,
+     "medianRating": 4.9,
+     "pct45": 97.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 509,
+     "totalReviews": 31692
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/pest-control/west-palm-beach",
+     "listings": 31,
+     "rated": 31,
+     "avgRating": 4.75,
+     "medianRating": 4.9,
+     "pct45": 83.9,
+     "pctUnder4": 3.2,
+     "medianReviews": 44,
+     "totalReviews": 22781
+    },
+    {
+     "city": "Tallahassee",
+     "href": "/services/pest-control/tallahassee",
+     "listings": 26,
+     "rated": 26,
+     "avgRating": 4.87,
+     "medianRating": 4.9,
+     "pct45": 96.2,
+     "pctUnder4": 0.0,
+     "medianReviews": 47,
+     "totalReviews": 6675
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/pest-control/tampa",
+     "listings": 26,
+     "rated": 26,
+     "avgRating": 4.75,
+     "medianRating": 4.8,
+     "pct45": 88.5,
+     "pctUnder4": 0.0,
+     "medianReviews": 693,
+     "totalReviews": 31115
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/pest-control/kissimmee",
+     "listings": 25,
+     "rated": 25,
+     "avgRating": 4.64,
+     "medianRating": 4.7,
+     "pct45": 80.0,
+     "pctUnder4": 12.0,
+     "medianReviews": 17,
+     "totalReviews": 3057
+    },
+    {
+     "city": "Fort Myers",
+     "href": "/services/pest-control/fort-myers",
+     "listings": 21,
+     "rated": 21,
+     "avgRating": 4.82,
+     "medianRating": 4.9,
+     "pct45": 95.2,
+     "pctUnder4": 4.8,
+     "medianReviews": 317,
+     "totalReviews": 17063
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/pest-control/fort-lauderdale",
+     "listings": 18,
+     "rated": 18,
+     "avgRating": 4.71,
+     "medianRating": 4.8,
+     "pct45": 83.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 254,
+     "totalReviews": 15085
+    },
+    {
+     "city": "Cape Coral",
+     "href": "/services/pest-control/cape-coral",
+     "listings": 18,
+     "rated": 18,
+     "avgRating": 4.9,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 140,
+     "totalReviews": 5364
+    },
+    {
+     "city": "St. Augustine",
+     "href": "/services/pest-control/st-augustine",
+     "listings": 17,
+     "rated": 17,
+     "avgRating": 4.78,
+     "medianRating": 4.9,
+     "pct45": 88.2,
+     "pctUnder4": 0.0,
+     "medianReviews": 101,
+     "totalReviews": 4535
+    },
+    {
+     "city": "Naples",
+     "href": "/services/pest-control/naples",
+     "listings": 16,
+     "rated": 15,
+     "avgRating": 4.88,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 268,
+     "totalReviews": 5466
+    },
+    {
+     "city": "Clearwater",
+     "href": "/services/pest-control/clearwater",
+     "listings": 16,
+     "rated": 16,
+     "avgRating": 4.86,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 238,
+     "totalReviews": 6542
+    },
+    {
+     "city": "Ocala",
+     "href": "/services/pest-control/ocala",
+     "listings": 15,
+     "rated": 15,
+     "avgRating": 4.75,
+     "medianRating": 4.9,
+     "pct45": 86.7,
+     "pctUnder4": 6.7,
+     "medianReviews": 259,
+     "totalReviews": 8894
+    },
+    {
+     "city": "Sarasota",
+     "href": "/services/pest-control/sarasota",
+     "listings": 14,
+     "rated": 14,
+     "avgRating": 4.91,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 391,
+     "totalReviews": 8945
+    }
+   ],
+   "countyCount": 61,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 160,
+     "rated": 151,
+     "avgRating": 4.66,
+     "medianRating": 4.9,
+     "pct45": 81.5,
+     "pctUnder4": 11.3,
+     "medianReviews": 23,
+     "totalReviews": 22961
+    },
+    {
+     "county": "Broward",
+     "listings": 116,
+     "rated": 116,
+     "avgRating": 4.83,
+     "medianRating": 4.9,
+     "pct45": 93.1,
+     "pctUnder4": 0.9,
+     "medianReviews": 105,
+     "totalReviews": 45878
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 109,
+     "rated": 106,
+     "avgRating": 4.81,
+     "medianRating": 4.9,
+     "pct45": 91.5,
+     "pctUnder4": 1.9,
+     "medianReviews": 42,
+     "totalReviews": 41346
+    },
+    {
+     "county": "Orange",
+     "listings": 76,
+     "rated": 73,
+     "avgRating": 4.77,
+     "medianRating": 4.9,
+     "pct45": 87.7,
+     "pctUnder4": 1.4,
+     "medianReviews": 100,
+     "totalReviews": 18696
+    },
+    {
+     "county": "Pinellas",
+     "listings": 64,
+     "rated": 64,
+     "avgRating": 4.83,
+     "medianRating": 4.9,
+     "pct45": 96.9,
+     "pctUnder4": 0.0,
+     "medianReviews": 152,
+     "totalReviews": 19474
+    },
+    {
+     "county": "Lee",
+     "listings": 62,
+     "rated": 61,
+     "avgRating": 4.86,
+     "medianRating": 4.9,
+     "pct45": 98.4,
+     "pctUnder4": 1.6,
+     "medianReviews": 184,
+     "totalReviews": 31199
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 52,
+     "rated": 52,
+     "avgRating": 4.77,
+     "medianRating": 4.8,
+     "pct45": 88.5,
+     "pctUnder4": 0.0,
+     "medianReviews": 403,
+     "totalReviews": 45562
+    },
+    {
+     "county": "Seminole",
+     "listings": 46,
+     "rated": 46,
+     "avgRating": 4.62,
+     "medianRating": 4.8,
+     "pct45": 78.3,
+     "pctUnder4": 6.5,
+     "medianReviews": 163,
+     "totalReviews": 14750
+    },
+    {
+     "county": "Duval",
+     "listings": 41,
+     "rated": 39,
+     "avgRating": 4.8,
+     "medianRating": 4.9,
+     "pct45": 92.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 328,
+     "totalReviews": 32070
+    },
+    {
+     "county": "Osceola",
+     "listings": 31,
+     "rated": 30,
+     "avgRating": 4.63,
+     "medianRating": 4.7,
+     "pct45": 73.3,
+     "pctUnder4": 10.0,
+     "medianReviews": 20,
+     "totalReviews": 3355
+    }
+   ]
+  },
+  {
+   "name": "Painting",
+   "slug": "painting",
+   "listings": 1217,
+   "rated": 1167,
+   "avgRating": 4.84,
+   "medianRating": 5.0,
+   "pct45": 92.0,
+   "pctUnder4": 3.4,
+   "medianReviews": 24,
+   "totalReviews": 63381,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 993
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 81
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 53
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 33
+    },
+    {
+     "band": "Below 3.0",
+     "count": 7
+    }
+   ],
+   "cityCount": 246,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/painting/miami",
+     "listings": 92,
+     "rated": 86,
+     "avgRating": 4.78,
+     "medianRating": 5.0,
+     "pct45": 89.5,
+     "pctUnder4": 5.8,
+     "medianReviews": 13,
+     "totalReviews": 2192
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/painting/orlando",
+     "listings": 42,
+     "rated": 42,
+     "avgRating": 4.8,
+     "medianRating": 5.0,
+     "pct45": 88.1,
+     "pctUnder4": 4.8,
+     "medianReviews": 34,
+     "totalReviews": 3260
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/painting/tampa",
+     "listings": 29,
+     "rated": 29,
+     "avgRating": 4.85,
+     "medianRating": 4.9,
+     "pct45": 93.1,
+     "pctUnder4": 0.0,
+     "medianReviews": 82,
+     "totalReviews": 5663
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/painting/kissimmee",
+     "listings": 28,
+     "rated": 24,
+     "avgRating": 4.76,
+     "medianRating": 5.0,
+     "pct45": 83.3,
+     "pctUnder4": 8.3,
+     "medianReviews": 10,
+     "totalReviews": 633
+    },
+    {
+     "city": "Hialeah",
+     "href": "/services/painting/hialeah",
+     "listings": 23,
+     "rated": 20,
+     "avgRating": 4.83,
+     "medianRating": 5.0,
+     "pct45": 80.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 11,
+     "totalReviews": 326
+    },
+    {
+     "city": "Naples",
+     "href": "/services/painting/naples",
+     "listings": 22,
+     "rated": 22,
+     "avgRating": 4.76,
+     "medianRating": 5.0,
+     "pct45": 86.4,
+     "pctUnder4": 9.1,
+     "medianReviews": 40,
+     "totalReviews": 1125
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/painting/west-palm-beach",
+     "listings": 21,
+     "rated": 20,
+     "avgRating": 4.69,
+     "medianRating": 5.0,
+     "pct45": 90.0,
+     "pctUnder4": 10.0,
+     "medianReviews": 36,
+     "totalReviews": 892
+    },
+    {
+     "city": "St Cloud",
+     "href": "/services/painting/st-cloud",
+     "listings": 21,
+     "rated": 21,
+     "avgRating": 4.76,
+     "medianRating": 5.0,
+     "pct45": 81.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 20,
+     "totalReviews": 674
+    },
+    {
+     "city": "Fort Myers",
+     "href": "/services/painting/fort-myers",
+     "listings": 19,
+     "rated": 19,
+     "avgRating": 4.9,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 47,
+     "totalReviews": 2158
+    },
+    {
+     "city": "Sarasota",
+     "href": "/services/painting/sarasota",
+     "listings": 18,
+     "rated": 18,
+     "avgRating": 4.94,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 74,
+     "totalReviews": 1500
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/painting/fort-lauderdale",
+     "listings": 18,
+     "rated": 17,
+     "avgRating": 4.93,
+     "medianRating": 5.0,
+     "pct45": 94.1,
+     "pctUnder4": 0.0,
+     "medianReviews": 32,
+     "totalReviews": 660
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/painting/jacksonville",
+     "listings": 16,
+     "rated": 15,
+     "avgRating": 4.89,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 154,
+     "totalReviews": 2399
+    },
+    {
+     "city": "Boca Raton",
+     "href": "/services/painting/boca-raton",
+     "listings": 14,
+     "rated": 14,
+     "avgRating": 4.9,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 54,
+     "totalReviews": 1160
+    },
+    {
+     "city": "St. Petersburg",
+     "href": "/services/painting/st-petersburg",
+     "listings": 13,
+     "rated": 13,
+     "avgRating": 4.94,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 18,
+     "totalReviews": 515
+    },
+    {
+     "city": "St. Augustine",
+     "href": "/services/painting/st-augustine",
+     "listings": 13,
+     "rated": 13,
+     "avgRating": 4.92,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 55,
+     "totalReviews": 967
+    }
+   ],
+   "countyCount": 62,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 183,
+     "rated": 170,
+     "avgRating": 4.83,
+     "medianRating": 5.0,
+     "pct45": 90.6,
+     "pctUnder4": 4.1,
+     "medianReviews": 13,
+     "totalReviews": 4446
+    },
+    {
+     "county": "Broward",
+     "listings": 130,
+     "rated": 127,
+     "avgRating": 4.9,
+     "medianRating": 5.0,
+     "pct45": 94.5,
+     "pctUnder4": 0.8,
+     "medianReviews": 29,
+     "totalReviews": 6104
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 111,
+     "rated": 109,
+     "avgRating": 4.83,
+     "medianRating": 5.0,
+     "pct45": 92.7,
+     "pctUnder4": 3.7,
+     "medianReviews": 28,
+     "totalReviews": 5467
+    },
+    {
+     "county": "Orange",
+     "listings": 96,
+     "rated": 91,
+     "avgRating": 4.77,
+     "medianRating": 5.0,
+     "pct45": 86.8,
+     "pctUnder4": 5.5,
+     "medianReviews": 22,
+     "totalReviews": 5135
+    },
+    {
+     "county": "Pinellas",
+     "listings": 62,
+     "rated": 62,
+     "avgRating": 4.89,
+     "medianRating": 5.0,
+     "pct45": 95.2,
+     "pctUnder4": 1.6,
+     "medianReviews": 29,
+     "totalReviews": 3630
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 62,
+     "rated": 62,
+     "avgRating": 4.9,
+     "medianRating": 5.0,
+     "pct45": 95.2,
+     "pctUnder4": 0.0,
+     "medianReviews": 47,
+     "totalReviews": 7491
+    },
+    {
+     "county": "Seminole",
+     "listings": 57,
+     "rated": 54,
+     "avgRating": 4.77,
+     "medianRating": 5.0,
+     "pct45": 87.0,
+     "pctUnder4": 9.3,
+     "medianReviews": 20,
+     "totalReviews": 1569
+    },
+    {
+     "county": "Lee",
+     "listings": 53,
+     "rated": 52,
+     "avgRating": 4.94,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 51,
+     "totalReviews": 4599
+    },
+    {
+     "county": "Osceola",
+     "listings": 50,
+     "rated": 46,
+     "avgRating": 4.8,
+     "medianRating": 5.0,
+     "pct45": 84.8,
+     "pctUnder4": 2.2,
+     "medianReviews": 13,
+     "totalReviews": 1320
+    },
+    {
+     "county": "Collier",
+     "listings": 30,
+     "rated": 28,
+     "avgRating": 4.78,
+     "medianRating": 5.0,
+     "pct45": 85.7,
+     "pctUnder4": 7.1,
+     "medianReviews": 30,
+     "totalReviews": 1240
+    }
+   ]
+  },
+  {
+   "name": "Tree Service",
+   "slug": "tree-service",
+   "listings": 1057,
+   "rated": 1004,
+   "avgRating": 4.76,
+   "medianRating": 4.9,
+   "pct45": 87.0,
+   "pctUnder4": 5.1,
+   "medianReviews": 25,
+   "totalReviews": 75337,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 747
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 126
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 80
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 37
+    },
+    {
+     "band": "Below 3.0",
+     "count": 14
+    }
+   ],
+   "cityCount": 271,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/tree-service/miami",
+     "listings": 58,
+     "rated": 52,
+     "avgRating": 4.59,
+     "medianRating": 4.9,
+     "pct45": 75.0,
+     "pctUnder4": 9.6,
+     "medianReviews": 10,
+     "totalReviews": 1795
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/tree-service/jacksonville",
+     "listings": 31,
+     "rated": 30,
+     "avgRating": 4.8,
+     "medianRating": 4.9,
+     "pct45": 90.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 75,
+     "totalReviews": 3329
+    },
+    {
+     "city": "Tallahassee",
+     "href": "/services/tree-service/tallahassee",
+     "listings": 21,
+     "rated": 20,
+     "avgRating": 4.88,
+     "medianRating": 4.9,
+     "pct45": 95.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 53,
+     "totalReviews": 3146
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/tree-service/west-palm-beach",
+     "listings": 20,
+     "rated": 18,
+     "avgRating": 4.79,
+     "medianRating": 5.0,
+     "pct45": 83.3,
+     "pctUnder4": 5.6,
+     "medianReviews": 8,
+     "totalReviews": 712
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/tree-service/orlando",
+     "listings": 19,
+     "rated": 19,
+     "avgRating": 4.88,
+     "medianRating": 5.0,
+     "pct45": 94.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 23,
+     "totalReviews": 1273
+    },
+    {
+     "city": "Sarasota",
+     "href": "/services/tree-service/sarasota",
+     "listings": 19,
+     "rated": 19,
+     "avgRating": 4.83,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 122,
+     "totalReviews": 2569
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/tree-service/fort-lauderdale",
+     "listings": 18,
+     "rated": 18,
+     "avgRating": 4.56,
+     "medianRating": 4.9,
+     "pct45": 77.8,
+     "pctUnder4": 11.1,
+     "medianReviews": 26,
+     "totalReviews": 1260
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/tree-service/tampa",
+     "listings": 18,
+     "rated": 16,
+     "avgRating": 4.83,
+     "medianRating": 4.9,
+     "pct45": 93.8,
+     "pctUnder4": 0.0,
+     "medianReviews": 91,
+     "totalReviews": 2278
+    },
+    {
+     "city": "St. Petersburg",
+     "href": "/services/tree-service/st-petersburg",
+     "listings": 16,
+     "rated": 16,
+     "avgRating": 4.88,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 105,
+     "totalReviews": 2369
+    },
+    {
+     "city": "Sanford",
+     "href": "/services/tree-service/sanford",
+     "listings": 15,
+     "rated": 14,
+     "avgRating": 4.31,
+     "medianRating": 5.0,
+     "pct45": 64.3,
+     "pctUnder4": 28.6,
+     "medianReviews": 6,
+     "totalReviews": 326
+    },
+    {
+     "city": "St. Augustine",
+     "href": "/services/tree-service/st-augustine",
+     "listings": 14,
+     "rated": 14,
+     "avgRating": 4.71,
+     "medianRating": 4.8,
+     "pct45": 78.6,
+     "pctUnder4": 0.0,
+     "medianReviews": 31,
+     "totalReviews": 438
+    },
+    {
+     "city": "Plant City",
+     "href": "/services/tree-service/plant-city",
+     "listings": 14,
+     "rated": 14,
+     "avgRating": 4.86,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 21,
+     "totalReviews": 872
+    },
+    {
+     "city": "Ocala",
+     "href": "/services/tree-service/ocala",
+     "listings": 13,
+     "rated": 13,
+     "avgRating": 4.82,
+     "medianRating": 4.9,
+     "pct45": 92.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 50,
+     "totalReviews": 809
+    },
+    {
+     "city": "Pompano Beach",
+     "href": "/services/tree-service/pompano-beach",
+     "listings": 13,
+     "rated": 13,
+     "avgRating": 4.64,
+     "medianRating": 5.0,
+     "pct45": 69.2,
+     "pctUnder4": 15.4,
+     "medianReviews": 7,
+     "totalReviews": 459
+    },
+    {
+     "city": "Apopka",
+     "href": "/services/tree-service/apopka",
+     "listings": 12,
+     "rated": 12,
+     "avgRating": 4.3,
+     "medianRating": 5.0,
+     "pct45": 75.0,
+     "pctUnder4": 25.0,
+     "medianReviews": 7,
+     "totalReviews": 168
+    }
+   ],
+   "countyCount": 65,
+   "counties": [
+    {
+     "county": "Broward",
+     "listings": 113,
+     "rated": 108,
+     "avgRating": 4.64,
+     "medianRating": 4.9,
+     "pct45": 78.7,
+     "pctUnder4": 13.0,
+     "medianReviews": 18,
+     "totalReviews": 5280
+    },
+    {
+     "county": "Miami-Dade",
+     "listings": 105,
+     "rated": 93,
+     "avgRating": 4.66,
+     "medianRating": 5.0,
+     "pct45": 80.6,
+     "pctUnder4": 8.6,
+     "medianReviews": 11,
+     "totalReviews": 9456
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 92,
+     "rated": 86,
+     "avgRating": 4.74,
+     "medianRating": 5.0,
+     "pct45": 83.7,
+     "pctUnder4": 7.0,
+     "medianReviews": 8,
+     "totalReviews": 4196
+    },
+    {
+     "county": "Pinellas",
+     "listings": 62,
+     "rated": 62,
+     "avgRating": 4.88,
+     "medianRating": 4.9,
+     "pct45": 98.4,
+     "pctUnder4": 0.0,
+     "medianReviews": 73,
+     "totalReviews": 7242
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 59,
+     "rated": 57,
+     "avgRating": 4.85,
+     "medianRating": 4.9,
+     "pct45": 94.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 36,
+     "totalReviews": 4972
+    },
+    {
+     "county": "Seminole",
+     "listings": 51,
+     "rated": 47,
+     "avgRating": 4.64,
+     "medianRating": 4.9,
+     "pct45": 78.7,
+     "pctUnder4": 8.5,
+     "medianReviews": 20,
+     "totalReviews": 4501
+    },
+    {
+     "county": "Orange",
+     "listings": 42,
+     "rated": 42,
+     "avgRating": 4.65,
+     "medianRating": 5.0,
+     "pct45": 85.7,
+     "pctUnder4": 11.9,
+     "medianReviews": 22,
+     "totalReviews": 2090
+    },
+    {
+     "county": "Lee",
+     "listings": 42,
+     "rated": 42,
+     "avgRating": 4.84,
+     "medianRating": 5.0,
+     "pct45": 92.9,
+     "pctUnder4": 2.4,
+     "medianReviews": 25,
+     "totalReviews": 1713
+    },
+    {
+     "county": "Duval",
+     "listings": 34,
+     "rated": 32,
+     "avgRating": 4.8,
+     "medianRating": 4.9,
+     "pct45": 90.6,
+     "pctUnder4": 0.0,
+     "medianReviews": 75,
+     "totalReviews": 3624
+    },
+    {
+     "county": "Sarasota",
+     "listings": 29,
+     "rated": 29,
+     "avgRating": 4.84,
+     "medianRating": 4.9,
+     "pct45": 96.6,
+     "pctUnder4": 0.0,
+     "medianReviews": 116,
+     "totalReviews": 3792
+    }
+   ]
+  },
+  {
+   "name": "Cleaning",
+   "slug": "cleaning",
+   "listings": 1008,
+   "rated": 980,
+   "avgRating": 4.87,
+   "medianRating": 5.0,
+   "pct45": 95.2,
+   "pctUnder4": 0.7,
+   "medianReviews": 33,
+   "totalReviews": 82960,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 815
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 118
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 40
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 6
+    },
+    {
+     "band": "Below 3.0",
+     "count": 1
+    }
+   ],
+   "cityCount": 212,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/cleaning/miami",
+     "listings": 88,
+     "rated": 88,
+     "avgRating": 4.91,
+     "medianRating": 5.0,
+     "pct45": 96.6,
+     "pctUnder4": 1.1,
+     "medianReviews": 25,
+     "totalReviews": 5355
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/cleaning/orlando",
+     "listings": 52,
+     "rated": 51,
+     "avgRating": 4.9,
+     "medianRating": 5.0,
+     "pct45": 98.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 42,
+     "totalReviews": 4526
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/cleaning/tampa",
+     "listings": 22,
+     "rated": 22,
+     "avgRating": 4.85,
+     "medianRating": 4.9,
+     "pct45": 95.5,
+     "pctUnder4": 0.0,
+     "medianReviews": 130,
+     "totalReviews": 5301
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/cleaning/west-palm-beach",
+     "listings": 21,
+     "rated": 20,
+     "avgRating": 4.83,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 78,
+     "totalReviews": 2276
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/cleaning/fort-lauderdale",
+     "listings": 20,
+     "rated": 20,
+     "avgRating": 4.79,
+     "medianRating": 4.9,
+     "pct45": 95.0,
+     "pctUnder4": 5.0,
+     "medianReviews": 59,
+     "totalReviews": 1766
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/cleaning/jacksonville",
+     "listings": 20,
+     "rated": 20,
+     "avgRating": 4.83,
+     "medianRating": 4.9,
+     "pct45": 90.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 64,
+     "totalReviews": 2593
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/cleaning/kissimmee",
+     "listings": 19,
+     "rated": 19,
+     "avgRating": 4.92,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 35,
+     "totalReviews": 2016
+    },
+    {
+     "city": "Naples",
+     "href": "/services/cleaning/naples",
+     "listings": 16,
+     "rated": 16,
+     "avgRating": 4.89,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 45,
+     "totalReviews": 2299
+    },
+    {
+     "city": "Homestead",
+     "href": "/services/cleaning/homestead",
+     "listings": 16,
+     "rated": 13,
+     "avgRating": 4.97,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 7,
+     "totalReviews": 437
+    },
+    {
+     "city": "St. Augustine",
+     "href": "/services/cleaning/st-augustine",
+     "listings": 15,
+     "rated": 15,
+     "avgRating": 4.83,
+     "medianRating": 4.9,
+     "pct45": 93.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 38,
+     "totalReviews": 1570
+    },
+    {
+     "city": "Winter Garden",
+     "href": "/services/cleaning/winter-garden",
+     "listings": 15,
+     "rated": 15,
+     "avgRating": 4.91,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 70,
+     "totalReviews": 1789
+    },
+    {
+     "city": "Cape Coral",
+     "href": "/services/cleaning/cape-coral",
+     "listings": 14,
+     "rated": 14,
+     "avgRating": 4.82,
+     "medianRating": 5.0,
+     "pct45": 85.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 32,
+     "totalReviews": 901
+    },
+    {
+     "city": "Miami Beach",
+     "href": "/services/cleaning/miami-beach",
+     "listings": 14,
+     "rated": 14,
+     "avgRating": 4.85,
+     "medianRating": 5.0,
+     "pct45": 85.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 22,
+     "totalReviews": 624
+    },
+    {
+     "city": "Boca Raton",
+     "href": "/services/cleaning/boca-raton",
+     "listings": 14,
+     "rated": 13,
+     "avgRating": 4.95,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 44,
+     "totalReviews": 1968
+    },
+    {
+     "city": "Fort Myers",
+     "href": "/services/cleaning/fort-myers",
+     "listings": 13,
+     "rated": 13,
+     "avgRating": 4.89,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 63,
+     "totalReviews": 1169
+    }
+   ],
+   "countyCount": 59,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 180,
+     "rated": 177,
+     "avgRating": 4.91,
+     "medianRating": 5.0,
+     "pct45": 95.5,
+     "pctUnder4": 0.6,
+     "medianReviews": 22,
+     "totalReviews": 9005
+    },
+    {
+     "county": "Broward",
+     "listings": 131,
+     "rated": 131,
+     "avgRating": 4.87,
+     "medianRating": 5.0,
+     "pct45": 95.4,
+     "pctUnder4": 1.5,
+     "medianReviews": 41,
+     "totalReviews": 9720
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 95,
+     "rated": 88,
+     "avgRating": 4.88,
+     "medianRating": 4.9,
+     "pct45": 98.9,
+     "pctUnder4": 0.0,
+     "medianReviews": 36,
+     "totalReviews": 8182
+    },
+    {
+     "county": "Orange",
+     "listings": 93,
+     "rated": 90,
+     "avgRating": 4.9,
+     "medianRating": 5.0,
+     "pct45": 98.9,
+     "pctUnder4": 0.0,
+     "medianReviews": 39,
+     "totalReviews": 7483
+    },
+    {
+     "county": "Pinellas",
+     "listings": 47,
+     "rated": 47,
+     "avgRating": 4.87,
+     "medianRating": 4.9,
+     "pct45": 95.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 52,
+     "totalReviews": 4863
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 43,
+     "rated": 43,
+     "avgRating": 4.89,
+     "medianRating": 4.9,
+     "pct45": 97.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 66,
+     "totalReviews": 6298
+    },
+    {
+     "county": "Lee",
+     "listings": 42,
+     "rated": 42,
+     "avgRating": 4.89,
+     "medianRating": 5.0,
+     "pct45": 95.2,
+     "pctUnder4": 0.0,
+     "medianReviews": 32,
+     "totalReviews": 2778
+    },
+    {
+     "county": "Seminole",
+     "listings": 42,
+     "rated": 41,
+     "avgRating": 4.86,
+     "medianRating": 5.0,
+     "pct45": 95.1,
+     "pctUnder4": 2.4,
+     "medianReviews": 21,
+     "totalReviews": 3301
+    },
+    {
+     "county": "Osceola",
+     "listings": 32,
+     "rated": 32,
+     "avgRating": 4.91,
+     "medianRating": 5.0,
+     "pct45": 96.9,
+     "pctUnder4": 0.0,
+     "medianReviews": 27,
+     "totalReviews": 2582
+    },
+    {
+     "county": "Duval",
+     "listings": 26,
+     "rated": 25,
+     "avgRating": 4.82,
+     "medianRating": 4.9,
+     "pct45": 92.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 57,
+     "totalReviews": 2772
+    }
+   ]
+  },
+  {
+   "name": "Handyman",
+   "slug": "handyman",
+   "listings": 976,
+   "rated": 887,
+   "avgRating": 4.76,
+   "medianRating": 5.0,
+   "pct45": 86.5,
+   "pctUnder4": 6.2,
+   "medianReviews": 13,
+   "totalReviews": 51618,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 681
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 86
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 65
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 40
+    },
+    {
+     "band": "Below 3.0",
+     "count": 15
+    }
+   ],
+   "cityCount": 245,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/handyman/miami",
+     "listings": 57,
+     "rated": 49,
+     "avgRating": 4.63,
+     "medianRating": 5.0,
+     "pct45": 79.6,
+     "pctUnder4": 12.2,
+     "medianReviews": 6,
+     "totalReviews": 1984
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/handyman/west-palm-beach",
+     "listings": 25,
+     "rated": 24,
+     "avgRating": 4.84,
+     "medianRating": 5.0,
+     "pct45": 95.8,
+     "pctUnder4": 0.0,
+     "medianReviews": 16,
+     "totalReviews": 1319
+    },
+    {
+     "city": "Boca Raton",
+     "href": "/services/handyman/boca-raton",
+     "listings": 24,
+     "rated": 24,
+     "avgRating": 4.53,
+     "medianRating": 4.8,
+     "pct45": 75.0,
+     "pctUnder4": 8.3,
+     "medianReviews": 21,
+     "totalReviews": 8126
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/handyman/orlando",
+     "listings": 23,
+     "rated": 23,
+     "avgRating": 4.87,
+     "medianRating": 5.0,
+     "pct45": 91.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 23,
+     "totalReviews": 718
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/handyman/fort-lauderdale",
+     "listings": 23,
+     "rated": 22,
+     "avgRating": 4.73,
+     "medianRating": 5.0,
+     "pct45": 77.3,
+     "pctUnder4": 4.5,
+     "medianReviews": 10,
+     "totalReviews": 812
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/handyman/jacksonville",
+     "listings": 23,
+     "rated": 21,
+     "avgRating": 4.9,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 36,
+     "totalReviews": 1464
+    },
+    {
+     "city": "Hollywood",
+     "href": "/services/handyman/hollywood",
+     "listings": 17,
+     "rated": 17,
+     "avgRating": 4.89,
+     "medianRating": 5.0,
+     "pct45": 94.1,
+     "pctUnder4": 5.9,
+     "medianReviews": 18,
+     "totalReviews": 612
+    },
+    {
+     "city": "Fort Myers",
+     "href": "/services/handyman/fort-myers",
+     "listings": 16,
+     "rated": 16,
+     "avgRating": 4.93,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 11,
+     "totalReviews": 976
+    },
+    {
+     "city": "Hialeah",
+     "href": "/services/handyman/hialeah",
+     "listings": 16,
+     "rated": 13,
+     "avgRating": 4.93,
+     "medianRating": 5.0,
+     "pct45": 92.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 5,
+     "totalReviews": 1022
+    },
+    {
+     "city": "Boynton Beach",
+     "href": "/services/handyman/boynton-beach",
+     "listings": 16,
+     "rated": 16,
+     "avgRating": 4.54,
+     "medianRating": 5.0,
+     "pct45": 81.2,
+     "pctUnder4": 12.5,
+     "medianReviews": 5,
+     "totalReviews": 349
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/handyman/tampa",
+     "listings": 16,
+     "rated": 15,
+     "avgRating": 4.81,
+     "medianRating": 4.9,
+     "pct45": 93.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 135,
+     "totalReviews": 1878
+    },
+    {
+     "city": "Naples",
+     "href": "/services/handyman/naples",
+     "listings": 15,
+     "rated": 15,
+     "avgRating": 4.93,
+     "medianRating": 5.0,
+     "pct45": 93.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 27,
+     "totalReviews": 461
+    },
+    {
+     "city": "Marco Island",
+     "href": "/services/handyman/marco-island",
+     "listings": 13,
+     "rated": 13,
+     "avgRating": 4.96,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 2,
+     "totalReviews": 56
+    },
+    {
+     "city": "Jupiter",
+     "href": "/services/handyman/jupiter",
+     "listings": 13,
+     "rated": 12,
+     "avgRating": 4.53,
+     "medianRating": 5.0,
+     "pct45": 83.3,
+     "pctUnder4": 16.7,
+     "medianReviews": 8,
+     "totalReviews": 200
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/handyman/kissimmee",
+     "listings": 12,
+     "rated": 10,
+     "avgRating": 4.88,
+     "medianRating": 5.0,
+     "pct45": 90.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 7,
+     "totalReviews": 182
+    }
+   ],
+   "countyCount": 61,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 172,
+     "rated": 144,
+     "avgRating": 4.71,
+     "medianRating": 5.0,
+     "pct45": 82.6,
+     "pctUnder4": 8.3,
+     "medianReviews": 9,
+     "totalReviews": 9478
+    },
+    {
+     "county": "Broward",
+     "listings": 159,
+     "rated": 144,
+     "avgRating": 4.74,
+     "medianRating": 5.0,
+     "pct45": 84.0,
+     "pctUnder4": 7.6,
+     "medianReviews": 11,
+     "totalReviews": 4822
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 138,
+     "rated": 125,
+     "avgRating": 4.67,
+     "medianRating": 5.0,
+     "pct45": 84.0,
+     "pctUnder4": 8.0,
+     "medianReviews": 15,
+     "totalReviews": 12167
+    },
+    {
+     "county": "Lee",
+     "listings": 40,
+     "rated": 38,
+     "avgRating": 4.9,
+     "medianRating": 5.0,
+     "pct45": 97.4,
+     "pctUnder4": 2.6,
+     "medianReviews": 15,
+     "totalReviews": 1797
+    },
+    {
+     "county": "Pinellas",
+     "listings": 38,
+     "rated": 37,
+     "avgRating": 4.87,
+     "medianRating": 5.0,
+     "pct45": 91.9,
+     "pctUnder4": 0.0,
+     "medianReviews": 25,
+     "totalReviews": 3851
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 37,
+     "rated": 36,
+     "avgRating": 4.87,
+     "medianRating": 4.9,
+     "pct45": 94.4,
+     "pctUnder4": 0.0,
+     "medianReviews": 16,
+     "totalReviews": 2819
+    },
+    {
+     "county": "Orange",
+     "listings": 36,
+     "rated": 34,
+     "avgRating": 4.86,
+     "medianRating": 5.0,
+     "pct45": 88.2,
+     "pctUnder4": 0.0,
+     "medianReviews": 20,
+     "totalReviews": 986
+    },
+    {
+     "county": "Collier",
+     "listings": 28,
+     "rated": 28,
+     "avgRating": 4.95,
+     "medianRating": 5.0,
+     "pct45": 96.4,
+     "pctUnder4": 0.0,
+     "medianReviews": 4,
+     "totalReviews": 517
+    },
+    {
+     "county": "Duval",
+     "listings": 25,
+     "rated": 23,
+     "avgRating": 4.83,
+     "medianRating": 5.0,
+     "pct45": 91.3,
+     "pctUnder4": 4.3,
+     "medianReviews": 29,
+     "totalReviews": 1492
+    },
+    {
+     "county": "Clay",
+     "listings": 19,
+     "rated": 17,
+     "avgRating": 4.43,
+     "medianRating": 5.0,
+     "pct45": 70.6,
+     "pctUnder4": 23.5,
+     "medianReviews": 6,
+     "totalReviews": 1001
+    }
+   ]
+  },
+  {
+   "name": "Carpet Cleaning",
+   "slug": "carpet-cleaning",
+   "listings": 955,
+   "rated": 896,
+   "avgRating": 4.82,
+   "medianRating": 4.9,
+   "pct45": 90.1,
+   "pctUnder4": 1.9,
+   "medianReviews": 47,
+   "totalReviews": 157638,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 712
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 95
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 72
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 12
+    },
+    {
+     "band": "Below 3.0",
+     "count": 5
+    }
+   ],
+   "cityCount": 217,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/carpet-cleaning/miami",
+     "listings": 77,
+     "rated": 70,
+     "avgRating": 4.8,
+     "medianRating": 5.0,
+     "pct45": 87.1,
+     "pctUnder4": 2.9,
+     "medianReviews": 26,
+     "totalReviews": 4150
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/carpet-cleaning/orlando",
+     "listings": 45,
+     "rated": 40,
+     "avgRating": 4.85,
+     "medianRating": 4.9,
+     "pct45": 92.5,
+     "pctUnder4": 0.0,
+     "medianReviews": 67,
+     "totalReviews": 5892
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/carpet-cleaning/kissimmee",
+     "listings": 28,
+     "rated": 26,
+     "avgRating": 4.83,
+     "medianRating": 5.0,
+     "pct45": 92.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 35,
+     "totalReviews": 1878
+    },
+    {
+     "city": "Naples",
+     "href": "/services/carpet-cleaning/naples",
+     "listings": 19,
+     "rated": 19,
+     "avgRating": 4.87,
+     "medianRating": 5.0,
+     "pct45": 89.5,
+     "pctUnder4": 0.0,
+     "medianReviews": 23,
+     "totalReviews": 2253
+    },
+    {
+     "city": "St. Augustine",
+     "href": "/services/carpet-cleaning/st-augustine",
+     "listings": 18,
+     "rated": 16,
+     "avgRating": 4.73,
+     "medianRating": 4.9,
+     "pct45": 87.5,
+     "pctUnder4": 6.2,
+     "medianReviews": 44,
+     "totalReviews": 8966
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/carpet-cleaning/fort-lauderdale",
+     "listings": 18,
+     "rated": 14,
+     "avgRating": 4.93,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 52,
+     "totalReviews": 1123
+    },
+    {
+     "city": "Tallahassee",
+     "href": "/services/carpet-cleaning/tallahassee",
+     "listings": 18,
+     "rated": 18,
+     "avgRating": 4.82,
+     "medianRating": 4.8,
+     "pct45": 88.9,
+     "pctUnder4": 0.0,
+     "medianReviews": 21,
+     "totalReviews": 2674
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/carpet-cleaning/tampa",
+     "listings": 17,
+     "rated": 17,
+     "avgRating": 4.79,
+     "medianRating": 4.9,
+     "pct45": 88.2,
+     "pctUnder4": 0.0,
+     "medianReviews": 114,
+     "totalReviews": 5196
+    },
+    {
+     "city": "Cape Coral",
+     "href": "/services/carpet-cleaning/cape-coral",
+     "listings": 17,
+     "rated": 17,
+     "avgRating": 4.92,
+     "medianRating": 5.0,
+     "pct45": 94.1,
+     "pctUnder4": 0.0,
+     "medianReviews": 92,
+     "totalReviews": 3234
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/carpet-cleaning/jacksonville",
+     "listings": 17,
+     "rated": 17,
+     "avgRating": 4.66,
+     "medianRating": 4.9,
+     "pct45": 88.2,
+     "pctUnder4": 5.9,
+     "medianReviews": 143,
+     "totalReviews": 6058
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/carpet-cleaning/west-palm-beach",
+     "listings": 16,
+     "rated": 16,
+     "avgRating": 4.82,
+     "medianRating": 4.9,
+     "pct45": 93.8,
+     "pctUnder4": 6.2,
+     "medianReviews": 46,
+     "totalReviews": 1487
+    },
+    {
+     "city": "Sarasota",
+     "href": "/services/carpet-cleaning/sarasota",
+     "listings": 14,
+     "rated": 14,
+     "avgRating": 4.91,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 82,
+     "totalReviews": 4428
+    },
+    {
+     "city": "Hialeah",
+     "href": "/services/carpet-cleaning/hialeah",
+     "listings": 13,
+     "rated": 12,
+     "avgRating": 4.75,
+     "medianRating": 4.9,
+     "pct45": 83.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 6,
+     "totalReviews": 511
+    },
+    {
+     "city": "Hollywood",
+     "href": "/services/carpet-cleaning/hollywood",
+     "listings": 13,
+     "rated": 13,
+     "avgRating": 4.94,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 58,
+     "totalReviews": 810
+    },
+    {
+     "city": "Punta Gorda",
+     "href": "/services/carpet-cleaning/punta-gorda",
+     "listings": 11,
+     "rated": 11,
+     "avgRating": 4.88,
+     "medianRating": 5.0,
+     "pct45": 90.9,
+     "pctUnder4": 0.0,
+     "medianReviews": 53,
+     "totalReviews": 1957
+    }
+   ],
+   "countyCount": 54,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 168,
+     "rated": 153,
+     "avgRating": 4.81,
+     "medianRating": 5.0,
+     "pct45": 86.3,
+     "pctUnder4": 2.0,
+     "medianReviews": 26,
+     "totalReviews": 21329
+    },
+    {
+     "county": "Broward",
+     "listings": 103,
+     "rated": 96,
+     "avgRating": 4.89,
+     "medianRating": 5.0,
+     "pct45": 94.8,
+     "pctUnder4": 1.0,
+     "medianReviews": 50,
+     "totalReviews": 11067
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 79,
+     "rated": 75,
+     "avgRating": 4.82,
+     "medianRating": 4.9,
+     "pct45": 89.3,
+     "pctUnder4": 2.7,
+     "medianReviews": 38,
+     "totalReviews": 12388
+    },
+    {
+     "county": "Orange",
+     "listings": 66,
+     "rated": 56,
+     "avgRating": 4.83,
+     "medianRating": 4.9,
+     "pct45": 89.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 63,
+     "totalReviews": 12534
+    },
+    {
+     "county": "Pinellas",
+     "listings": 52,
+     "rated": 50,
+     "avgRating": 4.8,
+     "medianRating": 4.9,
+     "pct45": 94.0,
+     "pctUnder4": 2.0,
+     "medianReviews": 46,
+     "totalReviews": 7297
+    },
+    {
+     "county": "Lee",
+     "listings": 41,
+     "rated": 39,
+     "avgRating": 4.93,
+     "medianRating": 5.0,
+     "pct45": 97.4,
+     "pctUnder4": 0.0,
+     "medianReviews": 62,
+     "totalReviews": 7581
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 39,
+     "rated": 37,
+     "avgRating": 4.79,
+     "medianRating": 4.9,
+     "pct45": 86.5,
+     "pctUnder4": 0.0,
+     "medianReviews": 86,
+     "totalReviews": 13557
+    },
+    {
+     "county": "Osceola",
+     "listings": 33,
+     "rated": 31,
+     "avgRating": 4.84,
+     "medianRating": 4.9,
+     "pct45": 93.5,
+     "pctUnder4": 0.0,
+     "medianReviews": 45,
+     "totalReviews": 2389
+    },
+    {
+     "county": "Charlotte",
+     "listings": 25,
+     "rated": 25,
+     "avgRating": 4.8,
+     "medianRating": 4.9,
+     "pct45": 88.0,
+     "pctUnder4": 8.0,
+     "medianReviews": 72,
+     "totalReviews": 5432
+    },
+    {
+     "county": "Duval",
+     "listings": 24,
+     "rated": 24,
+     "avgRating": 4.59,
+     "medianRating": 4.9,
+     "pct45": 79.2,
+     "pctUnder4": 8.3,
+     "medianReviews": 89,
+     "totalReviews": 6614
+    }
+   ]
+  },
+  {
+   "name": "Locksmith",
+   "slug": "locksmith",
+   "listings": 862,
+   "rated": 813,
+   "avgRating": 4.58,
+   "medianRating": 4.8,
+   "pct45": 74.3,
+   "pctUnder4": 9.0,
+   "medianReviews": 56,
+   "totalReviews": 123801,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 430
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 174
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 136
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 54
+    },
+    {
+     "band": "Below 3.0",
+     "count": 19
+    }
+   ],
+   "cityCount": 202,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/locksmith/miami",
+     "listings": 102,
+     "rated": 97,
+     "avgRating": 4.53,
+     "medianRating": 4.8,
+     "pct45": 67.0,
+     "pctUnder4": 12.4,
+     "medianReviews": 41,
+     "totalReviews": 14470
+    },
+    {
+     "city": "Hialeah",
+     "href": "/services/locksmith/hialeah",
+     "listings": 33,
+     "rated": 28,
+     "avgRating": 4.46,
+     "medianRating": 4.6,
+     "pct45": 64.3,
+     "pctUnder4": 7.1,
+     "medianReviews": 16,
+     "totalReviews": 2048
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/locksmith/orlando",
+     "listings": 33,
+     "rated": 33,
+     "avgRating": 4.76,
+     "medianRating": 4.8,
+     "pct45": 87.9,
+     "pctUnder4": 3.0,
+     "medianReviews": 118,
+     "totalReviews": 13360
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/locksmith/jacksonville",
+     "listings": 23,
+     "rated": 23,
+     "avgRating": 4.75,
+     "medianRating": 4.8,
+     "pct45": 91.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 167,
+     "totalReviews": 8062
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/locksmith/tampa",
+     "listings": 23,
+     "rated": 23,
+     "avgRating": 4.81,
+     "medianRating": 4.8,
+     "pct45": 95.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 206,
+     "totalReviews": 12547
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/locksmith/fort-lauderdale",
+     "listings": 19,
+     "rated": 19,
+     "avgRating": 4.83,
+     "medianRating": 4.9,
+     "pct45": 94.7,
+     "pctUnder4": 5.3,
+     "medianReviews": 73,
+     "totalReviews": 2307
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/locksmith/west-palm-beach",
+     "listings": 18,
+     "rated": 18,
+     "avgRating": 4.67,
+     "medianRating": 4.8,
+     "pct45": 77.8,
+     "pctUnder4": 0.0,
+     "medianReviews": 93,
+     "totalReviews": 2646
+    },
+    {
+     "city": "Homestead",
+     "href": "/services/locksmith/homestead",
+     "listings": 16,
+     "rated": 13,
+     "avgRating": 4.67,
+     "medianRating": 4.9,
+     "pct45": 84.6,
+     "pctUnder4": 7.7,
+     "medianReviews": 12,
+     "totalReviews": 741
+    },
+    {
+     "city": "Naples",
+     "href": "/services/locksmith/naples",
+     "listings": 15,
+     "rated": 14,
+     "avgRating": 4.74,
+     "medianRating": 5.0,
+     "pct45": 78.6,
+     "pctUnder4": 7.1,
+     "medianReviews": 178,
+     "totalReviews": 3927
+    },
+    {
+     "city": "Fort Myers",
+     "href": "/services/locksmith/fort-myers",
+     "listings": 13,
+     "rated": 13,
+     "avgRating": 4.71,
+     "medianRating": 4.8,
+     "pct45": 92.3,
+     "pctUnder4": 7.7,
+     "medianReviews": 95,
+     "totalReviews": 2300
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/locksmith/kissimmee",
+     "listings": 13,
+     "rated": 13,
+     "avgRating": 4.71,
+     "medianRating": 4.9,
+     "pct45": 69.2,
+     "pctUnder4": 0.0,
+     "medianReviews": 24,
+     "totalReviews": 1022
+    },
+    {
+     "city": "Pompano Beach",
+     "href": "/services/locksmith/pompano-beach",
+     "listings": 12,
+     "rated": 12,
+     "avgRating": 4.52,
+     "medianRating": 4.8,
+     "pct45": 66.7,
+     "pctUnder4": 16.7,
+     "medianReviews": 58,
+     "totalReviews": 711
+    },
+    {
+     "city": "Sarasota",
+     "href": "/services/locksmith/sarasota",
+     "listings": 12,
+     "rated": 12,
+     "avgRating": 4.87,
+     "medianRating": 5.0,
+     "pct45": 91.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 131,
+     "totalReviews": 5487
+    },
+    {
+     "city": "Davie",
+     "href": "/services/locksmith/davie",
+     "listings": 11,
+     "rated": 9,
+     "avgRating": 4.59,
+     "medianRating": 4.5,
+     "pct45": 77.8,
+     "pctUnder4": 0.0,
+     "medianReviews": 79,
+     "totalReviews": 2254
+    },
+    {
+     "city": "Hallandale Beach",
+     "href": "/services/locksmith/hallandale-beach",
+     "listings": 11,
+     "rated": 11,
+     "avgRating": 4.59,
+     "medianRating": 4.8,
+     "pct45": 63.6,
+     "pctUnder4": 9.1,
+     "medianReviews": 80,
+     "totalReviews": 1021
+    }
+   ],
+   "countyCount": 57,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 197,
+     "rated": 181,
+     "avgRating": 4.53,
+     "medianRating": 4.7,
+     "pct45": 68.0,
+     "pctUnder4": 11.0,
+     "medianReviews": 32,
+     "totalReviews": 21385
+    },
+    {
+     "county": "Broward",
+     "listings": 144,
+     "rated": 138,
+     "avgRating": 4.67,
+     "medianRating": 4.8,
+     "pct45": 79.0,
+     "pctUnder4": 8.0,
+     "medianReviews": 58,
+     "totalReviews": 13456
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 86,
+     "rated": 79,
+     "avgRating": 4.54,
+     "medianRating": 4.7,
+     "pct45": 67.1,
+     "pctUnder4": 8.9,
+     "medianReviews": 62,
+     "totalReviews": 8705
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 45,
+     "rated": 45,
+     "avgRating": 4.63,
+     "medianRating": 4.8,
+     "pct45": 84.4,
+     "pctUnder4": 4.4,
+     "medianReviews": 135,
+     "totalReviews": 14618
+    },
+    {
+     "county": "Orange",
+     "listings": 41,
+     "rated": 41,
+     "avgRating": 4.75,
+     "medianRating": 4.8,
+     "pct45": 85.4,
+     "pctUnder4": 2.4,
+     "medianReviews": 57,
+     "totalReviews": 13651
+    },
+    {
+     "county": "Pinellas",
+     "listings": 38,
+     "rated": 37,
+     "avgRating": 4.6,
+     "medianRating": 4.7,
+     "pct45": 78.4,
+     "pctUnder4": 2.7,
+     "medianReviews": 59,
+     "totalReviews": 5420
+    },
+    {
+     "county": "Lee",
+     "listings": 30,
+     "rated": 30,
+     "avgRating": 4.67,
+     "medianRating": 4.8,
+     "pct45": 80.0,
+     "pctUnder4": 6.7,
+     "medianReviews": 42,
+     "totalReviews": 3460
+    },
+    {
+     "county": "Duval",
+     "listings": 25,
+     "rated": 25,
+     "avgRating": 4.75,
+     "medianRating": 4.8,
+     "pct45": 92.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 166,
+     "totalReviews": 8039
+    },
+    {
+     "county": "Osceola",
+     "listings": 21,
+     "rated": 20,
+     "avgRating": 4.67,
+     "medianRating": 4.8,
+     "pct45": 75.0,
+     "pctUnder4": 5.0,
+     "medianReviews": 40,
+     "totalReviews": 1509
+    },
+    {
+     "county": "Collier",
+     "listings": 17,
+     "rated": 16,
+     "avgRating": 4.71,
+     "medianRating": 4.9,
+     "pct45": 75.0,
+     "pctUnder4": 6.2,
+     "medianReviews": 128,
+     "totalReviews": 3949
+    }
+   ]
+  },
+  {
+   "name": "Appliance Repair",
+   "slug": "appliance-repair",
+   "listings": 858,
+   "rated": 800,
+   "avgRating": 4.54,
+   "medianRating": 4.8,
+   "pct45": 73.5,
+   "pctUnder4": 12.4,
+   "medianReviews": 63,
+   "totalReviews": 155735,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 409
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 179
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 113
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 74
+    },
+    {
+     "band": "Below 3.0",
+     "count": 25
+    }
+   ],
+   "cityCount": 221,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/appliance-repair/miami",
+     "listings": 72,
+     "rated": 67,
+     "avgRating": 4.59,
+     "medianRating": 4.9,
+     "pct45": 76.1,
+     "pctUnder4": 13.4,
+     "medianReviews": 18,
+     "totalReviews": 10985
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/appliance-repair/orlando",
+     "listings": 36,
+     "rated": 34,
+     "avgRating": 4.33,
+     "medianRating": 4.8,
+     "pct45": 64.7,
+     "pctUnder4": 17.6,
+     "medianReviews": 118,
+     "totalReviews": 11144
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/appliance-repair/tampa",
+     "listings": 24,
+     "rated": 23,
+     "avgRating": 4.71,
+     "medianRating": 4.8,
+     "pct45": 87.0,
+     "pctUnder4": 4.3,
+     "medianReviews": 167,
+     "totalReviews": 17956
+    },
+    {
+     "city": "Hialeah",
+     "href": "/services/appliance-repair/hialeah",
+     "listings": 19,
+     "rated": 19,
+     "avgRating": 4.49,
+     "medianRating": 4.7,
+     "pct45": 68.4,
+     "pctUnder4": 15.8,
+     "medianReviews": 25,
+     "totalReviews": 2036
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/appliance-repair/kissimmee",
+     "listings": 19,
+     "rated": 14,
+     "avgRating": 4.47,
+     "medianRating": 4.7,
+     "pct45": 64.3,
+     "pctUnder4": 7.1,
+     "medianReviews": 120,
+     "totalReviews": 2414
+    },
+    {
+     "city": "Naples",
+     "href": "/services/appliance-repair/naples",
+     "listings": 17,
+     "rated": 17,
+     "avgRating": 4.59,
+     "medianRating": 4.7,
+     "pct45": 82.4,
+     "pctUnder4": 11.8,
+     "medianReviews": 111,
+     "totalReviews": 5158
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/appliance-repair/fort-lauderdale",
+     "listings": 13,
+     "rated": 13,
+     "avgRating": 4.78,
+     "medianRating": 4.9,
+     "pct45": 92.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 105,
+     "totalReviews": 2031
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/appliance-repair/west-palm-beach",
+     "listings": 12,
+     "rated": 12,
+     "avgRating": 4.55,
+     "medianRating": 4.5,
+     "pct45": 75.0,
+     "pctUnder4": 8.3,
+     "medianReviews": 143,
+     "totalReviews": 5083
+    },
+    {
+     "city": "Cape Coral",
+     "href": "/services/appliance-repair/cape-coral",
+     "listings": 12,
+     "rated": 12,
+     "avgRating": 4.67,
+     "medianRating": 4.8,
+     "pct45": 66.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 82,
+     "totalReviews": 1643
+    },
+    {
+     "city": "Clearwater",
+     "href": "/services/appliance-repair/clearwater",
+     "listings": 11,
+     "rated": 10,
+     "avgRating": 4.49,
+     "medianRating": 4.7,
+     "pct45": 80.0,
+     "pctUnder4": 20.0,
+     "medianReviews": 91,
+     "totalReviews": 1180
+    },
+    {
+     "city": "Boynton Beach",
+     "href": "/services/appliance-repair/boynton-beach",
+     "listings": 11,
+     "rated": 10,
+     "avgRating": 4.74,
+     "medianRating": 4.9,
+     "pct45": 90.0,
+     "pctUnder4": 10.0,
+     "medianReviews": 156,
+     "totalReviews": 2534
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/appliance-repair/jacksonville",
+     "listings": 11,
+     "rated": 11,
+     "avgRating": 4.75,
+     "medianRating": 4.8,
+     "pct45": 90.9,
+     "pctUnder4": 0.0,
+     "medianReviews": 84,
+     "totalReviews": 1805
+    },
+    {
+     "city": "Boca Raton",
+     "href": "/services/appliance-repair/boca-raton",
+     "listings": 11,
+     "rated": 10,
+     "avgRating": 4.9,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 107,
+     "totalReviews": 1962
+    },
+    {
+     "city": "Plant City",
+     "href": "/services/appliance-repair/plant-city",
+     "listings": 10,
+     "rated": 9,
+     "avgRating": 4.5,
+     "medianRating": 4.5,
+     "pct45": 55.6,
+     "pctUnder4": 11.1,
+     "medianReviews": 66,
+     "totalReviews": 940
+    },
+    {
+     "city": "Belle Glade",
+     "href": "/services/appliance-repair/belle-glade",
+     "listings": 10,
+     "rated": 9,
+     "avgRating": 4.68,
+     "medianRating": 4.7,
+     "pct45": 77.8,
+     "pctUnder4": 0.0,
+     "medianReviews": 21,
+     "totalReviews": 876
+    }
+   ],
+   "countyCount": 60,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 137,
+     "rated": 123,
+     "avgRating": 4.54,
+     "medianRating": 4.8,
+     "pct45": 73.2,
+     "pctUnder4": 13.8,
+     "medianReviews": 23,
+     "totalReviews": 21129
+    },
+    {
+     "county": "Broward",
+     "listings": 87,
+     "rated": 81,
+     "avgRating": 4.62,
+     "medianRating": 4.9,
+     "pct45": 80.2,
+     "pctUnder4": 8.6,
+     "medianReviews": 52,
+     "totalReviews": 12219
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 81,
+     "rated": 75,
+     "avgRating": 4.67,
+     "medianRating": 4.8,
+     "pct45": 78.7,
+     "pctUnder4": 8.0,
+     "medianReviews": 63,
+     "totalReviews": 14115
+    },
+    {
+     "county": "Orange",
+     "listings": 53,
+     "rated": 48,
+     "avgRating": 4.37,
+     "medianRating": 4.8,
+     "pct45": 68.8,
+     "pctUnder4": 18.8,
+     "medianReviews": 60,
+     "totalReviews": 12388
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 50,
+     "rated": 48,
+     "avgRating": 4.6,
+     "medianRating": 4.8,
+     "pct45": 77.1,
+     "pctUnder4": 6.2,
+     "medianReviews": 99,
+     "totalReviews": 21492
+    },
+    {
+     "county": "Pinellas",
+     "listings": 41,
+     "rated": 40,
+     "avgRating": 4.68,
+     "medianRating": 4.8,
+     "pct45": 82.5,
+     "pctUnder4": 7.5,
+     "medianReviews": 103,
+     "totalReviews": 8940
+    },
+    {
+     "county": "Lee",
+     "listings": 40,
+     "rated": 38,
+     "avgRating": 4.58,
+     "medianRating": 4.7,
+     "pct45": 63.2,
+     "pctUnder4": 7.9,
+     "medianReviews": 106,
+     "totalReviews": 12504
+    },
+    {
+     "county": "Collier",
+     "listings": 31,
+     "rated": 30,
+     "avgRating": 4.4,
+     "medianRating": 4.7,
+     "pct45": 73.3,
+     "pctUnder4": 16.7,
+     "medianReviews": 84,
+     "totalReviews": 7027
+    },
+    {
+     "county": "Seminole",
+     "listings": 27,
+     "rated": 24,
+     "avgRating": 4.17,
+     "medianRating": 4.6,
+     "pct45": 54.2,
+     "pctUnder4": 29.2,
+     "medianReviews": 68,
+     "totalReviews": 3773
+    },
+    {
+     "county": "Osceola",
+     "listings": 25,
+     "rated": 20,
+     "avgRating": 4.38,
+     "medianRating": 4.7,
+     "pct45": 60.0,
+     "pctUnder4": 10.0,
+     "medianReviews": 120,
+     "totalReviews": 3506
+    }
+   ]
+  },
+  {
+   "name": "Fencing",
+   "slug": "fencing",
+   "listings": 821,
+   "rated": 787,
+   "avgRating": 4.59,
+   "medianRating": 4.8,
+   "pct45": 74.6,
+   "pctUnder4": 10.4,
+   "medianReviews": 32,
+   "totalReviews": 69248,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 430
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 157
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 118
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 66
+    },
+    {
+     "band": "Below 3.0",
+     "count": 16
+    }
+   ],
+   "cityCount": 225,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/fencing/miami",
+     "listings": 64,
+     "rated": 59,
+     "avgRating": 4.3,
+     "medianRating": 4.7,
+     "pct45": 62.7,
+     "pctUnder4": 25.4,
+     "medianReviews": 21,
+     "totalReviews": 2969
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/fencing/orlando",
+     "listings": 32,
+     "rated": 30,
+     "avgRating": 4.3,
+     "medianRating": 4.7,
+     "pct45": 66.7,
+     "pctUnder4": 16.7,
+     "medianReviews": 24,
+     "totalReviews": 3877
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/fencing/tampa",
+     "listings": 24,
+     "rated": 24,
+     "avgRating": 4.71,
+     "medianRating": 4.8,
+     "pct45": 79.2,
+     "pctUnder4": 4.2,
+     "medianReviews": 63,
+     "totalReviews": 6139
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/fencing/jacksonville",
+     "listings": 20,
+     "rated": 20,
+     "avgRating": 4.71,
+     "medianRating": 4.8,
+     "pct45": 85.0,
+     "pctUnder4": 5.0,
+     "medianReviews": 106,
+     "totalReviews": 4711
+    },
+    {
+     "city": "Hialeah",
+     "href": "/services/fencing/hialeah",
+     "listings": 19,
+     "rated": 18,
+     "avgRating": 4.54,
+     "medianRating": 4.7,
+     "pct45": 72.2,
+     "pctUnder4": 11.1,
+     "medianReviews": 12,
+     "totalReviews": 624
+    },
+    {
+     "city": "Cape Coral",
+     "href": "/services/fencing/cape-coral",
+     "listings": 15,
+     "rated": 15,
+     "avgRating": 4.67,
+     "medianRating": 4.7,
+     "pct45": 80.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 119,
+     "totalReviews": 2136
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/fencing/fort-lauderdale",
+     "listings": 15,
+     "rated": 15,
+     "avgRating": 4.17,
+     "medianRating": 4.7,
+     "pct45": 60.0,
+     "pctUnder4": 33.3,
+     "medianReviews": 37,
+     "totalReviews": 1181
+    },
+    {
+     "city": "Sarasota",
+     "href": "/services/fencing/sarasota",
+     "listings": 14,
+     "rated": 14,
+     "avgRating": 4.76,
+     "medianRating": 4.8,
+     "pct45": 85.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 117,
+     "totalReviews": 2481
+    },
+    {
+     "city": "Oviedo",
+     "href": "/services/fencing/oviedo",
+     "listings": 12,
+     "rated": 11,
+     "avgRating": 4.67,
+     "medianRating": 4.9,
+     "pct45": 90.9,
+     "pctUnder4": 9.1,
+     "medianReviews": 19,
+     "totalReviews": 1532
+    },
+    {
+     "city": "Panama City",
+     "href": "/services/fencing/panama-city",
+     "listings": 12,
+     "rated": 10,
+     "avgRating": 4.83,
+     "medianRating": 5.0,
+     "pct45": 90.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 31,
+     "totalReviews": 834
+    },
+    {
+     "city": "Clearwater",
+     "href": "/services/fencing/clearwater",
+     "listings": 12,
+     "rated": 12,
+     "avgRating": 4.55,
+     "medianRating": 4.8,
+     "pct45": 75.0,
+     "pctUnder4": 16.7,
+     "medianReviews": 48,
+     "totalReviews": 933
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/fencing/west-palm-beach",
+     "listings": 12,
+     "rated": 11,
+     "avgRating": 4.58,
+     "medianRating": 4.9,
+     "pct45": 63.6,
+     "pctUnder4": 18.2,
+     "medianReviews": 29,
+     "totalReviews": 1141
+    },
+    {
+     "city": "Ocala",
+     "href": "/services/fencing/ocala",
+     "listings": 11,
+     "rated": 11,
+     "avgRating": 4.79,
+     "medianRating": 4.8,
+     "pct45": 90.9,
+     "pctUnder4": 0.0,
+     "medianReviews": 202,
+     "totalReviews": 2004
+    },
+    {
+     "city": "Tallahassee",
+     "href": "/services/fencing/tallahassee",
+     "listings": 11,
+     "rated": 11,
+     "avgRating": 4.58,
+     "medianRating": 4.7,
+     "pct45": 63.6,
+     "pctUnder4": 9.1,
+     "medianReviews": 28,
+     "totalReviews": 619
+    },
+    {
+     "city": "Pompano Beach",
+     "href": "/services/fencing/pompano-beach",
+     "listings": 10,
+     "rated": 10,
+     "avgRating": 4.75,
+     "medianRating": 5.0,
+     "pct45": 70.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 10,
+     "totalReviews": 738
+    }
+   ],
+   "countyCount": 58,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 119,
+     "rated": 112,
+     "avgRating": 4.43,
+     "medianRating": 4.7,
+     "pct45": 67.9,
+     "pctUnder4": 20.5,
+     "medianReviews": 18,
+     "totalReviews": 5016
+    },
+    {
+     "county": "Broward",
+     "listings": 75,
+     "rated": 75,
+     "avgRating": 4.47,
+     "medianRating": 4.8,
+     "pct45": 72.0,
+     "pctUnder4": 16.0,
+     "medianReviews": 21,
+     "totalReviews": 4943
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 49,
+     "rated": 45,
+     "avgRating": 4.59,
+     "medianRating": 4.8,
+     "pct45": 66.7,
+     "pctUnder4": 6.7,
+     "medianReviews": 32,
+     "totalReviews": 3354
+    },
+    {
+     "county": "Orange",
+     "listings": 44,
+     "rated": 41,
+     "avgRating": 4.37,
+     "medianRating": 4.7,
+     "pct45": 68.3,
+     "pctUnder4": 17.1,
+     "medianReviews": 21,
+     "totalReviews": 4446
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 41,
+     "rated": 40,
+     "avgRating": 4.73,
+     "medianRating": 4.8,
+     "pct45": 82.5,
+     "pctUnder4": 5.0,
+     "medianReviews": 62,
+     "totalReviews": 7966
+    },
+    {
+     "county": "Pinellas",
+     "listings": 35,
+     "rated": 35,
+     "avgRating": 4.51,
+     "medianRating": 4.8,
+     "pct45": 71.4,
+     "pctUnder4": 14.3,
+     "medianReviews": 52,
+     "totalReviews": 2896
+    },
+    {
+     "county": "Lee",
+     "listings": 34,
+     "rated": 34,
+     "avgRating": 4.63,
+     "medianRating": 4.8,
+     "pct45": 79.4,
+     "pctUnder4": 8.8,
+     "medianReviews": 54,
+     "totalReviews": 4271
+    },
+    {
+     "county": "Seminole",
+     "listings": 28,
+     "rated": 25,
+     "avgRating": 4.61,
+     "medianRating": 4.8,
+     "pct45": 76.0,
+     "pctUnder4": 8.0,
+     "medianReviews": 34,
+     "totalReviews": 2427
+    },
+    {
+     "county": "Duval",
+     "listings": 20,
+     "rated": 19,
+     "avgRating": 4.73,
+     "medianRating": 4.8,
+     "pct45": 89.5,
+     "pctUnder4": 5.3,
+     "medianReviews": 113,
+     "totalReviews": 4702
+    },
+    {
+     "county": "Osceola",
+     "listings": 17,
+     "rated": 16,
+     "avgRating": 4.51,
+     "medianRating": 4.7,
+     "pct45": 62.5,
+     "pctUnder4": 12.5,
+     "medianReviews": 51,
+     "totalReviews": 1079
+    }
+   ]
+  },
+  {
+   "name": "Garage Door",
+   "slug": "garage-door",
+   "listings": 814,
+   "rated": 781,
+   "avgRating": 4.85,
+   "medianRating": 5.0,
+   "pct45": 93.9,
+   "pctUnder4": 2.2,
+   "medianReviews": 37,
+   "totalReviews": 136553,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 646
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 87
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 31
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 13
+    },
+    {
+     "band": "Below 3.0",
+     "count": 4
+    }
+   ],
+   "cityCount": 213,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/garage-door/miami",
+     "listings": 57,
+     "rated": 49,
+     "avgRating": 4.87,
+     "medianRating": 5.0,
+     "pct45": 95.9,
+     "pctUnder4": 4.1,
+     "medianReviews": 30,
+     "totalReviews": 4719
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/garage-door/orlando",
+     "listings": 42,
+     "rated": 41,
+     "avgRating": 4.87,
+     "medianRating": 4.9,
+     "pct45": 97.6,
+     "pctUnder4": 2.4,
+     "medianReviews": 47,
+     "totalReviews": 9300
+    },
+    {
+     "city": "Naples",
+     "href": "/services/garage-door/naples",
+     "listings": 24,
+     "rated": 24,
+     "avgRating": 4.96,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 45,
+     "totalReviews": 4533
+    },
+    {
+     "city": "Hialeah",
+     "href": "/services/garage-door/hialeah",
+     "listings": 22,
+     "rated": 20,
+     "avgRating": 4.82,
+     "medianRating": 4.9,
+     "pct45": 95.0,
+     "pctUnder4": 5.0,
+     "medianReviews": 43,
+     "totalReviews": 1352
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/garage-door/jacksonville",
+     "listings": 21,
+     "rated": 21,
+     "avgRating": 4.86,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 60,
+     "totalReviews": 8169
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/garage-door/tampa",
+     "listings": 19,
+     "rated": 19,
+     "avgRating": 4.87,
+     "medianRating": 5.0,
+     "pct45": 94.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 175,
+     "totalReviews": 10543
+    },
+    {
+     "city": "Sarasota",
+     "href": "/services/garage-door/sarasota",
+     "listings": 17,
+     "rated": 17,
+     "avgRating": 4.91,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 11,
+     "totalReviews": 3399
+    },
+    {
+     "city": "Tallahassee",
+     "href": "/services/garage-door/tallahassee",
+     "listings": 17,
+     "rated": 13,
+     "avgRating": 4.6,
+     "medianRating": 4.8,
+     "pct45": 61.5,
+     "pctUnder4": 7.7,
+     "medianReviews": 23,
+     "totalReviews": 424
+    },
+    {
+     "city": "Ocala",
+     "href": "/services/garage-door/ocala",
+     "listings": 15,
+     "rated": 15,
+     "avgRating": 4.87,
+     "medianRating": 4.9,
+     "pct45": 93.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 44,
+     "totalReviews": 2995
+    },
+    {
+     "city": "Gainesville",
+     "href": "/services/garage-door/gainesville",
+     "listings": 15,
+     "rated": 13,
+     "avgRating": 4.74,
+     "medianRating": 5.0,
+     "pct45": 84.6,
+     "pctUnder4": 7.7,
+     "medianReviews": 5,
+     "totalReviews": 495
+    },
+    {
+     "city": "Pensacola",
+     "href": "/services/garage-door/pensacola",
+     "listings": 14,
+     "rated": 14,
+     "avgRating": 4.75,
+     "medianRating": 4.9,
+     "pct45": 85.7,
+     "pctUnder4": 7.1,
+     "medianReviews": 45,
+     "totalReviews": 2833
+    },
+    {
+     "city": "Fort Myers",
+     "href": "/services/garage-door/fort-myers",
+     "listings": 14,
+     "rated": 14,
+     "avgRating": 4.77,
+     "medianRating": 4.9,
+     "pct45": 85.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 184,
+     "totalReviews": 3028
+    },
+    {
+     "city": "Cape Coral",
+     "href": "/services/garage-door/cape-coral",
+     "listings": 13,
+     "rated": 13,
+     "avgRating": 4.85,
+     "medianRating": 4.9,
+     "pct45": 92.3,
+     "pctUnder4": 7.7,
+     "medianReviews": 58,
+     "totalReviews": 1708
+    },
+    {
+     "city": "Boca Raton",
+     "href": "/services/garage-door/boca-raton",
+     "listings": 12,
+     "rated": 12,
+     "avgRating": 4.89,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 54,
+     "totalReviews": 1653
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/garage-door/kissimmee",
+     "listings": 11,
+     "rated": 11,
+     "avgRating": 4.99,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 7,
+     "totalReviews": 845
+    }
+   ],
+   "countyCount": 50,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 122,
+     "rated": 108,
+     "avgRating": 4.79,
+     "medianRating": 5.0,
+     "pct45": 90.7,
+     "pctUnder4": 5.6,
+     "medianReviews": 25,
+     "totalReviews": 9861
+    },
+    {
+     "county": "Broward",
+     "listings": 68,
+     "rated": 65,
+     "avgRating": 4.95,
+     "medianRating": 5.0,
+     "pct45": 98.5,
+     "pctUnder4": 0.0,
+     "medianReviews": 32,
+     "totalReviews": 9222
+    },
+    {
+     "county": "Orange",
+     "listings": 66,
+     "rated": 65,
+     "avgRating": 4.84,
+     "medianRating": 5.0,
+     "pct45": 95.4,
+     "pctUnder4": 3.1,
+     "medianReviews": 32,
+     "totalReviews": 10659
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 64,
+     "rated": 63,
+     "avgRating": 4.85,
+     "medianRating": 5.0,
+     "pct45": 90.5,
+     "pctUnder4": 1.6,
+     "medianReviews": 24,
+     "totalReviews": 8086
+    },
+    {
+     "county": "Lee",
+     "listings": 45,
+     "rated": 45,
+     "avgRating": 4.88,
+     "medianRating": 5.0,
+     "pct45": 93.3,
+     "pctUnder4": 2.2,
+     "medianReviews": 45,
+     "totalReviews": 5208
+    },
+    {
+     "county": "Pinellas",
+     "listings": 38,
+     "rated": 36,
+     "avgRating": 4.81,
+     "medianRating": 5.0,
+     "pct45": 91.7,
+     "pctUnder4": 2.8,
+     "medianReviews": 40,
+     "totalReviews": 10700
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 36,
+     "rated": 35,
+     "avgRating": 4.86,
+     "medianRating": 5.0,
+     "pct45": 94.3,
+     "pctUnder4": 2.9,
+     "medianReviews": 91,
+     "totalReviews": 13954
+    },
+    {
+     "county": "Collier",
+     "listings": 29,
+     "rated": 29,
+     "avgRating": 4.96,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 39,
+     "totalReviews": 4978
+    },
+    {
+     "county": "Sarasota",
+     "listings": 26,
+     "rated": 26,
+     "avgRating": 4.9,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 11,
+     "totalReviews": 3724
+    },
+    {
+     "county": "Duval",
+     "listings": 24,
+     "rated": 24,
+     "avgRating": 4.87,
+     "medianRating": 4.9,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 82,
+     "totalReviews": 9285
+    }
+   ]
+  },
+  {
+   "name": "Solar Installation",
+   "slug": "solar-installation",
+   "listings": 736,
+   "rated": 657,
+   "avgRating": 4.66,
+   "medianRating": 4.9,
+   "pct45": 82.0,
+   "pctUnder4": 8.2,
+   "medianReviews": 22,
+   "totalReviews": 80235,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 427
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 112
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 64
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 36
+    },
+    {
+     "band": "Below 3.0",
+     "count": 18
+    }
+   ],
+   "cityCount": 188,
+   "cities": [
+    {
+     "city": "Orlando",
+     "href": "/services/solar-installation/orlando",
+     "listings": 86,
+     "rated": 82,
+     "avgRating": 4.71,
+     "medianRating": 4.9,
+     "pct45": 86.6,
+     "pctUnder4": 4.9,
+     "medianReviews": 46,
+     "totalReviews": 10268
+    },
+    {
+     "city": "Miami",
+     "href": "/services/solar-installation/miami",
+     "listings": 65,
+     "rated": 57,
+     "avgRating": 4.73,
+     "medianRating": 5.0,
+     "pct45": 89.5,
+     "pctUnder4": 8.8,
+     "medianReviews": 12,
+     "totalReviews": 8508
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/solar-installation/tampa",
+     "listings": 26,
+     "rated": 26,
+     "avgRating": 4.74,
+     "medianRating": 4.8,
+     "pct45": 92.3,
+     "pctUnder4": 7.7,
+     "medianReviews": 74,
+     "totalReviews": 5539
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/solar-installation/kissimmee",
+     "listings": 21,
+     "rated": 16,
+     "avgRating": 4.76,
+     "medianRating": 4.9,
+     "pct45": 81.2,
+     "pctUnder4": 6.2,
+     "medianReviews": 22,
+     "totalReviews": 501
+    },
+    {
+     "city": "Tallahassee",
+     "href": "/services/solar-installation/tallahassee",
+     "listings": 16,
+     "rated": 12,
+     "avgRating": 4.06,
+     "medianRating": 4.6,
+     "pct45": 75.0,
+     "pctUnder4": 16.7,
+     "medianReviews": 6,
+     "totalReviews": 709
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/solar-installation/jacksonville",
+     "listings": 15,
+     "rated": 14,
+     "avgRating": 4.69,
+     "medianRating": 4.8,
+     "pct45": 85.7,
+     "pctUnder4": 7.1,
+     "medianReviews": 52,
+     "totalReviews": 1732
+    },
+    {
+     "city": "Naples",
+     "href": "/services/solar-installation/naples",
+     "listings": 14,
+     "rated": 13,
+     "avgRating": 4.68,
+     "medianRating": 5.0,
+     "pct45": 76.9,
+     "pctUnder4": 7.7,
+     "medianReviews": 21,
+     "totalReviews": 5446
+    },
+    {
+     "city": "Sarasota",
+     "href": "/services/solar-installation/sarasota",
+     "listings": 14,
+     "rated": 13,
+     "avgRating": 4.81,
+     "medianRating": 4.9,
+     "pct45": 92.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 18,
+     "totalReviews": 1181
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/solar-installation/fort-lauderdale",
+     "listings": 13,
+     "rated": 11,
+     "avgRating": 4.5,
+     "medianRating": 4.6,
+     "pct45": 63.6,
+     "pctUnder4": 9.1,
+     "medianReviews": 15,
+     "totalReviews": 372
+    },
+    {
+     "city": "Fort Myers",
+     "href": "/services/solar-installation/fort-myers",
+     "listings": 13,
+     "rated": 12,
+     "avgRating": 4.66,
+     "medianRating": 5.0,
+     "pct45": 75.0,
+     "pctUnder4": 8.3,
+     "medianReviews": 41,
+     "totalReviews": 1296
+    },
+    {
+     "city": "Pensacola",
+     "href": "/services/solar-installation/pensacola",
+     "listings": 12,
+     "rated": 12,
+     "avgRating": 4.47,
+     "medianRating": 4.8,
+     "pct45": 66.7,
+     "pctUnder4": 16.7,
+     "medianReviews": 33,
+     "totalReviews": 1146
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/solar-installation/west-palm-beach",
+     "listings": 12,
+     "rated": 12,
+     "avgRating": 4.79,
+     "medianRating": 4.9,
+     "pct45": 91.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 15,
+     "totalReviews": 762
+    },
+    {
+     "city": "Sanford",
+     "href": "/services/solar-installation/sanford",
+     "listings": 11,
+     "rated": 10,
+     "avgRating": 4.68,
+     "medianRating": 4.9,
+     "pct45": 80.0,
+     "pctUnder4": 20.0,
+     "medianReviews": 47,
+     "totalReviews": 2509
+    },
+    {
+     "city": "St. Petersburg",
+     "href": "/services/solar-installation/st-petersburg",
+     "listings": 11,
+     "rated": 11,
+     "avgRating": 4.82,
+     "medianRating": 4.9,
+     "pct45": 90.9,
+     "pctUnder4": 0.0,
+     "medianReviews": 46,
+     "totalReviews": 1420
+    },
+    {
+     "city": "Ocala",
+     "href": "/services/solar-installation/ocala",
+     "listings": 10,
+     "rated": 9,
+     "avgRating": 4.81,
+     "medianRating": 5.0,
+     "pct45": 77.8,
+     "pctUnder4": 0.0,
+     "medianReviews": 44,
+     "totalReviews": 1938
+    }
+   ],
+   "countyCount": 53,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 114,
+     "rated": 93,
+     "avgRating": 4.66,
+     "medianRating": 5.0,
+     "pct45": 83.9,
+     "pctUnder4": 10.8,
+     "medianReviews": 12,
+     "totalReviews": 13768
+    },
+    {
+     "county": "Orange",
+     "listings": 103,
+     "rated": 97,
+     "avgRating": 4.68,
+     "medianRating": 4.9,
+     "pct45": 83.5,
+     "pctUnder4": 6.2,
+     "medianReviews": 35,
+     "totalReviews": 11657
+    },
+    {
+     "county": "Broward",
+     "listings": 52,
+     "rated": 49,
+     "avgRating": 4.64,
+     "medianRating": 4.8,
+     "pct45": 77.6,
+     "pctUnder4": 8.2,
+     "medianReviews": 15,
+     "totalReviews": 3294
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 40,
+     "rated": 37,
+     "avgRating": 4.67,
+     "medianRating": 4.9,
+     "pct45": 86.5,
+     "pctUnder4": 5.4,
+     "medianReviews": 15,
+     "totalReviews": 2644
+    },
+    {
+     "county": "Pinellas",
+     "listings": 39,
+     "rated": 39,
+     "avgRating": 4.84,
+     "medianRating": 4.9,
+     "pct45": 94.9,
+     "pctUnder4": 0.0,
+     "medianReviews": 31,
+     "totalReviews": 8677
+    },
+    {
+     "county": "Seminole",
+     "listings": 35,
+     "rated": 32,
+     "avgRating": 4.52,
+     "medianRating": 4.9,
+     "pct45": 71.9,
+     "pctUnder4": 15.6,
+     "medianReviews": 21,
+     "totalReviews": 5547
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 33,
+     "rated": 33,
+     "avgRating": 4.72,
+     "medianRating": 4.8,
+     "pct45": 90.9,
+     "pctUnder4": 9.1,
+     "medianReviews": 73,
+     "totalReviews": 7854
+    },
+    {
+     "county": "Lee",
+     "listings": 28,
+     "rated": 26,
+     "avgRating": 4.76,
+     "medianRating": 5.0,
+     "pct45": 84.6,
+     "pctUnder4": 3.8,
+     "medianReviews": 41,
+     "totalReviews": 2590
+    },
+    {
+     "county": "Osceola",
+     "listings": 24,
+     "rated": 19,
+     "avgRating": 4.75,
+     "medianRating": 4.8,
+     "pct45": 84.2,
+     "pctUnder4": 5.3,
+     "medianReviews": 26,
+     "totalReviews": 2072
+    },
+    {
+     "county": "Duval",
+     "listings": 16,
+     "rated": 15,
+     "avgRating": 4.67,
+     "medianRating": 4.8,
+     "pct45": 80.0,
+     "pctUnder4": 6.7,
+     "medianReviews": 50,
+     "totalReviews": 1778
+    }
+   ]
+  },
+  {
+   "name": "Security & Alarm",
+   "slug": "security-alarm",
+   "listings": 703,
+   "rated": 672,
+   "avgRating": 4.65,
+   "medianRating": 4.9,
+   "pct45": 77.8,
+   "pctUnder4": 8.9,
+   "medianReviews": 20,
+   "totalReviews": 50579,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 443
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 80
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 89
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 45
+    },
+    {
+     "band": "Below 3.0",
+     "count": 15
+    }
+   ],
+   "cityCount": 146,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/security-alarm/miami",
+     "listings": 80,
+     "rated": 77,
+     "avgRating": 4.77,
+     "medianRating": 4.9,
+     "pct45": 85.7,
+     "pctUnder4": 3.9,
+     "medianReviews": 17,
+     "totalReviews": 3730
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/security-alarm/orlando",
+     "listings": 54,
+     "rated": 53,
+     "avgRating": 4.71,
+     "medianRating": 5.0,
+     "pct45": 79.2,
+     "pctUnder4": 5.7,
+     "medianReviews": 18,
+     "totalReviews": 2468
+    },
+    {
+     "city": "Hialeah",
+     "href": "/services/security-alarm/hialeah",
+     "listings": 27,
+     "rated": 25,
+     "avgRating": 4.7,
+     "medianRating": 5.0,
+     "pct45": 84.0,
+     "pctUnder4": 8.0,
+     "medianReviews": 14,
+     "totalReviews": 754
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/security-alarm/kissimmee",
+     "listings": 23,
+     "rated": 22,
+     "avgRating": 4.56,
+     "medianRating": 4.8,
+     "pct45": 63.6,
+     "pctUnder4": 9.1,
+     "medianReviews": 17,
+     "totalReviews": 2432
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/security-alarm/jacksonville",
+     "listings": 21,
+     "rated": 21,
+     "avgRating": 4.6,
+     "medianRating": 4.8,
+     "pct45": 71.4,
+     "pctUnder4": 9.5,
+     "medianReviews": 20,
+     "totalReviews": 5139
+    },
+    {
+     "city": "Fort Myers",
+     "href": "/services/security-alarm/fort-myers",
+     "listings": 19,
+     "rated": 18,
+     "avgRating": 4.56,
+     "medianRating": 5.0,
+     "pct45": 83.3,
+     "pctUnder4": 11.1,
+     "medianReviews": 33,
+     "totalReviews": 2828
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/security-alarm/west-palm-beach",
+     "listings": 18,
+     "rated": 18,
+     "avgRating": 4.82,
+     "medianRating": 5.0,
+     "pct45": 83.3,
+     "pctUnder4": 5.6,
+     "medianReviews": 13,
+     "totalReviews": 726
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/security-alarm/tampa",
+     "listings": 18,
+     "rated": 18,
+     "avgRating": 4.77,
+     "medianRating": 4.9,
+     "pct45": 83.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 60,
+     "totalReviews": 3528
+    },
+    {
+     "city": "Doral",
+     "href": "/services/security-alarm/doral",
+     "listings": 15,
+     "rated": 15,
+     "avgRating": 4.7,
+     "medianRating": 4.8,
+     "pct45": 73.3,
+     "pctUnder4": 6.7,
+     "medianReviews": 40,
+     "totalReviews": 1572
+    },
+    {
+     "city": "Sanford",
+     "href": "/services/security-alarm/sanford",
+     "listings": 15,
+     "rated": 14,
+     "avgRating": 4.49,
+     "medianRating": 5.0,
+     "pct45": 57.1,
+     "pctUnder4": 28.6,
+     "medianReviews": 9,
+     "totalReviews": 527
+    },
+    {
+     "city": "Winter Park",
+     "href": "/services/security-alarm/winter-park",
+     "listings": 14,
+     "rated": 13,
+     "avgRating": 4.64,
+     "medianRating": 4.8,
+     "pct45": 76.9,
+     "pctUnder4": 7.7,
+     "medianReviews": 13,
+     "totalReviews": 654
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/security-alarm/fort-lauderdale",
+     "listings": 14,
+     "rated": 14,
+     "avgRating": 4.69,
+     "medianRating": 5.0,
+     "pct45": 85.7,
+     "pctUnder4": 14.3,
+     "medianReviews": 23,
+     "totalReviews": 350
+    },
+    {
+     "city": "Naples",
+     "href": "/services/security-alarm/naples",
+     "listings": 13,
+     "rated": 13,
+     "avgRating": 4.83,
+     "medianRating": 4.9,
+     "pct45": 92.3,
+     "pctUnder4": 0.0,
+     "medianReviews": 34,
+     "totalReviews": 2312
+    },
+    {
+     "city": "Longwood",
+     "href": "/services/security-alarm/longwood",
+     "listings": 11,
+     "rated": 10,
+     "avgRating": 3.66,
+     "medianRating": 3.8,
+     "pct45": 40.0,
+     "pctUnder4": 60.0,
+     "medianReviews": 13,
+     "totalReviews": 305
+    },
+    {
+     "city": "Boynton Beach",
+     "href": "/services/security-alarm/boynton-beach",
+     "listings": 11,
+     "rated": 10,
+     "avgRating": 4.42,
+     "medianRating": 4.7,
+     "pct45": 60.0,
+     "pctUnder4": 10.0,
+     "medianReviews": 20,
+     "totalReviews": 802
+    }
+   ],
+   "countyCount": 40,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 168,
+     "rated": 159,
+     "avgRating": 4.69,
+     "medianRating": 4.9,
+     "pct45": 79.2,
+     "pctUnder4": 6.3,
+     "medianReviews": 18,
+     "totalReviews": 9037
+    },
+    {
+     "county": "Broward",
+     "listings": 99,
+     "rated": 98,
+     "avgRating": 4.7,
+     "medianRating": 5.0,
+     "pct45": 81.6,
+     "pctUnder4": 8.2,
+     "medianReviews": 20,
+     "totalReviews": 5160
+    },
+    {
+     "county": "Orange",
+     "listings": 82,
+     "rated": 80,
+     "avgRating": 4.63,
+     "medianRating": 4.9,
+     "pct45": 77.5,
+     "pctUnder4": 10.0,
+     "medianReviews": 19,
+     "totalReviews": 3730
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 74,
+     "rated": 69,
+     "avgRating": 4.75,
+     "medianRating": 5.0,
+     "pct45": 82.6,
+     "pctUnder4": 7.2,
+     "medianReviews": 24,
+     "totalReviews": 4886
+    },
+    {
+     "county": "Seminole",
+     "listings": 45,
+     "rated": 40,
+     "avgRating": 4.22,
+     "medianRating": 4.3,
+     "pct45": 50.0,
+     "pctUnder4": 35.0,
+     "medianReviews": 15,
+     "totalReviews": 3283
+    },
+    {
+     "county": "Lee",
+     "listings": 32,
+     "rated": 30,
+     "avgRating": 4.62,
+     "medianRating": 4.9,
+     "pct45": 80.0,
+     "pctUnder4": 6.7,
+     "medianReviews": 33,
+     "totalReviews": 3625
+    },
+    {
+     "county": "Pinellas",
+     "listings": 29,
+     "rated": 27,
+     "avgRating": 4.67,
+     "medianRating": 4.9,
+     "pct45": 81.5,
+     "pctUnder4": 3.7,
+     "medianReviews": 19,
+     "totalReviews": 928
+    },
+    {
+     "county": "Osceola",
+     "listings": 26,
+     "rated": 25,
+     "avgRating": 4.56,
+     "medianRating": 4.8,
+     "pct45": 64.0,
+     "pctUnder4": 8.0,
+     "medianReviews": 15,
+     "totalReviews": 2579
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 25,
+     "rated": 25,
+     "avgRating": 4.78,
+     "medianRating": 4.9,
+     "pct45": 84.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 59,
+     "totalReviews": 3963
+    },
+    {
+     "county": "Duval",
+     "listings": 22,
+     "rated": 22,
+     "avgRating": 4.44,
+     "medianRating": 4.8,
+     "pct45": 68.2,
+     "pctUnder4": 13.6,
+     "medianReviews": 19,
+     "totalReviews": 5140
+    }
+   ]
+  },
+  {
+   "name": "Window Cleaning",
+   "slug": "window-cleaning",
+   "listings": 604,
+   "rated": 573,
+   "avgRating": 4.89,
+   "medianRating": 5.0,
+   "pct45": 95.3,
+   "pctUnder4": 1.9,
+   "medianReviews": 43,
+   "totalReviews": 56457,
+   "distribution": [
+    {
+     "band": "4.8–5.0",
+     "count": 507
+    },
+    {
+     "band": "4.5–4.7",
+     "count": 39
+    },
+    {
+     "band": "4.0–4.4",
+     "count": 16
+    },
+    {
+     "band": "3.0–3.9",
+     "count": 10
+    },
+    {
+     "band": "Below 3.0",
+     "count": 1
+    }
+   ],
+   "cityCount": 186,
+   "cities": [
+    {
+     "city": "Miami",
+     "href": "/services/window-cleaning/miami",
+     "listings": 37,
+     "rated": 36,
+     "avgRating": 4.87,
+     "medianRating": 5.0,
+     "pct45": 94.4,
+     "pctUnder4": 5.6,
+     "medianReviews": 29,
+     "totalReviews": 2384
+    },
+    {
+     "city": "Orlando",
+     "href": "/services/window-cleaning/orlando",
+     "listings": 19,
+     "rated": 18,
+     "avgRating": 4.93,
+     "medianRating": 5.0,
+     "pct45": 94.4,
+     "pctUnder4": 0.0,
+     "medianReviews": 34,
+     "totalReviews": 1997
+    },
+    {
+     "city": "Naples",
+     "href": "/services/window-cleaning/naples",
+     "listings": 15,
+     "rated": 15,
+     "avgRating": 4.85,
+     "medianRating": 5.0,
+     "pct45": 93.3,
+     "pctUnder4": 6.7,
+     "medianReviews": 73,
+     "totalReviews": 3087
+    },
+    {
+     "city": "Jacksonville",
+     "href": "/services/window-cleaning/jacksonville",
+     "listings": 13,
+     "rated": 12,
+     "avgRating": 4.91,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 41,
+     "totalReviews": 1581
+    },
+    {
+     "city": "Boca Raton",
+     "href": "/services/window-cleaning/boca-raton",
+     "listings": 12,
+     "rated": 12,
+     "avgRating": 4.93,
+     "medianRating": 5.0,
+     "pct45": 91.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 55,
+     "totalReviews": 1053
+    },
+    {
+     "city": "Cape Coral",
+     "href": "/services/window-cleaning/cape-coral",
+     "listings": 11,
+     "rated": 11,
+     "avgRating": 4.77,
+     "medianRating": 4.9,
+     "pct45": 90.9,
+     "pctUnder4": 9.1,
+     "medianReviews": 58,
+     "totalReviews": 835
+    },
+    {
+     "city": "St. Augustine",
+     "href": "/services/window-cleaning/st-augustine",
+     "listings": 11,
+     "rated": 11,
+     "avgRating": 4.78,
+     "medianRating": 5.0,
+     "pct45": 90.9,
+     "pctUnder4": 9.1,
+     "medianReviews": 79,
+     "totalReviews": 1537
+    },
+    {
+     "city": "Fort Lauderdale",
+     "href": "/services/window-cleaning/fort-lauderdale",
+     "listings": 10,
+     "rated": 10,
+     "avgRating": 4.95,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 58,
+     "totalReviews": 699
+    },
+    {
+     "city": "Sarasota",
+     "href": "/services/window-cleaning/sarasota",
+     "listings": 10,
+     "rated": 10,
+     "avgRating": 4.83,
+     "medianRating": 4.9,
+     "pct45": 90.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 38,
+     "totalReviews": 1708
+    },
+    {
+     "city": "Tampa",
+     "href": "/services/window-cleaning/tampa",
+     "listings": 10,
+     "rated": 10,
+     "avgRating": 4.88,
+     "medianRating": 5.0,
+     "pct45": 90.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 101,
+     "totalReviews": 1001
+    },
+    {
+     "city": "Kissimmee",
+     "href": "/services/window-cleaning/kissimmee",
+     "listings": 9,
+     "rated": 8,
+     "avgRating": 4.99,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 77,
+     "totalReviews": 648
+    },
+    {
+     "city": "West Palm Beach",
+     "href": "/services/window-cleaning/west-palm-beach",
+     "listings": 9,
+     "rated": 9,
+     "avgRating": 4.96,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 66,
+     "totalReviews": 1804
+    },
+    {
+     "city": "Ponte Vedra Beach",
+     "href": "/services/window-cleaning/ponte-vedra-beach",
+     "listings": 9,
+     "rated": 9,
+     "avgRating": 4.89,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 26,
+     "totalReviews": 303
+    },
+    {
+     "city": "Fort Myers",
+     "href": "/services/window-cleaning/fort-myers",
+     "listings": 9,
+     "rated": 8,
+     "avgRating": 4.9,
+     "medianRating": 5.0,
+     "pct45": 87.5,
+     "pctUnder4": 0.0,
+     "medianReviews": 58,
+     "totalReviews": 598
+    },
+    {
+     "city": "Boynton Beach",
+     "href": "/services/window-cleaning/boynton-beach",
+     "listings": 8,
+     "rated": 8,
+     "avgRating": 4.9,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 15,
+     "totalReviews": 384
+    }
+   ],
+   "countyCount": 58,
+   "counties": [
+    {
+     "county": "Miami-Dade",
+     "listings": 74,
+     "rated": 69,
+     "avgRating": 4.86,
+     "medianRating": 5.0,
+     "pct45": 92.8,
+     "pctUnder4": 4.3,
+     "medianReviews": 28,
+     "totalReviews": 3866
+    },
+    {
+     "county": "Palm Beach",
+     "listings": 64,
+     "rated": 61,
+     "avgRating": 4.89,
+     "medianRating": 5.0,
+     "pct45": 93.4,
+     "pctUnder4": 1.6,
+     "medianReviews": 45,
+     "totalReviews": 6509
+    },
+    {
+     "county": "Broward",
+     "listings": 63,
+     "rated": 60,
+     "avgRating": 4.95,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 29,
+     "totalReviews": 4931
+    },
+    {
+     "county": "Orange",
+     "listings": 32,
+     "rated": 31,
+     "avgRating": 4.94,
+     "medianRating": 5.0,
+     "pct45": 96.8,
+     "pctUnder4": 0.0,
+     "medianReviews": 34,
+     "totalReviews": 4485
+    },
+    {
+     "county": "Pinellas",
+     "listings": 32,
+     "rated": 31,
+     "avgRating": 4.87,
+     "medianRating": 5.0,
+     "pct45": 93.5,
+     "pctUnder4": 3.2,
+     "medianReviews": 25,
+     "totalReviews": 2091
+    },
+    {
+     "county": "Lee",
+     "listings": 30,
+     "rated": 28,
+     "avgRating": 4.88,
+     "medianRating": 5.0,
+     "pct45": 92.9,
+     "pctUnder4": 3.6,
+     "medianReviews": 56,
+     "totalReviews": 1829
+    },
+    {
+     "county": "Seminole",
+     "listings": 25,
+     "rated": 25,
+     "avgRating": 4.96,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 54,
+     "totalReviews": 3927
+    },
+    {
+     "county": "Hillsborough",
+     "listings": 24,
+     "rated": 24,
+     "avgRating": 4.91,
+     "medianRating": 5.0,
+     "pct45": 91.7,
+     "pctUnder4": 0.0,
+     "medianReviews": 86,
+     "totalReviews": 3847
+    },
+    {
+     "county": "St. Johns",
+     "listings": 23,
+     "rated": 23,
+     "avgRating": 4.85,
+     "medianRating": 5.0,
+     "pct45": 95.7,
+     "pctUnder4": 4.3,
+     "medianReviews": 71,
+     "totalReviews": 2121
+    },
+    {
+     "county": "Duval",
+     "listings": 18,
+     "rated": 16,
+     "avgRating": 4.92,
+     "medianRating": 5.0,
+     "pct45": 100.0,
+     "pctUnder4": 0.0,
+     "medianReviews": 63,
+     "totalReviews": 2123
+    }
+   ]
+  }
+ ]
+}
