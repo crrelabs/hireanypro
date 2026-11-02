@@ -118,7 +118,7 @@ export function OwnerClaimBanner({ slug, name, listingId }: { slug: string; name
         </p>
         <ClaimValueCard listing={slug} surface="listing_banner" compact />
         {state === 'error' && (
-          <p className="text-sm text-red-700 mt-2">{err} <a href={claimHref(slug, ct, 'listing_banner')} className="underline font-semibold">Finish on the claim page</a>.</p>
+          <p className="text-sm text-red-700 mt-2">{err} <a rel="nofollow" href={claimHref(slug, ct, 'listing_banner')} className="underline font-semibold">Finish on the claim page</a>.</p>
         )}
       </div>
       <div className="shrink-0 text-center">
@@ -128,10 +128,10 @@ export function OwnerClaimBanner({ slug, name, listingId }: { slug: string; name
               className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-60 text-white font-bold px-6 py-3 rounded-lg">
               {state === 'loading' ? 'Claiming…' : 'Claim It Now — Free'}
             </button>
-            <p className="text-xs text-gray-500 mt-1 max-w-[16rem]">By claiming, you confirm you manage this business. <a href={claimHref(slug, ct, 'listing_banner')} className="underline">Use a different email</a></p>
+            <p className="text-xs text-gray-500 mt-1 max-w-[16rem]">By claiming, you confirm you manage this business. <a rel="nofollow" href={claimHref(slug, ct, 'listing_banner')} className="underline">Use a different email</a></p>
           </>
         ) : (
-          <a href={claimHref(slug, ct, 'listing_banner')}
+          <a rel="nofollow" href={claimHref(slug, ct, 'listing_banner')}
             className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-lg">
             {ct ? 'Claim in One Click' : 'Claim This Listing'}
           </a>
@@ -144,7 +144,7 @@ export function OwnerClaimBanner({ slug, name, listingId }: { slug: string; name
 export function ClaimLink({ slug, className, children }: { slug: string; className: string; children: React.ReactNode }) {
   const { ct } = useEmailArrival();
   return (
-    <a href={claimHref(slug, ct, 'listing_page')} className={className}>
+    <a rel="nofollow" href={claimHref(slug, ct, 'listing_page')} className={className}>
       {children}
     </a>
   );

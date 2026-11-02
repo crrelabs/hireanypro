@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { CityIntro, CityStatsBlock, CityFaq, CityTopSpot } from '@/components/CityInsights';
 import CityQuoteForm from '@/components/CityQuoteForm';
 import StickyQuoteBar from '@/components/StickyQuoteBar';
-import { getCountyData, primaryCitiesInCounty, countySlug, stateName } from '@/lib/geo';
+import { getCountyData, primaryCitiesInCounty, countySlug, citySlug, stateName } from '@/lib/geo';
 import {
   toCard,
   getCategoryCities,
@@ -110,6 +110,18 @@ export default async function CityLandingPage({ params }: Props) {
     // Near-border GA/AL cities moved from /valdosta to /valdosta-ga on 2026-10-25; send old URLs to the new page.
     const moved = cityGroups.find((g) => g.state !== 'FL' && g.slug === `${cSlug}-${g.state.toLowerCase()}`);
     if (moved) permanentRedirect(`/services/${catSlug}/${moved.slug}`);
+    // No pros of this service in this city. Crawlers hit ~190 of these a day (old links, guessed URLs). Send real
+    // places to the closest useful page instead of a 404: the city hub, else the city's county hub.
+    const hub = await getHubCity(cSlug);
+    if (hub) permanentRedirect(hubHref(hub.slug));
+    const countyResult = await countyMapPromise;
+    if (countyResult.data) {
+      const { primary } = countyResult.data;
+      const countyName = cSlug.endsWith('-county')
+        ? Object.values(primary).find((c) => countySlug(c) === cSlug.replace(/-county$/, ''))
+        : Object.entries(primary).find(([name]) => citySlug(name) === cSlug)?.[1];
+      if (countyName) permanentRedirect(`/region/${countySlug(countyName)}`);
+    }
     notFound();
   }
   const cityName = group.name;
