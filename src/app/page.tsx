@@ -44,7 +44,7 @@ async function popularCombos(): Promise<{ cat: string; slug: string; label: stri
 export default async function HomePage() {
   const [{ data: categories }, { data: featuredListings }] = await Promise.all([
     supabase.from('categories').select('*').order('name'),
-    supabase.from('listings').select('*, categories(name, slug, icon)').eq('featured', true).order('rating', { ascending: false }).limit(6),
+    supabase.from('listings').select('*, categories(name, slug, icon)').eq('featured', true).order('rating', { ascending: false, nullsFirst: false }).limit(6),
   ]);
   // No Featured subscribers yet: show Pro and top-reviewed pros instead of an empty grid.
   let showcase = featuredListings || [];
@@ -160,7 +160,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Browse by Location</h2>
-            <p className="text-gray-500 mt-2">Find home service professionals in your area</p>
+            <p className="text-gray-500 mt-2">Find home service professionals in your area · <Link href="/cities" className="text-blue-800 hover:underline">All cities</Link></p>
           </div>
 
           {/* Region cards */}

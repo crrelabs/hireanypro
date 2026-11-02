@@ -8,7 +8,7 @@ import { formatCount } from '@/lib/directory-content';
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: 'For Pros: List Your Florida Home Service Business Free | HireAnyPro',
+  title: 'List Your Florida Home Service Business Free | HireAnyPro',
   description: 'Find your business on HireAnyPro, claim it free and get quote requests from Florida homeowners. For plumbers, electricians, roofers, HVAC pros and more.',
   alternates: { canonical: 'https://hireanypro.com/for-pros' },
 };

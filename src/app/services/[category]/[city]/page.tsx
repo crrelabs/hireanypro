@@ -72,9 +72,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   // "Moving Companies Pros" read badly; names that already name the business type don't get "Pros".
   const plural = /(companies|services)$/i.test(cat.name) ? cat.name : `${cat.name} Pros`;
-  const title = count > 1
-    ? `${count} Best ${plural} in ${cityName}, ${st} (${new Date().getFullYear()}) | HireAnyPro`
-    : `${cat.name} Pro in ${cityName}, ${st} (${new Date().getFullYear()}) | HireAnyPro`;
+  const baseTitle = count > 1
+    ? `${count} Best ${plural} in ${cityName}, ${st} (${new Date().getFullYear()})`
+    : `${cat.name} Pro in ${cityName}, ${st} (${new Date().getFullYear()})`;
+  // Keep titles under ~65 characters: drop the brand suffix on long city names.
+  const title = baseTitle.length + 13 > 65 ? baseTitle : `${baseTitle} | HireAnyPro`;
   const lcName = lowerCategory(cat.name);
   const description = stats.rated > 0
     ? `Compare ${count.toLocaleString('en-US')} ${count === 1 ? `${lcName} pro` : prosLabel(lcName)} in ${cityName}, ${stName}. Average rating ${stats.avg.toFixed(1)}/5 across ${stats.totalReviews.toLocaleString('en-US')} reviews. Free quotes.`
