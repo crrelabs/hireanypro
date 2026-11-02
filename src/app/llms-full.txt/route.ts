@@ -48,7 +48,7 @@ This file is a longer version of ${SITE}/llms.txt. Category statistics are a sna
 - A county: ${SITE}/region/{county}, e.g. ${SITE}/region/miami-dade.
 - A single business: ${SITE}/listing/{slug}, with its rating, hours, service area, FAQ and a quote form.
 - Quotes: free for homeowners; one request can go to up to 3 local pros.
-- Choosing a pro: compare a 4.5+ rating backed by many reviews, check the Florida license at https://www.myfloridalicense.com/ (DBPR), and get at least 3 written quotes.
+- Choosing a pro: compare a 4.5+ rating backed by many reviews, check the Florida license at https://www.myfloridalicense.com/ (DBPR; pest control and movers: FDACS; trade-by-trade guide: ${SITE}/guides/florida-contractor-license-check), and get at least 3 written quotes.
 - Businesses: claiming a listing is free. Optional paid plans: Pro ($9/month, listed above free listings and shows phone and website) and Featured ($49.99/month, listed first on its city pages). ${SITE}/pricing
 
 ## Florida-wide facts (snapshot ${overall.asOf})
