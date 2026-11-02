@@ -18,6 +18,7 @@ import { getCityCategorySnapshot } from '@/lib/listings';
 import ListingMarketContext from '@/components/ListingMarketContext';
 import StickyQuoteBar from '@/components/StickyQuoteBar';
 import { buildListingFaq, faqJsonLd } from '@/lib/listing-faq';
+import { GUIDE_PATH, licenseRuleFor } from '@/lib/fl-licensing';
 
 export const revalidate = 3600;
 
@@ -209,6 +210,7 @@ export default async function ListingPage({ params }: Props) {
   const address = cleanAddress(listing.address);
   const addressHasCity = !!(address && listing.city && address.toLowerCase().includes(String(listing.city).toLowerCase()));
   const cityLine = [listing.city, [stateCode(listing.state), listing.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+  const licenseRule = licenseRuleFor(listing.categories?.slug);
   const catLabel = listing.categories?.name ? catText(listing.categories.name) : 'home service';
   const description = (listing.description && String(listing.description).trim())
     || `${listing.name} is ${/^[aeiou]/i.test(catLabel) ? 'an' : 'a'} ${catLabel} business${listing.city ? ` in ${listing.city}, ${stateCode(listing.state)}` : ''}${listing.rating && listing.review_count ? `, rated ${Number(listing.rating).toFixed(1)} out of 5 from ${Number(listing.review_count).toLocaleString('en-US')} Google ${listing.review_count === 1 ? 'review' : 'reviews'}` : ''}. Request a free quote below.`;
@@ -499,6 +501,25 @@ export default async function ListingPage({ params }: Props) {
             <ReviewForm listingId={listing.id} businessName={listing.name} />
           </div>
         </div>
+
+        {/* How to check this trade's Florida license (guide: /guides/florida-contractor-license-check). */}
+        {licenseRule && (
+          <section className="mt-8 bg-white rounded-xl border border-gray-200 p-6" aria-labelledby="license-check">
+            <h2 id="license-check" className="text-lg font-bold text-gray-900 mb-2">
+              {licenseRule.level === 'state' ? `Check ${listing.name}\u2019s Florida license` : `Does ${listing.name} need a license?`}
+            </h2>
+            <p className="text-gray-600 text-sm leading-relaxed">{licenseRule.rule}</p>
+            <p className="text-sm mt-3">
+              {licenseRule.level === 'state' && (
+                <>
+                  <a href={licenseRule.checkUrl} target="_blank" rel="noopener nofollow" className="text-blue-800 font-medium hover:underline">{licenseRule.checkLabel}</a>
+                  {' · '}
+                </>
+              )}
+              <Link href={`${GUIDE_PATH}#license-${licenseRule.slug}`} className="text-blue-800 font-medium hover:underline">How to check a contractor license in Florida</Link>
+            </p>
+          </section>
+        )}
 
         {/* FAQ from the listing's own facts (mirrored in FAQPage JSON-LD above). */}
         <section className="mt-8 bg-white rounded-xl border border-gray-200 p-6" aria-labelledby="listing-faq">

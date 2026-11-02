@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { GUIDE_PATH, licenseRuleFor } from '@/lib/fl-licensing';
 import CategoryFilters from '@/components/CategoryFilters';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import type { Metadata } from 'next';
@@ -204,6 +205,13 @@ export default async function CategoryPage({ params }: Props) {
         )}
 
         <CategoryFaq {...story} />
+
+        {licenseRuleFor(category.slug) && (
+          <p className="mt-8 text-sm text-gray-700 bg-white border border-gray-200 rounded-lg p-4">
+            <strong>Licensing:</strong> {licenseRuleFor(category.slug)!.rule}{' '}
+            <Link href={`${GUIDE_PATH}#license-${category.slug}`} className="text-blue-800 font-semibold hover:underline">How to check a license in Florida</Link>.
+          </p>
+        )}
 
         <p className="mt-8 text-sm text-gray-600 bg-blue-50 border border-blue-200 rounded-lg p-4">
           Are you a {lowerCategory(category.name)} pro in Florida? <Link href={`/for-pros/${category.slug}`} className="text-blue-800 font-semibold hover:underline">Find and claim your free listing</Link>.

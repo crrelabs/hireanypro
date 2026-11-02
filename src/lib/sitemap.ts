@@ -53,7 +53,7 @@ function maxLastmod(values: Array<string | null | undefined>): string | undefine
 export const CITY_PAGES_REVISED = '2026-11-02'; // 2026-11-02: link to the city hub
 export const CATEGORY_PAGES_REVISED = '2026-10-31'; // 2026-10-31: quote finder on category hubs
 // 2026-10-31: every listing page gained an FAQ section + FAQPage markup, so listing lastmod is floored to that date.
-export const LISTING_PAGES_REVISED = '2026-10-31';
+export const LISTING_PAGES_REVISED = '2026-11-02'; // 2026-11-02: license check box
 export const COUNTY_PAGES_REVISED = '2026-11-02'; // 2026-11-02: city chips link city hubs
 export const CITY_HUBS_REVISED = '2026-11-02';
 export function withFloor(lastmod: string | null | undefined, floor: string): string {
@@ -194,6 +194,7 @@ export async function getPagesSitemapUrls(): Promise<SitemapUrl[]> {
     { loc: `${BASE_URL}/contact`, changefreq: 'yearly', priority: 0.3 },
     { loc: `${BASE_URL}/about`, changefreq: 'yearly', priority: 0.4 },
     { loc: `${BASE_URL}/data/florida-contractor-ratings-2026`, lastmod: '2026-11-01', changefreq: 'monthly', priority: 0.6 },
+    { loc: `${BASE_URL}/guides/florida-contractor-license-check`, lastmod: '2026-11-02', changefreq: 'monthly', priority: 0.7 },
     { loc: `${BASE_URL}/claim`, changefreq: 'monthly', priority: 0.5 },
     { loc: `${BASE_URL}/for-pros`, lastmod: '2026-10-30', changefreq: 'monthly', priority: 0.6 },
   ];
