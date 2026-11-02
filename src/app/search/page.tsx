@@ -81,7 +81,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   const { data: listings, count } = await query
     .order('featured', { ascending: false })
     .order('tier', { ascending: false }) // 'pro' sorts above 'free'
-    .order('rating', { ascending: false })
+    .order('rating', { ascending: false, nullsFirst: false }) // unrated listings last, not first
+    .order('review_count', { ascending: false, nullsFirst: false })
     .range(from, from + perPage - 1);
 
   const totalPages = Math.ceil((count || 0) / perPage);

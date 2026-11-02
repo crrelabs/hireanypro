@@ -19,6 +19,7 @@ import ListingMarketContext from '@/components/ListingMarketContext';
 import StickyQuoteBar from '@/components/StickyQuoteBar';
 import { buildListingFaq, faqJsonLd } from '@/lib/listing-faq';
 import { GUIDE_PATH, licenseRuleFor } from '@/lib/fl-licensing';
+import { getHubCity, hubHref } from '@/lib/city-hubs';
 
 export const revalidate = 3600;
 
@@ -53,7 +54,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const st = stateCode(listing.state);
   const baseTitle = listing.city ? `${listing.name} - ${cat} in ${listing.city}, ${st}` : `${listing.name} - ${cat} in ${stateName(st)}`;
   // Google cuts titles around 60-65 characters; drop the brand suffix rather than lose the city.
-  const title = baseTitle.length + 13 > 65 ? baseTitle : `${baseTitle} | HireAnyPro`;
+  // Very long names (71-81 chars) also drop the category, keeping name + city.
+  const shortTitle = listing.city ? `${listing.name} in ${listing.city}, ${st}` : listing.name;
+  const title = baseTitle.length + 13 <= 65 ? `${baseTitle} | HireAnyPro` : baseTitle.length <= 70 ? baseTitle : shortTitle;
   const ratingText = listing.rating && listing.review_count
     ? ` Rated ${Number(listing.rating).toFixed(1)}/5 from ${Number(listing.review_count).toLocaleString('en-US')} ${listing.review_count === 1 ? 'review' : 'reviews'}.`
     : '';
@@ -211,6 +214,7 @@ export default async function ListingPage({ params }: Props) {
   const addressHasCity = !!(address && listing.city && address.toLowerCase().includes(String(listing.city).toLowerCase()));
   const cityLine = [listing.city, [stateCode(listing.state), listing.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
   const licenseRule = licenseRuleFor(listing.categories?.slug);
+  const cityHub = listing.city ? await getHubCity(cityPageSlug(listing.city, listing.state)) : null;
   const catLabel = listing.categories?.name ? catText(listing.categories.name) : 'home service';
   const description = (listing.description && String(listing.description).trim())
     || `${listing.name} is ${/^[aeiou]/i.test(catLabel) ? 'an' : 'a'} ${catLabel} business${listing.city ? ` in ${listing.city}, ${stateCode(listing.state)}` : ''}${listing.rating && listing.review_count ? `, rated ${Number(listing.rating).toFixed(1)} out of 5 from ${Number(listing.review_count).toLocaleString('en-US')} Google ${listing.review_count === 1 ? 'review' : 'reviews'}` : ''}. Request a free quote below.`;
@@ -260,7 +264,8 @@ export default async function ListingPage({ params }: Props) {
         <Breadcrumbs items={[
           { label: 'Home', href: '/' },
           ...(listing.categories ? [{ label: listing.categories.name, href: `/category/${listing.categories.slug}` }] : []),
-          ...(listing.city ? [{ label: listing.city, href: listing.categories && cityLinkOk ? `/services/${listing.categories.slug}/${cityPageSlug(listing.city, listing.state)}` : undefined }] : []),
+          // Thin city x service page (noindex): link the city hub instead when there is one.
+          ...(listing.city ? [{ label: listing.city, href: listing.categories && cityLinkOk ? `/services/${listing.categories.slug}/${cityPageSlug(listing.city, listing.state)}` : cityHub ? hubHref(cityHub.slug) : undefined }] : []),
           { label: listing.name },
         ]} />
 

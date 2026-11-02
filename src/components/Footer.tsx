@@ -69,7 +69,7 @@ export default function Footer() {
                   { name: 'Pembroke Pines', slug: 'pembroke-pines' },
                   { name: 'Kissimmee', slug: 'kissimmee' },
                 ].map(c => (
-                  <Link key={c.slug} href={`/services/plumbing/${c.slug}`} className="hover:text-white transition-colors">{c.name}</Link>
+                  <Link key={c.slug} href={`/cities/${c.slug}`} className="hover:text-white transition-colors">{c.name}</Link>
                 ))}
               </div>
             </div>

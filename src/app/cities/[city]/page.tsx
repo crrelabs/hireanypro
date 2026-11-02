@@ -162,6 +162,7 @@ export default async function CityHubPage({ params }: Props) {
 
   const breadcrumbItems = [
     { label: 'Home', href: '/' },
+    { label: 'Cities', href: '/cities' },
     ...(county ? [{ label: `${county} County`, href: `/region/${countySlug(county)}` }] : []),
     { label: hub.name },
   ];

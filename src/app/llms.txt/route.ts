@@ -28,6 +28,7 @@ Key facts:
 ## Main pages
 - [Home](https://hireanypro.com/)
 - [All categories](https://hireanypro.com/categories)
+- [All cities (every service in one city)](https://hireanypro.com/cities)
 - [Search pros](https://hireanypro.com/search)
 - [About HireAnyPro](https://hireanypro.com/about)
 - [Pricing for businesses](https://hireanypro.com/pricing)
