@@ -16,16 +16,18 @@ const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 const label = (c: City) => (c.state && c.state !== 'FL' ? `${c.name}, ${c.state}` : c.name);
 const catText = (n: string) => n.split(' ').map((w) => (w.length > 1 && w === w.toUpperCase() ? w : w.toLowerCase())).join(' ');
 
-export default function QuoteFinder({ categories, initialCategory, source, title, className = '' }: {
+export default function QuoteFinder({ categories, initialCategory, initialCity, source, title, className = '' }: {
   categories: Cat[];
   initialCategory?: string;
-  /** Where the finder sits: home | category | search. Sent to GA4 as form=<source>_multi_quote. */
-  source: 'home' | 'category' | 'search';
+  /** Prefill the city box (city hub pages); the visitor only picks a service. */
+  initialCity?: string;
+  /** Where the finder sits: home | category | search | city_hub. Sent to GA4 as form=<source>_multi_quote. */
+  source: 'home' | 'category' | 'search' | 'city_hub';
   title?: string;
   className?: string;
 }) {
   const [cat, setCat] = useState(initialCategory && categories.some((c) => c.slug === initialCategory) ? initialCategory : '');
-  const [cityText, setCityText] = useState('');
+  const [cityText, setCityText] = useState(initialCity || '');
   const [cities, setCities] = useState<City[] | null>(null);
   const [loadErr, setLoadErr] = useState('');
   const [err, setErr] = useState('');

@@ -3,6 +3,7 @@ import tradeReport from '@/data/florida-ratings-2026-by-category.json';
 import { getAllBlogSlugs } from '@/lib/blog';
 import { cityPageSlug, countySlug } from '@/lib/geo';
 import { shouldIndexCityPage } from '@/lib/directory-content';
+import { getHubCities } from '@/lib/city-hubs';
 import { renderSitemapIndex, renderUrlset } from '@/lib/sitemap-xml';
 import type { SitemapIndexEntry, SitemapUrl } from '@/lib/sitemap-xml';
 
@@ -49,11 +50,12 @@ function maxLastmod(values: Array<string | null | undefined>): string | undefine
 
 // Page templates were rewritten on these dates (PR #52: city + category pages; 2026-10-28: county hubs). The page content
 // changed even where no listing row did, so lastmod must not be older than the rewrite or crawlers skip the new copy.
-export const CITY_PAGES_REVISED = '2026-10-27';
+export const CITY_PAGES_REVISED = '2026-11-02'; // 2026-11-02: link to the city hub
 export const CATEGORY_PAGES_REVISED = '2026-10-31'; // 2026-10-31: quote finder on category hubs
 // 2026-10-31: every listing page gained an FAQ section + FAQPage markup, so listing lastmod is floored to that date.
 export const LISTING_PAGES_REVISED = '2026-10-31';
-export const COUNTY_PAGES_REVISED = '2026-10-28';
+export const COUNTY_PAGES_REVISED = '2026-11-02'; // 2026-11-02: city chips link city hubs
+export const CITY_HUBS_REVISED = '2026-11-02';
 export function withFloor(lastmod: string | null | undefined, floor: string): string {
   return lastmod && lastmod > floor ? lastmod : floor;
 }
@@ -226,10 +228,12 @@ export async function getPagesSitemapUrls(): Promise<SitemapUrl[]> {
 }
 
 export async function getCitiesSitemapUrls(): Promise<SitemapUrl[]> {
-  const [rows, catRows] = await Promise.all([
+  const [rows, catRows, hubs] = await Promise.all([
     fetchListingGeoRows(),
     assertOk(await supabase.from('categories').select('id, slug')),
+    getHubCities(),
   ]);
+  const hubLastmod = new Map<string, string>();
 
   const catIdToSlug = new Map((catRows || []).map((c) => [c.id as string, c.slug as string]));
   const cityLastmod = new Map<string, string>();
@@ -244,6 +248,7 @@ export async function getCitiesSitemapUrls(): Promise<SitemapUrl[]> {
         const key = `${catSlug}/${cityPageSlug(row.city, row.state)}`;
         cityCount.set(key, (cityCount.get(key) || 0) + 1);
         rememberLatest(cityLastmod, key, lastmod);
+        rememberLatest(hubLastmod, cityPageSlug(row.city, row.state), lastmod);
       }
     }
     // County hubs are Florida-only. GA/AL rows have a null county.
@@ -263,6 +268,17 @@ export async function getCitiesSitemapUrls(): Promise<SitemapUrl[]> {
       priority: 0.7,
     }));
 
+  // City hubs (/cities/<slug>): same rule as the page (3+ services with 3+ listings each).
+  const hubUrls: SitemapUrl[] = hubs
+    .map((h) => h.slug)
+    .sort()
+    .map((slug) => ({
+      loc: `${BASE_URL}/cities/${slug}`,
+      lastmod: withFloor(hubLastmod.get(slug) || CITY_HUBS_REVISED, CITY_HUBS_REVISED),
+      changefreq: 'weekly' as const,
+      priority: 0.8,
+    }));
+
   const countyUrls: SitemapUrl[] = [...countyLastmod.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([county, lastmod]) => ({
@@ -272,7 +288,7 @@ export async function getCitiesSitemapUrls(): Promise<SitemapUrl[]> {
       priority: 0.7,
     }));
 
-  return [...cityUrls, ...countyUrls];
+  return [...cityUrls, ...hubUrls, ...countyUrls];
 }
 
 export function listingSitemapPath(chunk: number): string {

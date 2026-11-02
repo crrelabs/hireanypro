@@ -3,6 +3,7 @@ import CategoryFilters from '@/components/CategoryFilters';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { getHubCity, hubHref } from '@/lib/city-hubs';
 import Image from 'next/image';
 import { CityIntro, CityStatsBlock, CityFaq, CityTopSpot } from '@/components/CityInsights';
 import CityQuoteForm from '@/components/CityQuoteForm';
@@ -114,10 +115,11 @@ export default async function CityLandingPage({ params }: Props) {
   const cityName = group.name;
   const stName = stateName(group.state);
 
-  const [rows, siblings, countyResult] = await Promise.all([
+  const [rows, siblings, countyResult, hubCity] = await Promise.all([
     getCityPageRows(category.id, group.variants, group.state, group.count),
     getCitySiblingCategories(group.variants, group.state, category.id),
     countyMapPromise,
+    getHubCity(cSlug),
   ]);
   if (!countyResult.data) {
     throw countyResult.error instanceof Error ? countyResult.error : new Error('county map failed');
@@ -230,6 +232,13 @@ export default async function CityLandingPage({ params }: Props) {
                 </Link>
               ))}
             </div>
+            {hubCity && (
+              <p className="mt-4">
+                <Link href={hubHref(hubCity.slug)} className="text-blue-800 font-semibold hover:underline">
+                  All {hubCity.total.toLocaleString('en-US')} home service pros in {cityName} →
+                </Link>
+              </p>
+            )}
           </section>
         )}
 

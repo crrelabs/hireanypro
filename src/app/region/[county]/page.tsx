@@ -1,6 +1,7 @@
 import { cache } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { getHubSlugs, hubHref } from '@/lib/city-hubs';
 import { notFound } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { getAllCounties, countyFromSlug, citySlug } from '@/lib/geo';
@@ -145,6 +146,7 @@ export default async function RegionPage({ params }: Props) {
   const data = await loadCounty(county);
   if (!data) notFound();
   const { countyName, total, cities, categories, topPros, rated, reviews, avgRating } = data;
+  const hubSlugs = await getHubSlugs();
 
   // A city/category link is only worth following when the target page is indexable (3+ listings). Counts here are
   // county-local, which never exceed the city page's own count, so a link shown here never lands on a thin page.
@@ -288,6 +290,19 @@ export default async function RegionPage({ params }: Props) {
             {cities.map((c) => {
               const cat = bestCategoryFor(c.slug);
               const label = `${c.name} · ${plural(c.count, 'pro', 'pros')}`;
+              if (hubSlugs.has(c.slug)) {
+                return (
+                  <li key={c.slug}>
+                    <Link
+                      href={hubHref(c.slug)}
+                      title={`All home services in ${c.name}`}
+                      className="inline-block px-3 py-1.5 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:border-blue-300 hover:text-blue-800"
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                );
+              }
               return (
                 <li key={c.slug}>
                   {cat ? (
