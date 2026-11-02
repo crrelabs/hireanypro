@@ -23,6 +23,7 @@ Key facts:
 - Free for homeowners. Businesses can claim their listing for free; optional paid plans are Pro ($9/month) and Featured ($49.99/month); see Pricing.
 - Ratings shown are public customer ratings and review counts.
 - Page pattern for a service in a city: https://hireanypro.com/services/{category}/{city} (e.g. https://hireanypro.com/services/plumbing/miami)
+- Page pattern for every service in a city: https://hireanypro.com/cities/{city} (e.g. https://hireanypro.com/cities/miami)
 
 ## Main pages
 - [Home](https://hireanypro.com/)

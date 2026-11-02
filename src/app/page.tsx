@@ -3,6 +3,7 @@ import SearchBar from '@/components/SearchBar';
 import CategoryCard from '@/components/CategoryCard';
 import ListingCard from '@/components/ListingCard';
 import Link from 'next/link';
+import { getHubSlugs, hubHref } from '@/lib/city-hubs';
 import QuoteFinder from '@/components/QuoteFinder';
 import OwnerClaimFinder from '@/components/OwnerClaimFinder';
 import { getCountyData, primaryCitiesInCounty, countySlug, citySlug } from '@/lib/geo';
@@ -165,10 +166,11 @@ export default async function HomePage() {
           {/* Region cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {await (async () => {
-              const [countyMap, plumbing] = await Promise.all([
+              const [countyMap, plumbing, hubSlugs] = await Promise.all([
                 getCountyData(),
                 // Only link cities that actually have a plumbing page (linking every city produced ~175 broken links).
                 getCategoryBySlug('plumbing'),
+                getHubSlugs(),
               ]);
               const counties = Object.keys(countyMap.byCounty).sort();
               // Thin plumbing pages (fewer than 3 listings) are noindex, so they are not linked from the homepage.
@@ -178,7 +180,7 @@ export default async function HomePage() {
                 // only show it under its primary county, once.
                 const cities = [...new Map(primaryCitiesInCounty(countyMap, county).map((c) => [citySlug(c), c])).values()];
                 const topCities = cities
-                  .filter((c) => plumbingCities.has(citySlug(c)))
+                  .filter((c) => plumbingCities.has(citySlug(c)) || hubSlugs.has(citySlug(c)))
                   .sort((a, b) => (plumbingCities.get(citySlug(b)) || 0) - (plumbingCities.get(citySlug(a)) || 0))
                   .slice(0, 8);
                 return (
@@ -190,7 +192,8 @@ export default async function HomePage() {
                       {topCities.map(city => (
                         <Link
                           key={city}
-                          href={`/services/plumbing/${citySlug(city)}`}
+                          // City hub (every service) when the city has one, else its plumbing page.
+                          href={hubSlugs.has(citySlug(city)) ? hubHref(citySlug(city)) : `/services/plumbing/${citySlug(city)}`}
                           className="text-sm text-gray-600 hover:text-blue-800 hover:bg-blue-50 px-2 py-1 rounded transition-colors"
                         >
                           {city}
