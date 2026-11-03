@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 const URL = `https://hireanypro.com${GUIDE_PATH}`;
 const TITLE = 'How to Check a Contractor License in Florida (2026 Guide)';
-const DESCRIPTION = 'Check a Florida contractor license in 2 minutes: which trades need a state license, where to look it up (DBPR, FDACS), and the deposit, permit and lien rules that protect homeowners.';
+const DESCRIPTION = 'Check a Florida contractor license in 2 minutes: which trades need a state license, how to look it up (DBPR, FDACS) and the rules that protect homeowners.';
 const UPDATED = '2026-11-02';
 
 export const metadata: Metadata = {
