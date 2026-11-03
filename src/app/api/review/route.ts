@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    if (!turnstileToken || !(await verifyTurnstile(turnstileToken))) {
+    if (!turnstileToken || !(await verifyTurnstile(turnstileToken, ip))) {
       return NextResponse.json({ error: 'CAPTCHA verification failed.' }, { status: 400 });
     }
 

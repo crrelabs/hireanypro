@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     const citySlugIn = clip(body.citySlug, 80);
 
     if (isBot(body.website)) return NextResponse.json({ success: true, count: 0 });
-    if (!body.turnstileToken || !(await verifyTurnstile(body.turnstileToken))) {
+    if (!body.turnstileToken || !(await verifyTurnstile(body.turnstileToken, ip))) {
       return NextResponse.json({ error: 'That was a little fast. Please wait a second and try again.' }, { status: 400 });
     }
     if (!name || !email || !message || !categorySlug || !citySlugIn) {

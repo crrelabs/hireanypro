@@ -31,10 +31,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    // verifyTurnstile() accepts an empty token (the invisible check fires on first interaction or after 3s);
-    // rejecting empty tokens here used to bounce owners who clicked "Claim" quickly.
-    if (!(await verifyTurnstile(turnstileToken || ''))) {
-      return NextResponse.json({ error: 'That was a little fast. Please wait a second and try again.' }, { status: 400 });
+    // Signed one-click claim links (from our own emails) are already proof of a real owner;
+    // every other claim must pass Cloudflare Turnstile. Empty tokens are rejected.
+    const signedLink = body.claimToken ? verifyClaimLink(body.claimToken) : null;
+    if (!signedLink && !(await verifyTurnstile(typeof turnstileToken === 'string' ? turnstileToken : '', ip))) {
+      return NextResponse.json({ error: 'Please wait a second for the security check to finish, then try again.' }, { status: 400 });
     }
 
     if (!listingId || !email) {
