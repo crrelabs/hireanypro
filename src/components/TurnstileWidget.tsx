@@ -52,17 +52,27 @@ export default function TurnstileWidget({ onSuccess, onError }: TurnstileWidgetP
     }
     let id: string | null = null;
     let cancelled = false;
+    let gotReal = false;
+    let fellBack = false;
+    // If Cloudflare errors (e.g. site key not valid for this domain) or is slow, fall back to the
+    // timing token so the form still works; the server only accepts it while TURNSTILE_ENFORCE is off.
+    const fallback = () => {
+      if (gotReal || fellBack || cancelled) return;
+      fellBack = true;
+      cb.current(`auto_${Math.max(Date.now() - start, 1000)}_${Math.random().toString(36).slice(2)}`);
+    };
+    const fallbackTimer = setTimeout(fallback, 6000);
     loadScript().then(() => {
       if (cancelled || !ref.current || !window.turnstile) return;
       id = window.turnstile.render(ref.current, {
         sitekey: SITE_KEY,
         appearance: 'interaction-only',
-        callback: (token: string) => cb.current(token),
+        callback: (token: string) => { gotReal = true; cb.current(token); },
         'expired-callback': () => { cb.current(''); if (id && window.turnstile) window.turnstile.reset(id); },
-        'error-callback': () => { errCb.current?.(); },
+        'error-callback': () => { fallback(); errCb.current?.(); return true; },
       });
-    }).catch(() => errCb.current?.());
-    return () => { cancelled = true; if (id && window.turnstile) window.turnstile.remove(id); };
+    }).catch(() => { fallback(); errCb.current?.(); });
+    return () => { cancelled = true; clearTimeout(fallbackTimer); if (id && window.turnstile) window.turnstile.remove(id); };
   }, []);
 
   return <div ref={ref} className="my-2" />;
