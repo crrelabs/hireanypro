@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
 import { isAutomatedBrowser, onHuman } from '@/lib/track';
 import PlanSpotCard from '@/components/PlanSpotCard';
 
@@ -99,9 +98,10 @@ export default function PricingPage() {
     if (tokenEmail) setEmail(tokenEmail);
     const stopView = onHuman(() => track('pricing_view', { has_listing: !!l, from_email_link: !!tokenEmail, plan: plan || '' }));
     if (l) {
-      const col = /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(l) ? 'id' : 'slug';
-      supabase.from('listings').select('id, name, slug, city, state, tier, claimed').eq(col, l).maybeSingle()
-        .then(({ data }) => { if (data) setBiz(data as Biz); });
+      fetch(`/api/claim-listings?listing=${encodeURIComponent(l)}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => { if (data?.listing) setBiz(data.listing as Biz); })
+        .catch(() => {});
     }
     fetch('/api/auth/me').then((r) => r.json()).then((me) => {
       if (!me?.signedIn) return;
@@ -113,19 +113,35 @@ export default function PricingPage() {
     return stopView;
   }, []);
 
-  useEffect(() => { if (selectedPlan) track('checkout_open', { plan: selectedPlan }); }, [selectedPlan]);
+  // Email scanners load /pricing?plan=pro and never interact. Same gate as pricing_view: wait for a human signal.
+  // A click on a plan counts, because pricing_view's listener has already marked this visitor as human.
+  useEffect(() => {
+    if (!selectedPlan) return;
+    return onHuman(() => track('checkout_open', { plan: selectedPlan }));
+  }, [selectedPlan]);
 
-  async function search(v: string) {
+  const searchSeq = useRef(0);
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (searchTimer.current) clearTimeout(searchTimer.current); }, []);
+  function search(v: string) {
     setQ(v);
-    if (v.trim().length < 2) { setResults([]); return; }
-    // "Name, City" narrows by city, like the claim finder.
-    const [name, city] = v.split(',').map((x) => x.trim().replace(/[%_()]/g, ' '));
-    let query = supabase.from('listings').select('id, name, slug, city, state, tier, claimed')
-      .ilike('name', `%${name}%`).not('slug', 'like', 'zz-hap-test%')
-      .order('review_count', { ascending: false, nullsFirst: false }).limit(8); // best-known match first, no QA rows
-    if (city) query = query.ilike('city', `${city}%`);
-    const { data } = await query;
-    setResults((data as Biz[]) || []);
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    if (v.trim().length < 2) { searchSeq.current++; setResults([]); return; }
+    // "Name, City" narrows by city. Parentheses are spaces so the server search matches the old browser query.
+    const safe = v.replace(/[%_()]/g, ' ');
+    const mine = ++searchSeq.current;
+    searchTimer.current = setTimeout(async () => {
+      let rows: Biz[] = [];
+      try {
+        const res = await fetch(`/api/claim-listings?q=${encodeURIComponent(safe)}&scope=directory`);
+        const data = res.ok ? await res.json() : null;
+        rows = (data?.listings as Biz[]) || [];
+      } catch {
+        rows = [];
+      }
+      if (mine !== searchSeq.current) return;
+      setResults(rows);
+    }, 250);
   }
 
   async function handleCheckout(e: React.FormEvent) {
