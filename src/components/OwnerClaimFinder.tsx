@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { supabase } from '@/lib/supabase';
 import { isAutomatedBrowser } from '@/lib/track';
 
 type Hit = { id: string; name: string; slug: string; city: string | null; claimed: boolean | null; categories: { name: string } | null };
@@ -18,18 +17,17 @@ export default function OwnerClaimFinder({ source }: { source: string }) {
     if (term.length < 3) { setHits([]); setSearched(false); return; }
     const mine = ++seq.current;
     const t = setTimeout(async () => {
-      const [name, city] = term.split(',').map((s) => s.trim());
-      let query = supabase
-        .from('listings')
-        .select('id, name, slug, city, claimed, categories(name)')
-        .ilike('name', `%${name.replace(/[%_]/g, '')}%`)
-        .not('slug', 'like', 'zz-hap-test%')
-        .order('review_count', { ascending: false, nullsFirst: false })
-        .limit(8);
-      if (city) query = query.ilike('city', `${city.replace(/[%_]/g, '')}%`);
-      const { data } = await query;
+      let rows: Hit[] = [];
+      try {
+        // scope=directory keeps the old browser query: name match, optional city prefix, 8 rows, no test slugs.
+        const res = await fetch(`/api/claim-listings?q=${encodeURIComponent(term)}&scope=directory`);
+        const data = res.ok ? await res.json() : null;
+        rows = (data?.listings as Hit[]) || [];
+      } catch {
+        rows = [];
+      }
       if (mine !== seq.current) return; // a newer search started
-      setHits((data as unknown as Hit[]) || []);
+      setHits(rows);
       setSearched(true);
     }, 250);
     return () => clearTimeout(t);

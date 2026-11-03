@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef, useSyncExternalStore, type ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useLayoutEffect, useRef, Suspense, type ReactNode } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import TurnstileWidget from '@/components/TurnstileWidget';
 import { isAutomatedBrowser, onHuman } from '@/lib/track';
@@ -17,11 +17,12 @@ type ListingResult = {
   categories: { name: string } | null;
 };
 
-const noopSubscribe = () => () => {};
-
-/** Server and hydration see an empty query so the HTML stays cacheable. The browser then reads the real query. */
-function useBrowserSearch() {
-  return useSyncExternalStore(noopSubscribe, () => window.location.search, () => '');
+/** Pushes the live query string into the form. Suspends during static render so the HTML stays query-free and cacheable. */
+function SearchParamBridge({ onChange }: { onChange: (search: string) => void }) {
+  const sp = useSearchParams();
+  const search = sp && sp.toString() ? `?${sp.toString()}` : '';
+  useLayoutEffect(() => { onChange(search); }, [search, onChange]);
+  return null;
 }
 
 function tokenEmailFrom(claimToken: string): string {
@@ -33,18 +34,34 @@ function tokenEmailFrom(claimToken: string): string {
   }
 }
 
-export default function ClaimForm({
-  intro,
-  benefits,
-  benefitsAfter,
-  trust,
-}: {
+type ClaimFormProps = {
   intro: ReactNode;
   benefits: ReactNode;
   benefitsAfter: ReactNode;
   trust: ReactNode;
-}) {
-  const search = useBrowserSearch();
+};
+
+export default function ClaimForm(props: ClaimFormProps) {
+  // Empty until the bridge reads the URL, so server HTML and hydration match and the page stays cacheable.
+  // useSearchParams updates on client navigations, including /claim?listing=X -> /claim.
+  const [search, setSearch] = useState('');
+  return (
+    <>
+      <Suspense fallback={null}>
+        <SearchParamBridge onChange={setSearch} />
+      </Suspense>
+      <ClaimFormBody search={search} {...props} />
+    </>
+  );
+}
+
+function ClaimFormBody({
+  search,
+  intro,
+  benefits,
+  benefitsAfter,
+  trust,
+}: ClaimFormProps & { search: string }) {
   const params = new URLSearchParams(search);
   const preselectedSlug = params.get('listing');
   const claimToken = params.get('ct') || '';
@@ -71,21 +88,53 @@ export default function ClaimForm({
   const [preselectMissing, setPreselectMissing] = useState(false);
 
   // Prefill from the signed link once the browser has read it. A later "use a different email" is left alone.
-  if (tokenEmail && tokenEmail !== seenToken) {
-    setSeenToken(tokenEmail);
-    setEmail(tokenEmail);
-    setUseToken(true);
+  // Leaving the signed URL drops one-click mode. An address the visitor typed stays.
+  if (tokenEmail !== seenToken) {
+    if (tokenEmail) {
+      setSeenToken(tokenEmail);
+      setEmail(tokenEmail);
+      setUseToken(true);
+    } else if (seenToken) {
+      const previous = seenToken;
+      setSeenToken('');
+      if (useToken) {
+        setUseToken(false);
+        setEmail((cur) => (cur === previous ? '' : cur));
+      }
+    }
   }
 
+  const urlSlug = useRef<string | null>(null);
   useEffect(() => {
-    if (!preselectedSlug) return;
+    if (!preselectedSlug) {
+      const previous = urlSlug.current;
+      urlSlug.current = null;
+      if (previous) {
+        setSelected((cur) => (cur?.slug === previous ? null : cur));
+        setPreselectMissing(false);
+      }
+      return;
+    }
+
+    const previous = urlSlug.current;
+    urlSlug.current = preselectedSlug;
+    if (previous && previous !== preselectedSlug) {
+      setSelected((cur) => (cur?.slug === previous ? null : cur));
+      setPreselectMissing(false);
+    }
+
     let live = true;
     fetch(`/api/claim-listings?slug=${encodeURIComponent(preselectedSlug)}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!live) return;
-        if (data?.listing) setSelected(data.listing as ListingResult);
-        else setPreselectMissing(true);
+        if (data?.listing) {
+          setSelected(data.listing as ListingResult);
+          setPreselectMissing(false);
+        } else {
+          setSelected((cur) => (cur && cur.slug !== preselectedSlug ? cur : null));
+          setPreselectMissing(true);
+        }
       })
       .catch(() => { if (live) setPreselectMissing(true); });
     return () => { live = false; };
@@ -97,14 +146,14 @@ export default function ClaimForm({
     w.gtag?.('event', name, { page_path: window.location.pathname, ...params });
   }
 
-  // Funnel: one claim_view per page load once the listing is known, split by one-click vs email-link.
-  const viewedRef = useRef(false);
+  // Funnel: one claim_view per listing once it is known, split by one-click vs email-link.
+  const viewedSlug = useRef<string | null>(null);
   useEffect(() => {
-    if (!selected || viewedRef.current) return;
+    if (!selected || viewedSlug.current === selected.slug) return;
     // Counted only once the visitor interacts, so email scanners that render the page don't inflate claim_view.
     return onHuman(() => {
-      if (viewedRef.current) return;
-      viewedRef.current = true;
+      if (viewedSlug.current === selected.slug) return;
+      viewedSlug.current = selected.slug;
       track('claim_view', { listing_slug: selected.slug, method: useToken ? 'one_click' : 'email_link', already_claimed: !!selected.claimed });
     });
   }, [selected, useToken]);
