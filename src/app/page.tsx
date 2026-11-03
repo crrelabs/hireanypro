@@ -241,7 +241,7 @@ export default async function HomePage() {
           <p className="text-orange-100 mb-6 max-w-xl mx-auto">Your business may already be listed. Find it and claim it free: fix your details and get homeowner quote requests.</p>
           <OwnerClaimFinder source="home_claim_finder" />
           <p className="text-sm text-orange-100 mt-4">
-            Free to claim, no card needed. <Link href="/pricing?utm_source=home_claim_finder&utm_medium=web" className="underline font-medium text-white">See Pro and Featured plans</Link>
+            Free to claim, no card needed. <Link href="/pricing?src=home_claim_finder" className="underline font-medium text-white">See Pro and Featured plans</Link>
           </p>
         </div>
       </section>

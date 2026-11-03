@@ -22,7 +22,7 @@ function useEmailArrival() {
 }
 
 function claimHref(slug: string, ct: string, source: string) {
-  return `/claim?listing=${encodeURIComponent(slug)}&utm_source=${source}&utm_medium=web${ct ? `&ct=${encodeURIComponent(ct)}` : ''}`;
+  return `/claim?listing=${encodeURIComponent(slug)}&src=${source}${ct ? `&ct=${encodeURIComponent(ct)}` : ''}`;
 }
 
 function track(name: string, params: Record<string, unknown>) {
@@ -98,7 +98,7 @@ export function OwnerClaimBanner({ slug, name, listingId }: { slug: string; name
         <p className="text-sm text-gray-700 mb-3">You&apos;re signed in. Add your phone, hours, services and a real description so homeowners pick you.</p>
         <div className="flex flex-col sm:flex-row gap-3">
           <Link href={listingId ? `/dashboard/edit/${listingId}?src=claim_success` : '/dashboard'} className="text-center bg-blue-800 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-lg">Finish my listing (2 min)</Link>
-          <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(listingId || slug)}&utm_source=claim_success&utm_medium=web&utm_campaign=listing_one_tap`}
+          <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(listingId || slug)}&src=claim_success&cmp=listing_one_tap`}
             className="text-center border-2 border-orange-500 text-orange-700 hover:bg-orange-100 font-semibold px-5 py-2.5 rounded-lg">Optional: rank above free listings with Pro ($9/mo)</Link>
         </div>
       </div>

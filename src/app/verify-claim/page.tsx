@@ -83,7 +83,7 @@ function VerifyClaimContent() {
                 <li>Your phone, email and website shown on your listing</li>
                 <li>Ranked above free listings in your category and city, plus a Verified badge</li>
               </ul>
-              <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(listingId)}&utm_source=verify_claim&utm_medium=web&utm_campaign=post_claim`}
+              <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(listingId)}&src=verify_claim&cmp=post_claim`}
                 className="block text-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors">
                 Upgrade to Pro: $9/month
               </Link>

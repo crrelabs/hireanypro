@@ -92,7 +92,7 @@ export function CityFaq(props: CityCopy) {
           <h2 className="text-lg font-bold text-gray-900">Own a {cat} business in {props.cityName}?</h2>
           <p className="text-gray-700 text-sm">Your business may already be listed here. Claim it free to fix your details and receive quote requests from {props.cityName} homeowners.</p>
         </div>
-        <Link href={`/claim?utm_source=city_page&utm_medium=web&utm_campaign=${props.categorySlug}-${props.citySlug}`} className="shrink-0 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 py-3 rounded-lg text-sm text-center">
+        <Link href={`/claim?src=city_page&cmp=${props.categorySlug}-${props.citySlug}`} className="shrink-0 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 py-3 rounded-lg text-sm text-center">
           Claim Your Free Listing
         </Link>
       </section>
@@ -103,11 +103,11 @@ export function CityFaq(props: CityCopy) {
 /**
  * Shown on indexable city pages that have no Featured pro yet: tells owners the top spot is open and what it costs.
  * Featured listings (listings.featured, set by the Stripe webhook) sort first on this page. Clicks count as
- * pricing_click / claim_click (FunnelTracker) with utm_source=city_top_spot.
+ * pricing_click / claim_click (FunnelTracker) with src=city_top_spot (internal links use src=, never utm_*, so GA keeps the real channel).
  */
 export function CityTopSpot({ categoryName, categorySlug, cityName, citySlug, count }: { categoryName: string; categorySlug: string; cityName: string; citySlug: string; count: number }) {
   const cat = lowerCategory(categoryName);
-  const utm = `utm_source=city_top_spot&utm_medium=web&utm_campaign=${categorySlug}-${citySlug}`;
+  const track = `src=city_top_spot&cmp=${categorySlug}-${citySlug}`;
   return (
     <aside className="mb-6 rounded-xl border-2 border-dashed border-orange-300 bg-white p-4 flex flex-col sm:flex-row sm:items-center gap-3" aria-label="Featured spot available">
       <div className="flex-1 text-sm text-gray-700">
@@ -115,8 +115,8 @@ export function CityTopSpot({ categoryName, categorySlug, cityName, citySlug, co
         <p>Featured pros are listed first on this page, above all {count.toLocaleString('en-US')} {prosLabel(cat)} here, with a highlighted card and badge. $49.99/month, cancel anytime.</p>
       </div>
       <div className="flex gap-2 shrink-0">
-        <a href={`/pricing?plan=featured&${utm}`} className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-lg text-sm text-center">Get the top spot</a>
-        <a href={`/claim?${utm}`} className="border border-gray-300 hover:bg-gray-50 text-gray-800 font-medium px-4 py-2 rounded-lg text-sm text-center">Claim free instead</a>
+        <a href={`/pricing?plan=featured&${track}`} className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-lg text-sm text-center">Get the top spot</a>
+        <a href={`/claim?${track}`} className="border border-gray-300 hover:bg-gray-50 text-gray-800 font-medium px-4 py-2 rounded-lg text-sm text-center">Claim free instead</a>
       </div>
     </aside>
   );

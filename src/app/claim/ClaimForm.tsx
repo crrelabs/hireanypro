@@ -205,7 +205,7 @@ export default function ClaimForm({
               <li>Your phone, email and website shown on your listing</li>
               <li>Ranked above free listings, plus a Verified badge</li>
             </ul>
-            <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(claimedListingId)}&utm_source=claim_success&utm_medium=web&utm_campaign=post_claim`}
+            <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(claimedListingId)}&src=claim_success&cmp=post_claim`}
               className="block text-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg">Upgrade to Pro: $9/month</Link>
             <p className="text-xs text-gray-500 text-center mt-2">Cancel anytime. Your free listing stays free if you skip this.</p>
           </div>

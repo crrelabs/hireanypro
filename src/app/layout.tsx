@@ -64,7 +64,10 @@ export default function RootLayout({
           {`window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', '${GA_ID}');`}
+          var hapQ = new URLSearchParams(window.location.search), hapSrc = hapQ.get('src');
+          // Internal links carry ?src= (never utm_*), so the session keeps its real channel (email, organic, AI);
+          // the internal entry point is sent as the event-scoped "source" dimension instead.
+          gtag('config', '${GA_ID}', hapSrc ? { source: (hapSrc + (hapQ.get('cmp') ? ':' + hapQ.get('cmp') : '')).slice(0, 100) } : {});`}
         </Script>
       </head>
       <body className={`${inter.className} bg-gray-50 text-gray-900 antialiased`}>

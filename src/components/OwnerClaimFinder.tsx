@@ -57,7 +57,7 @@ export default function OwnerClaimFinder({ source }: { source: string }) {
           {hits.map((h) => (
             <li key={h.id}>
               <a
-                href={`/claim?listing=${encodeURIComponent(h.slug)}&utm_source=${encodeURIComponent(source)}&utm_medium=web&utm_campaign=owner_finder`}
+                href={`/claim?listing=${encodeURIComponent(h.slug)}&src=${encodeURIComponent(source)}&cmp=owner_finder`}
                 onClick={() => pick(h)}
                 rel="nofollow"
                 className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-orange-50"
