@@ -1,3 +1,4 @@
+import { jsonLdHtml } from '@/lib/json-ld';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -73,7 +74,7 @@ export default function LicenseGuidePage() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }} />
       <article className="max-w-4xl mx-auto px-4 py-8">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Check a Florida contractor license' }]} />
         <h1 className="text-3xl font-bold text-gray-900 mb-3">How to check a contractor license in Florida</h1>

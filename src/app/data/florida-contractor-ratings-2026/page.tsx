@@ -1,3 +1,4 @@
+import { jsonLdHtml } from '@/lib/json-ld';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -41,7 +42,7 @@ export default function FloridaRatingsReport() {
   const td = 'px-3 py-2 border-b border-gray-100';
   return (
     <div className="max-w-5xl mx-auto px-4 py-12 text-gray-700 leading-relaxed">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }} />
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Data' }, { label: 'Florida contractor ratings 2026' }]} />
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Florida Contractor Ratings by City and Category (2026)</h1>
       <p className="text-sm text-gray-500 mb-6">Data as of {asOf} · {fmt(o.listings)} Florida businesses · 22 service categories · {fmt(report.countyCount)} counties</p>

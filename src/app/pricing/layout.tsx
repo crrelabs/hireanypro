@@ -1,3 +1,4 @@
+import { jsonLdHtml } from '@/lib/json-ld';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { faqPageJsonLd } from '@/lib/directory-content';
@@ -41,7 +42,7 @@ export default function PricingLayout({ children }: { children: React.ReactNode 
   return (
     <>
       {children}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageJsonLd(faqs)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(faqPageJsonLd(faqs)) }} />
       <section className="max-w-3xl mx-auto px-4 pb-16" aria-labelledby="pricing-faq">
         <h2 id="pricing-faq" className="text-2xl font-bold text-gray-900 mb-6 text-center">Questions owners ask</h2>
         <div className="space-y-3">

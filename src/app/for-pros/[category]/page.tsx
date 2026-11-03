@@ -1,3 +1,4 @@
+import { jsonLdHtml } from '@/lib/json-ld';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -30,7 +31,7 @@ export default async function ForProsCategoryPage({ params }: Props) {
   const faqs = prosFaqs(s);
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageJsonLd(faqs)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(faqPageJsonLd(faqs)) }} />
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'For Pros', href: '/for-pros' }, { label: s.name }]} />
       <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">Get found by Florida homeowners: list your {s.lc} business free</h1>
       <p className="text-lg text-gray-600 mb-8">
