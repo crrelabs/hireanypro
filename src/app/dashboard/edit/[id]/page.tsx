@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import type { Category } from '@/lib/supabase';
+import { isAutomatedBrowser } from '@/lib/track';
 
 const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
 
@@ -98,6 +99,12 @@ function EditForm() {
         setMessage({ type: 'error', text: data.error || 'Failed to save.' });
       } else {
         setMessage({ type: 'success', text: 'Listing updated successfully!' });
+        // Owner-onboarding metric: saves, and which entry point (claim_success, dashboard_checklist) brought them here.
+        if (!isAutomatedBrowser()) {
+          const w = window as unknown as { gtag?: (...a: unknown[]) => void };
+          const src = new URLSearchParams(window.location.search).get('src') || 'direct';
+          w.gtag?.('event', 'listing_saved', { source: src, has_listing: true, form: description.trim().length >= 120 ? 'description_ok' : 'description_short' });
+        }
       }
     } catch {
       setMessage({ type: 'error', text: 'Network error. Please try again.' });

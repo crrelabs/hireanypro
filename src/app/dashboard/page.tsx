@@ -16,6 +16,13 @@ type DashboardData = {
     review_count: number;
     smsPhone?: string | null;
     views30?: number;
+    city?: string | null;
+    categoryName?: string | null;
+    strength?: number;
+    checklist?: Array<{ key: string; label: string; done: boolean; why: string }>;
+    cityRank?: number | null;
+    cityTotal?: number | null;
+    proRank?: number | null;
   }>;
   inquiries: Array<{
     id: string;
@@ -200,6 +207,35 @@ function DashboardPage() {
                   <div className="text-sm text-gray-700 mt-2 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
                     {l.views30} people looked at your listing this month, but free listings hide your phone and website.{' '}
                     <Link href={`/pricing?plan=pro&listing=${l.id}&utm_source=dashboard&utm_medium=web&utm_campaign=views_nudge`} className="text-blue-800 font-semibold hover:underline">Show them with Pro ($9/mo)</Link>
+                  </div>
+                )}
+                {typeof l.strength === 'number' && l.checklist && (
+                  <div className="mt-3 rounded-lg border border-gray-200 bg-gray-50 px-3 py-3" data-testid="listing-strength">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-semibold text-gray-900">Listing strength: {l.strength}%</span>
+                      {l.strength < 100 && (
+                        <Link href={`/dashboard/edit/${l.id}?src=dashboard_checklist`} className="text-blue-800 font-semibold hover:underline">Finish it (2 min) →</Link>
+                      )}
+                    </div>
+                    <div className="mt-2 h-2 w-full rounded-full bg-gray-200" aria-hidden="true">
+                      <div className={`h-2 rounded-full ${l.strength >= 80 ? 'bg-green-600' : l.strength >= 50 ? 'bg-amber-500' : 'bg-orange-500'}`} style={{ width: `${Math.max(5, l.strength)}%` }} />
+                    </div>
+                    {l.strength < 100 && (
+                      <ul className="mt-2 space-y-1 text-sm">
+                        {l.checklist.filter((c) => !c.done).map((c) => (
+                          <li key={c.key} className="text-gray-700">
+                            <Link href={`/dashboard/edit/${l.id}?src=dashboard_checklist`} className="hover:underline">☐ {c.label}</Link>
+                            <span className="text-gray-500"> · {c.why}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {l.tier === 'free' && l.cityRank && l.cityTotal && l.proRank && l.city && l.categoryName && l.cityRank > l.proRank && (
+                      <p className="mt-3 text-sm text-gray-700">
+                        You are <strong>#{l.cityRank} of {l.cityTotal}</strong> on the {l.categoryName} page for {l.city}. Pro listings are shown above every free listing, so Pro would move you to <strong>#{l.proRank}</strong>.{' '}
+                        <Link href={`/pricing?plan=pro&listing=${l.id}&src=dashboard_rank`} className="text-blue-800 font-semibold hover:underline">Move up with Pro ($9/mo)</Link>
+                      </p>
+                    )}
                   </div>
                 )}
                 <SmsToggle listingId={l.id} initialPhone={l.smsPhone || null} />

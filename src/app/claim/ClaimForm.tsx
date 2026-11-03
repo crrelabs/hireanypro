@@ -191,9 +191,10 @@ export default function ClaimForm({
       <div className="max-w-lg mx-auto py-20 px-4 text-center">
         <div className="text-6xl mb-4">🎉</div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Listing Claimed!</h1>
-        <p className="text-gray-600 mb-6">{selected?.name} is now yours. You&apos;re signed in, so you can update your details right away.</p>
-        <Link href="/dashboard" className="inline-block bg-blue-800 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium">
-          Go to Dashboard →
+        <p className="text-gray-600 mb-4">{selected?.name} is now yours. You&apos;re signed in, so you can update your details right away.</p>
+        <p className="text-sm text-gray-700 mb-6"><strong>Next step (2 minutes):</strong> add a description in your own words, your hours and your website. Homeowners compare pros by what they read first.</p>
+        <Link href={claimedListingId ? `/dashboard/edit/${claimedListingId}?src=claim_success` : '/dashboard'} className="inline-block bg-blue-800 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium">
+          Finish my listing →
         </Link>
         {claimedListingId && (
           <div className="mt-10 text-left bg-white border-2 border-blue-800 rounded-xl p-6">
