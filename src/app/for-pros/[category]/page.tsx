@@ -74,17 +74,17 @@ export default async function ForProsCategoryPage({ params }: Props) {
         <div className="bg-white border border-gray-200 rounded-xl p-5">
           <p className="font-bold text-gray-900">Free · $0</p>
           <p className="text-sm text-gray-600 mt-1">Your listing in search, city and category pages. Edit your details. Quote request alerts by email.</p>
-          <Link href={`/claim?utm_source=for_pros&utm_medium=web&utm_campaign=${s.slug}`} className="inline-block mt-3 text-blue-800 font-semibold hover:underline">Claim free →</Link>
+          <Link href={`/claim?src=for_pros&cmp=${s.slug}`} className="inline-block mt-3 text-blue-800 font-semibold hover:underline">Claim free →</Link>
         </div>
         <div className="bg-white border-2 border-blue-800 rounded-xl p-5">
           <p className="font-bold text-gray-900">Pro · $9/month</p>
           <p className="text-sm text-gray-600 mt-1">Phone, email and website shown, ranked above free listings, Verified badge, full customer contact details on every request.</p>
-          <Link href={`/pricing?plan=pro&utm_source=for_pros&utm_medium=web&utm_campaign=${s.slug}`} className="inline-block mt-3 text-blue-800 font-semibold hover:underline">See Pro →</Link>
+          <Link href={`/pricing?plan=pro&src=for_pros&cmp=${s.slug}`} className="inline-block mt-3 text-blue-800 font-semibold hover:underline">See Pro →</Link>
         </div>
         <div className="bg-white border-2 border-orange-400 rounded-xl p-5">
           <p className="font-bold text-gray-900">Featured · $49.99/month</p>
           <p className="text-sm text-gray-600 mt-1">Everything in Pro, plus the top spot on your city and category pages, a highlighted card and the homepage.</p>
-          <Link href={`/pricing?plan=featured&utm_source=for_pros&utm_medium=web&utm_campaign=${s.slug}`} className="inline-block mt-3 text-orange-600 font-semibold hover:underline">See Featured →</Link>
+          <Link href={`/pricing?plan=featured&src=for_pros&cmp=${s.slug}`} className="inline-block mt-3 text-orange-600 font-semibold hover:underline">See Featured →</Link>
         </div>
       </div>
       <p className="text-sm text-gray-500 mb-10">Paid plans are month to month. Cancel anytime; your free listing stays free.</p>

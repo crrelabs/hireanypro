@@ -56,7 +56,7 @@ export default function PricingLayout({ children }: { children: React.ReactNode 
           ))}
         </div>
         <p className="text-center text-sm text-gray-600 mt-8">
-          Not sure yet? <Link href="/claim?utm_source=pricing_faq&utm_medium=web" className="text-blue-800 font-medium hover:underline">Claim your free listing first</Link> and upgrade any time.
+          Not sure yet? <Link href="/claim?src=pricing_faq" className="text-blue-800 font-medium hover:underline">Claim your free listing first</Link> and upgrade any time.
         </p>
       </section>
     </>

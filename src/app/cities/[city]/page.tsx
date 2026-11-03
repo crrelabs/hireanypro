@@ -321,7 +321,7 @@ export default async function CityHubPage({ params }: Props) {
           )}
           <p className="text-gray-700">
             Own a business in {hub.name}?{' '}
-            <Link href="/for-pros?utm_source=city_hub&utm_medium=web" className="text-blue-800 font-semibold hover:underline">Find your listing and claim it free</Link>.
+            <Link href="/for-pros?src=city_hub" className="text-blue-800 font-semibold hover:underline">Find your listing and claim it free</Link>.
           </p>
         </section>
       </div>
