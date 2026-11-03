@@ -68,8 +68,11 @@ function VerifyClaimContent() {
                     className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 py-2 rounded-lg">Email me a sign-in link</button>}
             </p>
           )}
-          <Link href="/dashboard" className="inline-block bg-blue-800 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium transition-colors">
-            Go to Dashboard →
+          {!already && listingId && (
+            <p className="text-sm text-gray-700 mb-6"><strong>Next step (2 minutes):</strong> add a description in your own words, your hours and your website. Homeowners compare pros by what they read first.</p>
+          )}
+          <Link href={!already && listingId ? `/dashboard/edit/${listingId}?src=claim_success` : '/dashboard'} className="inline-block bg-blue-800 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium transition-colors">
+            {!already && listingId ? 'Finish my listing →' : 'Go to Dashboard →'}
           </Link>
           {listingId && (
             <div className="mt-10 text-left bg-white border-2 border-blue-800 rounded-xl p-6">
