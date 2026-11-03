@@ -1,3 +1,4 @@
+import { jsonLdHtml } from '@/lib/json-ld';
 import Link from 'next/link';
 import {
   buildCityFaqs,
@@ -73,7 +74,7 @@ export function CityFaq(props: CityCopy) {
   const cat = props.categoryName.split(' ').map((w) => (w.length > 1 && w === w.toUpperCase() ? w : w.toLowerCase())).join(' ');
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(faqJsonLd) }} />
       <section className="mt-16 max-w-4xl">
         <h2 className="text-xl font-bold text-gray-900 mb-4">{props.categoryName} in {props.cityName}: Frequently Asked Questions</h2>
         <div className="divide-y divide-gray-200 border border-gray-200 rounded-xl bg-white">

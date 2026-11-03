@@ -1,3 +1,4 @@
+import { jsonLdHtml } from '@/lib/json-ld';
 import { getBlogPost, getRelatedPosts, formatCategory } from '@/lib/blog';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -61,7 +62,7 @@ export default async function BlogPostPage({ params }: Props) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }}
       />
 
       {/* Breadcrumbs */}

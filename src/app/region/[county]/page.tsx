@@ -1,3 +1,4 @@
+import { jsonLdHtml } from '@/lib/json-ld';
 import { cache } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -211,7 +212,7 @@ export default async function RegionPage({ params }: Props) {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }} />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: `${countyName} County` }]} />
 

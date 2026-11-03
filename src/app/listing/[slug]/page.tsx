@@ -1,3 +1,4 @@
+import { jsonLdHtml } from '@/lib/json-ld';
 import { supabase } from '@/lib/supabase';
 import { notFound, permanentRedirect } from 'next/navigation';
 import listingRedirects from '@/data/listing-redirects.json';
@@ -255,7 +256,7 @@ export default async function ListingPage({ params }: Props) {
   return (
     <>
       {jsonLdItems.map((item, i) => (
-        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }} />
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(item) }} />
       ))}
 
       {!slug.startsWith('zz-hap-test') && <ListingViewBeacon listingId={listing.id} />}

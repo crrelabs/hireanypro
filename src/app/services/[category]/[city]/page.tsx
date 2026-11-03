@@ -1,3 +1,4 @@
+import { jsonLdHtml } from '@/lib/json-ld';
 import { notFound, permanentRedirect } from 'next/navigation';
 import CategoryFilters from '@/components/CategoryFilters';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -212,9 +213,9 @@ export default async function CityLandingPage({ params }: Props) {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
-      {rankedJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(rankedJsonLd) }} />}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(itemListJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbJsonLd) }} />
+      {rankedJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(rankedJsonLd) }} />}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Breadcrumbs items={[

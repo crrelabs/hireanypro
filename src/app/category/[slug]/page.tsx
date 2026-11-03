@@ -1,3 +1,4 @@
+import { jsonLdHtml } from '@/lib/json-ld';
 import { notFound } from 'next/navigation';
 import { GUIDE_PATH, licenseRuleFor } from '@/lib/fl-licensing';
 import CategoryFilters from '@/components/CategoryFilters';
@@ -132,8 +133,8 @@ export default async function CategoryPage({ params }: Props) {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(itemListJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(breadcrumbJsonLd) }} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Breadcrumbs items={[
