@@ -7,6 +7,8 @@ import { getHubCity, hubHref } from '@/lib/city-hubs';
 import Image from 'next/image';
 import { CityIntro, CityStatsBlock, CityFaq, CityTopSpot } from '@/components/CityInsights';
 import CityQuoteForm from '@/components/CityQuoteForm';
+import CityRanking from '@/components/CityRanking';
+import { rankCityPros } from '@/lib/city-ranking';
 import StickyQuoteBar from '@/components/StickyQuoteBar';
 import { getCountyData, primaryCitiesInCounty, countySlug, citySlug, stateName } from '@/lib/geo';
 import {
@@ -181,6 +183,23 @@ export default async function CityLandingPage({ params }: Props) {
     })),
   };
 
+  // Answer-first ranked table (review-weighted, never boosted by paid plans). Only on indexable pages.
+  const ranked = shouldIndexCityPage(group.count) ? rankCityPros(rows) : [];
+  const rankLabel = prosLabel(lowerCategory(category.name));
+  const rankedJsonLd = ranked.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `Top ${ranked.length} ${rankLabel} in ${cityName}, ${group.state}, ranked by review-weighted Google rating`,
+    itemListOrder: 'https://schema.org/ItemListOrderDescending',
+    numberOfItems: ranked.length,
+    itemListElement: ranked.map((r) => ({
+      '@type': 'ListItem',
+      position: r.rank,
+      url: `https://hireanypro.com/listing/${r.slug}`,
+      name: r.name,
+    })),
+  } : null;
+
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -195,6 +214,7 @@ export default async function CityLandingPage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      {rankedJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(rankedJsonLd) }} />}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Breadcrumbs items={[
@@ -224,6 +244,8 @@ export default async function CityLandingPage({ params }: Props) {
         {shouldIndexCityPage(group.count) && !rows.some((r) => r.featured || r.tier === 'featured') && (
           <CityTopSpot categoryName={category.name} categorySlug={category.slug} cityName={cityName} citySlug={cSlug} count={group.count} />
         )}
+
+        <CityRanking ranked={ranked} label={rankLabel} cityName={cityName} stateCode={group.state} totalReviews={stats.totalReviews} count={group.count} />
 
         <CategoryFilters
           listings={listings}
