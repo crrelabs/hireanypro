@@ -6,6 +6,7 @@
  * "auto_<ms>_…") are only accepted while Turnstile is not usable on the server (secret
  * missing, or Cloudflare reports the secret invalid), so a config problem degrades to the
  * previous timing check instead of breaking every form. That fallback is logged loudly.
+ * Timing tokens are also accepted until TURNSTILE_ENFORCE=1 (widget fallback when the site key fails).
  */
 const SITEVERIFY = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 const TIMING = /^(human|auto)_(\d+)_[a-z0-9]*$/;
@@ -28,6 +29,11 @@ export async function verifyTurnstile(token: string, ip?: string): Promise<boole
 
   const secret = (process.env.TURNSTILE_SECRET_KEY || '').trim();
   const isTiming = TIMING.test(token);
+
+  // Real Turnstile tokens are only required once TURNSTILE_ENFORCE=1 (set it after the site key
+  // and secret are confirmed valid for hireanypro.com). Until then the widget falls back to timing tokens.
+  const enforce = process.env.TURNSTILE_ENFORCE === '1';
+  if (isTiming && !enforce) return timingCheck(token);
 
   if (!secret || secretBroken) {
     console.error('Turnstile not enforced: TURNSTILE_SECRET_KEY missing or invalid; using timing fallback');
