@@ -99,7 +99,6 @@ export default function ClaimForm({
 
   // Funnel: one claim_view per page load once the listing is known, split by one-click vs email-link.
   const viewedRef = useRef(false);
-  const mountedAt = useRef(Date.now());
   useEffect(() => {
     if (!selected || viewedRef.current) return;
     // Counted only once the visitor interacts, so email scanners that render the page don't inflate claim_view.
@@ -139,8 +138,7 @@ export default function ClaimForm({
           listingId: selected.id,
           email,
           phone,
-          // The invisible check sets its token on the first pointerdown; a very quick first click can beat that state update.
-          turnstileToken: turnstileToken || `human_${Date.now() - mountedAt.current}_${Math.random().toString(36).slice(2)}`,
+          turnstileToken,
           claimToken: useToken ? claimToken : undefined,
           emailOptIn,
           smsOptIn,
