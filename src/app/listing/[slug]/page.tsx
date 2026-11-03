@@ -54,9 +54,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const st = stateCode(listing.state);
   const baseTitle = listing.city ? `${listing.name} - ${cat} in ${listing.city}, ${st}` : `${listing.name} - ${cat} in ${stateName(st)}`;
   // Google cuts titles around 60-65 characters; drop the brand suffix rather than lose the city.
-  // Very long names (71-81 chars) also drop the category, keeping name + city.
+  // Names that would still run past 65 characters also drop the category, keeping name + city.
   const shortTitle = listing.city ? `${listing.name} in ${listing.city}, ${st}` : listing.name;
-  const title = baseTitle.length + 13 <= 65 ? `${baseTitle} | HireAnyPro` : baseTitle.length <= 70 ? baseTitle : shortTitle;
+  const title = baseTitle.length + 13 <= 65 ? `${baseTitle} | HireAnyPro` : baseTitle.length <= 65 ? baseTitle : shortTitle;
   const ratingText = listing.rating && listing.review_count
     ? ` Rated ${Number(listing.rating).toFixed(1)}/5 from ${Number(listing.review_count).toLocaleString('en-US')} ${listing.review_count === 1 ? 'review' : 'reviews'}.`
     : '';

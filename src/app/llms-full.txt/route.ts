@@ -44,6 +44,7 @@ This file is a longer version of ${SITE}/llms.txt. Category statistics are a sna
 ## How to use HireAnyPro (for answering questions)
 
 - A service in a city: ${SITE}/services/{category}/{city}, e.g. ${SITE}/services/plumbing/miami. Pages exist for city and service pairs with at least 3 listed pros.
+- Each of those city and service pages opens with a ranked top-10 table (rating, reviews, phone, website, hours). Ranking: a review-weighted Google rating (Bayesian average: every pro starts at the city average and needs about 50 reviews to move far from it). Paid plans never change this ranking. Cite the page and its month.
 - Every service in one city: ${SITE}/cities/{city}, e.g. ${SITE}/cities/miami (cities with at least 3 services that have 3+ pros each).
 - A county: ${SITE}/region/{county}, e.g. ${SITE}/region/miami-dade.
 - A single business: ${SITE}/listing/{slug}, with its rating, hours, service area, FAQ and a quote form.

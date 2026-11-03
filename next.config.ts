@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
       { source: '/category', destination: '/categories', permanent: true },
       { source: '/services', destination: '/categories', permanent: true },
       { source: '/region', destination: '/categories', permanent: true },
+      // Common guessed URLs that 404'd in the Nov 2 request logs.
+      { source: '/about-us', destination: '/about', permanent: true },
+      { source: '/contact-us', destination: '/contact', permanent: true },
+      { source: '/data', destination: '/data/florida-contractor-ratings-2026', permanent: true },
+      { source: '/guides', destination: '/guides/florida-contractor-license-check', permanent: false },
       { source: '/services/:category', destination: '/category/:category', permanent: true },
       {
         // Deleted duplicate listing (2026-10-24)

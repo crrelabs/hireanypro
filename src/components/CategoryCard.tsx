@@ -10,7 +10,7 @@ export default function CategoryCard({ category, count }: { category: Category; 
       <span className="text-4xl mb-3 group-hover:scale-110 transition-transform">{category.icon}</span>
       <h3 className="font-semibold text-gray-900 text-sm text-center">{category.name}</h3>
       {count !== undefined && (
-        <p className="text-xs text-gray-400 mt-1">{count} pros</p>
+        <p className="text-xs text-gray-400 mt-1">{count.toLocaleString('en-US')} {count === 1 ? 'pro' : 'pros'}</p>
       )}
     </Link>
   );
