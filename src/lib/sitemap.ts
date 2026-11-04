@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import tradeReport from '@/data/florida-ratings-2026-by-category.json';
+import { COST_GUIDES, COSTS_UPDATED, costPath } from '@/lib/cost-guides';
 import { getAllBlogSlugs } from '@/lib/blog';
 import { cityPageSlug, countySlug } from '@/lib/geo';
 import { shouldIndexCityPage } from '@/lib/directory-content';
@@ -196,6 +197,8 @@ export async function getPagesSitemapUrls(): Promise<SitemapUrl[]> {
     { loc: `${BASE_URL}/data/florida-contractor-ratings-2026`, lastmod: '2026-11-01', changefreq: 'monthly', priority: 0.6 },
     { loc: `${BASE_URL}/guides/florida-contractor-license-check`, lastmod: '2026-11-02', changefreq: 'monthly', priority: 0.7 },
     { loc: `${BASE_URL}/cities`, lastmod: '2026-11-02', changefreq: 'weekly', priority: 0.7 },
+    { loc: `${BASE_URL}/costs`, lastmod: COSTS_UPDATED, changefreq: 'monthly', priority: 0.7 },
+    ...COST_GUIDES.map((g) => ({ loc: `${BASE_URL}${costPath(g.slug)}`, lastmod: COSTS_UPDATED, changefreq: 'monthly' as const, priority: 0.7 })),
     { loc: `${BASE_URL}/claim`, changefreq: 'monthly', priority: 0.5 },
     { loc: `${BASE_URL}/for-pros`, lastmod: '2026-10-30', changefreq: 'monthly', priority: 0.6 },
   ];

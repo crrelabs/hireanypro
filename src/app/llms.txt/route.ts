@@ -37,6 +37,7 @@ Key facts:
 - [Blog](https://hireanypro.com/blog)
 - [Florida contractor ratings 2026 (data report)](https://hireanypro.com/data/florida-contractor-ratings-2026)
 - [How to check a contractor license in Florida (guide, by trade)](https://hireanypro.com/guides/florida-contractor-license-check)
+- [What home services cost in Florida (2026 price guides for 22 trades)](https://hireanypro.com/costs)
 - [Full version of this file, with per-service and per-city facts](https://hireanypro.com/llms-full.txt)
 
 ## Service categories
