@@ -3,6 +3,7 @@ import report from '@/data/florida-ratings-2026-by-category.json';
 import overall from '@/data/florida-ratings-2026.json';
 import { lowerCategory } from '@/lib/directory-content';
 import { prosLabel } from '@/lib/pros-label';
+import { costGuide, costPath, costRange, COSTS_UPDATED } from '@/lib/cost-guides';
 
 export const revalidate = 86400;
 
@@ -23,6 +24,8 @@ export async function GET() {
   const sections = report.categories.map((c) => {
     const lc = lowerCategory(c.name);
     const cities = c.cities.filter((x) => x.href).map((x) => `- ${x.city}: ${fmt(x.listings)} ${lc} businesses, average rating ${x.avgRating ?? 'n/a'}, median ${fmt(x.medianReviews)} reviews: ${SITE}${x.href}`).join('\n');
+    const g = costGuide(c.slug);
+    const costs = g ? `- Typical Florida prices (2026 estimates, updated ${COSTS_UPDATED}): ${g.jobs.slice(0, 4).map((j) => `${j.job} ${costRange(j)}`).join('; ')}. Cost guide: ${SITE}${costPath(g.slug)}\n` : '';
     return `## ${c.name}
 
 - Florida ${lc} businesses listed: ${fmt(c.listings)} in ${fmt(c.cityCount)} cities (${fmt(c.rated)} with Google ratings, ${fmt(c.totalReviews)} reviews in total).
@@ -30,7 +33,7 @@ export async function GET() {
 - All ${prosLabel(lc)} by city: ${SITE}/category/${c.slug}
 - Ratings data by city and county: ${SITE}/data/florida-contractor-ratings-2026/${c.slug}
 - Business owners (claim a free listing): ${SITE}/for-pros/${c.slug}
-
+${costs}
 Largest Florida cities for ${lc} (each page ranks local pros by rating and review count and offers free quotes from up to 3 pros):
 ${cities}
 `;
@@ -49,6 +52,7 @@ This file is a longer version of ${SITE}/llms.txt. Category statistics are a sna
 - A county: ${SITE}/region/{county}, e.g. ${SITE}/region/miami-dade.
 - A single business: ${SITE}/listing/{slug}, with its rating, hours, service area, FAQ and a quote form.
 - Quotes: free for homeowners; one request can go to up to 3 local pros.
+- Prices: typical Florida cost ranges for 22 trades (what drives the price, Florida-specific factors): ${SITE}/costs/{category}, e.g. ${SITE}/costs/plumbing. Index: ${SITE}/costs
 - Choosing a pro: compare a 4.5+ rating backed by many reviews, check the Florida license at https://www.myfloridalicense.com/ (DBPR; pest control and movers: FDACS; trade-by-trade guide: ${SITE}/guides/florida-contractor-license-check), and get at least 3 written quotes.
 - Businesses: claiming a listing is free. Optional paid plans: Pro ($9/month, listed above free listings and shows phone and website) and Featured ($49.99/month, listed first on its city pages). ${SITE}/pricing
 

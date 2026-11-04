@@ -11,6 +11,7 @@ import CityQuoteForm from '@/components/CityQuoteForm';
 import CityRanking from '@/components/CityRanking';
 import { rankCityPros } from '@/lib/city-ranking';
 import StickyQuoteBar from '@/components/StickyQuoteBar';
+import CostLine from '@/components/CostLine';
 import { getCountyData, primaryCitiesInCounty, countySlug, citySlug, stateName } from '@/lib/geo';
 import {
   toCard,
@@ -238,6 +239,7 @@ export default async function CityLandingPage({ params }: Props) {
 
         <CityIntro {...copy} />
         <CityStatsBlock categoryName={category.name} cityName={cityName} count={group.count} stats={stats} />
+        {group.state === 'FL' && <CostLine categorySlug={category.slug} />}
 
         <CityQuoteForm categorySlug={category.slug} categoryName={category.name} citySlug={cSlug} cityName={cityName} />
         <StickyQuoteBar targetId="get-quotes" form="city_multi_quote" label={`Get up to 3 free quotes in ${cityName}`} />
