@@ -14,9 +14,10 @@ const supabase = createClient(
 export async function POST(req: NextRequest) {
   if (await isRateLimitedDurable(req, 'verify-claim', { perMinute: 10, perHour: 50 })) return tooManyRequests();
   try {
-    const { token } = await req.json();
+    const body = await req.json().catch(() => null);
+    const token = body && typeof body === 'object' ? (body as { token?: unknown }).token : undefined;
 
-    if (!token) {
+    if (typeof token !== 'string' || !token || token.length > 200) {
       return NextResponse.json({ error: 'Invalid verification link' }, { status: 400 });
     }
 
