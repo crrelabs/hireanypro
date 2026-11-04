@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { isRateLimited, getClientIp } from '@/lib/rate-limit';
+import { isRateLimited, getClientIp, isRateLimitedDurable, tooManyRequests } from '@/lib/rate-limit';
 import { sessionEmail, likeExact } from '@/lib/session';
 import { recordSmsOptIn, toE164 } from '@/lib/sms-leads';
 
@@ -11,6 +11,8 @@ export async function POST(req: NextRequest) {
   if (isRateLimited(`dashboard-sms:${getClientIp(req)}`, 10, 60000)) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
+  if (await isRateLimitedDurable(req, 'dashboard/sms', { perMinute: 10, perHour: 50 })) return tooManyRequests();
+
   try {
     const email = sessionEmail(req);
     if (!email) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 });

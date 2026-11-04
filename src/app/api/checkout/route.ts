@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { isRateLimited, getClientIp } from '@/lib/rate-limit';
+import { isRateLimited, getClientIp, isRateLimitedDurable, tooManyRequests } from '@/lib/rate-limit';
 import { sessionEmail, likeExact } from '@/lib/session';
 
 const PRICE_IDS = {
@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
     if (isRateLimited(`checkout:${ip}`, 5)) {
       return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
     }
+    if (await isRateLimitedDurable(req, 'checkout', { perMinute: 10, perHour: 50 })) return tooManyRequests();
 
     const body = await req.json();
     const plan = body.plan;
