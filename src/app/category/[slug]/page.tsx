@@ -7,6 +7,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import QuoteFinder from '@/components/QuoteFinder';
+import CostLine from '@/components/CostLine';
 import { CategorySummary, CategoryCounties, CategoryFaq } from '@/components/CategoryHub';
 import { supabase } from '@/lib/supabase';
 import tradeReport from '@/data/florida-ratings-2026-by-category.json';
@@ -156,6 +157,7 @@ export default async function CategoryPage({ params }: Props) {
         </div>
 
         <CategorySummary {...story} />
+        <CostLine categorySlug={category.slug} />
 
         <QuoteFinder source="category" initialCategory={category.slug} className="mb-10"
           categories={[{ slug: category.slug, name: category.name, icon: category.icon }]}
