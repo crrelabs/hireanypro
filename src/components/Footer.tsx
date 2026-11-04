@@ -39,6 +39,7 @@ export default function Footer() {
               <li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
               <li><Link href="/data/florida-contractor-ratings-2026" className="hover:text-white transition-colors">Florida Ratings Data 2026</Link></li>
               <li><Link href="/guides/florida-contractor-license-check" className="hover:text-white transition-colors">Check a Contractor License</Link></li>
+              <li><Link href="/costs" className="hover:text-white transition-colors">Florida Cost Guides</Link></li>
               <li><Link href="/for-pros" className="hover:text-white transition-colors">For Pros</Link></li>
               <li><Link href="/claim" className="hover:text-white transition-colors">Claim Your Listing</Link></li>
               <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>

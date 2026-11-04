@@ -22,7 +22,7 @@ export default function QuoteFinder({ categories, initialCategory, initialCity, 
   /** Prefill the city box (city hub pages); the visitor only picks a service. */
   initialCity?: string;
   /** Where the finder sits: home | category | search | city_hub. Sent to GA4 as form=<source>_multi_quote. */
-  source: 'home' | 'category' | 'search' | 'city_hub';
+  source: 'home' | 'category' | 'search' | 'city_hub' | 'cost_guide';
   title?: string;
   className?: string;
 }) {
