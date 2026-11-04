@@ -2,6 +2,7 @@ import { jsonLdHtml } from '@/lib/json-ld';
 import type { Metadata } from 'next';
 import { prosLabel } from '@/lib/pros-label';
 import Link from 'next/link';
+import { costGuide, costPath } from '@/lib/cost-guides';
 import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import report from '@/data/florida-ratings-2026-by-category.json';
@@ -146,6 +147,7 @@ export default async function CategoryRatings({ params }: { params: Promise<{ ca
       <div className="flex flex-wrap gap-3 mt-6">
         <Link href={`/category/${c.slug}`} className="bg-blue-800 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-700">Find {prosLabel(lc)} near you</Link>
         <Link href={`/for-pros/${c.slug}`} className="border border-blue-800 text-blue-800 px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-50">Own a {lc} business? List it free</Link>
+        {costGuide(c.slug) && <Link href={costPath(c.slug)} className="border border-blue-800 text-blue-800 px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-50">Typical {lc} prices in Florida</Link>}
       </div>
       <p className="text-sm text-gray-500 mt-6">Other trades: {all.filter((x) => x.slug !== c.slug).map((x, i) => (<span key={x.slug}>{i ? ' · ' : ''}<Link href={`/data/florida-contractor-ratings-2026/${x.slug}`} className="text-blue-800 hover:underline">{x.name}</Link></span>))}</p>
     </div>

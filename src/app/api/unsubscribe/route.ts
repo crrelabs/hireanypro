@@ -14,7 +14,11 @@ const page = (body: string, status = 200) =>
 export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get('t');
   const email = verifyUnsub(token);
-  if (!email) return page('<h2>Invalid unsubscribe link</h2><p>Reply to any of our emails with "unsubscribe" and we will remove you.</p>', 400);
+  if (!email) {
+    // Shape only (never the token): tells truncated scanner fetches apart from a real signing bug.
+    console.warn('unsubscribe: invalid token', JSON.stringify({ len: token?.length ?? 0, dot: token?.includes('.') ?? false, ua: (req.headers.get('user-agent') || '').slice(0, 60) }));
+    return page('<h2>Invalid unsubscribe link</h2><p>Reply to any of our emails with "unsubscribe" and we will remove you.</p>', 400);
+  }
   return page(`<h2>Unsubscribe from HireAnyPro emails</h2><p>Stop all marketing emails to <strong>${esc(email)}</strong>?</p>
 <form method="POST" action="/api/unsubscribe?t=${encodeURIComponent(token!)}"><button type="submit" style="background:#1e40af;color:#fff;border:0;padding:12px 24px;border-radius:6px;font-size:16px;cursor:pointer">Unsubscribe</button></form>`);
 }

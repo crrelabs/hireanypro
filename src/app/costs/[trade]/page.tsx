@@ -20,14 +20,18 @@ export function generateStaticParams() {
 const BASE = 'https://hireanypro.com';
 const fmt = (n: number | null | undefined) => (n == null ? '—' : n.toLocaleString('en-US'));
 const article = (noun: string) => (/^[aeiou]/i.test(noun) && !/^u[^n]/i.test(noun) ? 'an' : 'a');
-const titleFor = (t: string) => `${t} Cost in Florida (2026): Typical Prices`;
+// Google cuts titles near 65 characters; long trade names drop the ": Typical Prices" tail.
+const titleFor = (t: string) => { const full = `${t} Cost in Florida (2026): Typical Prices`; return full.length <= 62 ? full : `${t} Cost in Florida (2026)`; };
 
 export async function generateMetadata({ params }: { params: Promise<{ trade: string }> }): Promise<Metadata> {
   const g = costGuide((await params).trade);
   if (!g) return {};
   const url = `${BASE}${costPath(g.slug)}`;
   const title = titleFor(g.title);
-  const description = clampDescription(`How much does ${article(g.noun)} ${g.noun} cost in Florida? ${g.headline.job}: ${costRange(g.headline)}. Prices for ${g.jobs.length} common jobs, what drives cost, and free quotes.`);
+  const tail = `${g.headline.job}: ${costRange(g.headline)}. Prices for ${g.jobs.length} jobs, cost drivers, free quotes.`;
+  const q = `How much does ${article(g.noun)} ${g.noun} cost in Florida? `;
+  // Keep the full tail inside 160 characters: drop the question first rather than losing the job count.
+  const description = clampDescription(q.length + tail.length <= 160 ? q + tail : `Florida ${g.noun} prices (2026): ${tail}`);
   return {
     title,
     description,
