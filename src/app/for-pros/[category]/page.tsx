@@ -1,5 +1,6 @@
 import { jsonLdHtml } from '@/lib/json-ld';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
+import { tradeAlias } from '@/lib/slug-aliases';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -27,6 +28,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ForProsCategoryPage({ params }: Props) {
   const { category } = await params;
   const s = await getProsCategoryStory(category);
+  if (!s) {
+    const alias = tradeAlias(category);
+    if (alias) permanentRedirect(`/for-pros/${alias}`);
+  }
   if (!s || s.total === 0) notFound();
   const faqs = prosFaqs(s);
   return (

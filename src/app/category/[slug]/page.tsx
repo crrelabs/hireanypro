@@ -1,5 +1,6 @@
 import { jsonLdHtml } from '@/lib/json-ld';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
+import { tradeAlias } from '@/lib/slug-aliases';
 import { GUIDE_PATH, licenseRuleFor } from '@/lib/fl-licensing';
 import CategoryFilters from '@/components/CategoryFilters';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -74,7 +75,11 @@ export default async function CategoryPage({ params }: Props) {
   const { slug } = await params;
 
   const category = await getCategoryBySlug(slug);
-  if (!category) notFound();
+  if (!category) {
+    const alias = tradeAlias(slug);
+    if (alias) permanentRedirect(`/category/${alias}`);
+    notFound();
+  }
 
   const cityGroups = await getCategoryCities(category.id);
   const story = await categoryNarrative(category);
