@@ -2,11 +2,12 @@ import { jsonLdHtml } from '@/lib/json-ld';
 import { cache } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
+import { cityAliasCandidates } from '@/lib/slug-aliases';
 import { supabase } from '@/lib/supabase';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import QuoteFinder from '@/components/QuoteFinder';
-import { getCountyData, countySlug, stateName } from '@/lib/geo';
+import { getCountyData, countySlug, citySlug, stateName } from '@/lib/geo';
 import { getHubCities, getHubCity, hubHref, type HubCity } from '@/lib/city-hubs';
 import { faqPageJsonLd, formatCount, listJoin, lowerCategory, shouldIndexCityPage } from '@/lib/directory-content';
 import { prosLabel } from '@/lib/pros-label';
@@ -128,7 +129,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CityHubPage({ params }: Props) {
   const { city } = await params;
   const data = await loadHub(city);
-  if (!data) notFound();
+  if (!data) {
+    // Guessed or old city URLs: spelling variant of a hub (saint-/st-, -fl, lake-worth -> lake-worth-beach), else the county hub.
+    for (const v of cityAliasCandidates(city)) { const h = await getHubCity(v); if (h) permanentRedirect(hubHref(h.slug)); }
+    const map = await getCountyData().catch(() => null);
+    const county = map ? Object.entries(map.primary).find(([name]) => citySlug(name) === city.replace(/-(fl|florida)$/, ''))?.[1] : null;
+    if (county) permanentRedirect(`/region/${countySlug(county)}`);
+    notFound();
+  }
   const { hub, total, services, topPros, rated, reviews, claimed, avg, county, nearby } = data;
   const st = stateName(hub.state);
   const place = `${hub.name}, ${hub.state}`;

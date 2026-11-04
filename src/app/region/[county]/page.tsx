@@ -3,9 +3,10 @@ import { cache } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getHubSlugs, hubHref } from '@/lib/city-hubs';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
+import { countyAliasCandidates } from '@/lib/slug-aliases';
 import { supabase } from '@/lib/supabase';
-import { getAllCounties, countyFromSlug, citySlug } from '@/lib/geo';
+import { getAllCounties, countyFromSlug, citySlug, countySlug } from '@/lib/geo';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import {
   MIN_INDEXABLE_CITY_LISTINGS,
@@ -147,7 +148,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function RegionPage({ params }: Props) {
   const { county } = await params;
   const data = await loadCounty(county);
-  if (!data) notFound();
+  if (!data) {
+    // /region/st-johns, /region/miami-dade-county -> canonical county slug.
+    const counties = await getAllCounties();
+    for (const v of countyAliasCandidates(county)) { const name = countyFromSlug(v, counties); if (name) permanentRedirect(`/region/${countySlug(name)}`); }
+    notFound();
+  }
   const { countyName, total, cities, categories, topPros, rated, reviews, avgRating } = data;
   const hubSlugs = await getHubSlugs();
 

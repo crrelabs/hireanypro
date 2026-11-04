@@ -12,6 +12,7 @@ import CityRanking from '@/components/CityRanking';
 import { rankCityPros } from '@/lib/city-ranking';
 import StickyQuoteBar from '@/components/StickyQuoteBar';
 import CostLine from '@/components/CostLine';
+import { tradeAlias, cityAliasCandidates } from '@/lib/slug-aliases';
 import { getCountyData, primaryCitiesInCounty, countySlug, citySlug, stateName } from '@/lib/geo';
 import {
   toCard,
@@ -107,7 +108,11 @@ export default async function CityLandingPage({ params }: Props) {
   );
 
   const category = await getCategoryBySlug(catSlug);
-  if (!category) notFound();
+  if (!category) {
+    const alias = tradeAlias(catSlug); // /services/plumbers/miami -> /services/plumbing/miami
+    if (alias) permanentRedirect(`/services/${alias}/${cSlug}`);
+    notFound();
+  }
 
   // Resolve the city from ALL cities in this category (grouped by slug, so spelling variants share one page).
   const cityGroups = await getCategoryCities(category.id);
@@ -116,6 +121,11 @@ export default async function CityLandingPage({ params }: Props) {
     // Near-border GA/AL cities moved from /valdosta to /valdosta-ga on 2026-10-25; send old URLs to the new page.
     const moved = cityGroups.find((g) => g.state !== 'FL' && g.slug === `${cSlug}-${g.state.toLowerCase()}`);
     if (moved) permanentRedirect(`/services/${catSlug}/${moved.slug}`);
+    // Spelling variants (saint-/st-, ft-/fort-, -fl suffix, lake-worth -> lake-worth-beach).
+    const variants = cityAliasCandidates(cSlug);
+    const alt = cityGroups.find((g) => variants.includes(g.slug));
+    if (alt) permanentRedirect(`/services/${catSlug}/${alt.slug}`);
+    for (const v of variants) { const h = await getHubCity(v); if (h) permanentRedirect(hubHref(h.slug)); }
     // No pros of this service in this city. Crawlers hit ~190 of these a day (old links, guessed URLs). Send real
     // places to the closest useful page instead of a 404: the city hub, else the city's county hub.
     const hub = await getHubCity(cSlug);
