@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { isRateLimited, getClientIp } from '@/lib/rate-limit';
+import { isRateLimited, getClientIp, isRateLimitedDurable, tooManyRequests } from '@/lib/rate-limit';
 import { sessionEmail, likeExact } from '@/lib/session';
 import { revalidateListing } from '@/lib/revalidate';
 
@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
     if (isRateLimited(ip, 10)) {
       return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
     }
+    if (await isRateLimitedDurable(req, 'listing/update', { perMinute: 10, perHour: 50 })) return tooManyRequests();
 
     const body = await req.json();
     const email = sessionEmail(req);

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { verifyTurnstile } from '@/lib/turnstile';
-import { isRateLimited, getClientIp } from '@/lib/rate-limit';
+import { isRateLimited, getClientIp, isRateLimitedDurable, tooManyRequests } from '@/lib/rate-limit';
 import { isBot } from '@/lib/honeypot';
 import { sendMail } from '@/lib/mailer';
 import {
@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
     if (isRateLimited(ip, 10)) {
       return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
     }
+    if (await isRateLimitedDurable(req, 'quote', { perMinute: 10, perHour: 50 })) return tooManyRequests();
 
     const body = await req.json();
     const { listingId, turnstileToken, website } = body;

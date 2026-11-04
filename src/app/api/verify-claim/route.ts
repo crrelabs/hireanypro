@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
+import { isRateLimitedDurable, tooManyRequests } from '@/lib/rate-limit';
 import { sendClaimVerification, sendClaimConfirmed } from '@/lib/claim-email';
 import { setSessionCookie } from '@/lib/session';
 import { revalidateListing } from '@/lib/revalidate';
@@ -11,6 +12,7 @@ const supabase = createClient(
 );
 
 export async function POST(req: NextRequest) {
+  if (await isRateLimitedDurable(req, 'verify-claim', { perMinute: 10, perHour: 50 })) return tooManyRequests();
   try {
     const { token } = await req.json();
 
