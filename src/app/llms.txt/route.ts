@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import report from '@/data/florida-ratings-2026-by-category.json';
+import { costGuide, costPath } from '@/lib/cost-guides';
 
 const TRADES = new Set(report.categories.map((c) => c.slug));
 
@@ -13,7 +14,7 @@ export async function GET() {
   ]);
   if (countError || catError) throw new Error(`llms.txt: ${(countError || catError)?.message}`); // keep the last good copy
   const n = (listingCount || 0).toLocaleString('en-US');
-  const catLines = (cats || []).map((c) => `- [${c.name}](https://hireanypro.com/category/${c.slug})${TRADES.has(c.slug) ? `: ratings data at https://hireanypro.com/data/florida-contractor-ratings-2026/${c.slug}` : ''}`).join('\n');
+  const catLines = (cats || []).map((c) => `- [${c.name}](https://hireanypro.com/category/${c.slug})${TRADES.has(c.slug) ? `: ratings data at https://hireanypro.com/data/florida-contractor-ratings-2026/${c.slug}` : ''}${costGuide(c.slug) ? `; typical prices at https://hireanypro.com${costPath(c.slug)}` : ''}`).join('\n');
   const body = `# HireAnyPro
 
 > HireAnyPro is a free directory of local service professionals across Florida (with the deepest coverage in Miami-Dade, Broward and Palm Beach), plus a few nearby Georgia and Alabama cities. It lists ${n} businesses across ${(cats || []).length} service categories, with public customer ratings, hours, service areas and contact details. Homeowners can request free quotes from up to 3 pros at once; there is no obligation to hire.

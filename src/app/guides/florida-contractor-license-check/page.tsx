@@ -159,6 +159,7 @@ export default function LicenseGuidePage() {
             ))}
             <Link href="/cities/miami" className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:text-blue-800">All services in Miami</Link>
             <Link href="/categories" className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:text-blue-800">All categories</Link>
+            <Link href="/costs" className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:text-blue-800">What jobs cost in Florida</Link>
           </div>
           <p className="text-xs text-gray-500 mt-4">
             This guide is general information, not legal advice. Rules change; the state agencies (DBPR, FDACS and, for interstate movers,{' '}

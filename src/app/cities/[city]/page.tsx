@@ -237,6 +237,7 @@ export default async function CityHubPage({ params }: Props) {
 
         <section className="mb-10">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Services in {hub.name}</h2>
+          {hub.state === 'FL' && <p className="text-sm text-gray-600 -mt-2 mb-4">Budgeting? <Link href="/costs" className="text-blue-800 hover:underline">See typical Florida prices for each service</Link>.</p>}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {services.map((s) => {
               const href = shouldIndexCityPage(s.count) ? `/services/${s.slug}/${hub.slug}` : null;

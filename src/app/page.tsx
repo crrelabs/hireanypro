@@ -106,7 +106,7 @@ export default async function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-10">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Browse by Category</h2>
-          <p className="text-gray-500 mt-2">Find the right pro for any home project</p>
+          <p className="text-gray-500 mt-2">Find the right pro for any home project, or <Link href="/costs" className="text-blue-800 hover:underline">see what jobs typically cost in Florida</Link></p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {categories?.map((cat) => (

@@ -1,6 +1,7 @@
 import { jsonLdHtml } from '@/lib/json-ld';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { tradeAlias } from '@/lib/slug-aliases';
+import { costGuide, costPath } from '@/lib/cost-guides';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -104,7 +105,7 @@ export default async function ForProsCategoryPage({ params }: Props) {
           </div>
         ))}
       </div>
-      <p className="text-sm text-gray-600">Looking for a {s.lc} pro instead? <Link href={`/category/${s.slug}`} className="text-blue-800 hover:underline">Compare {formatCount(s.total)} {s.lc} pros in Florida</Link>.</p>
+      <p className="text-sm text-gray-600">Looking for a {s.lc} pro instead? <Link href={`/category/${s.slug}`} className="text-blue-800 hover:underline">Compare {formatCount(s.total)} {s.lc} pros in Florida</Link>.{costGuide(s.slug) && <> See what Florida homeowners typically pay: <Link href={costPath(s.slug)} className="text-blue-800 hover:underline">{s.lc} prices</Link>.</>}</p>
     </div>
   );
 }

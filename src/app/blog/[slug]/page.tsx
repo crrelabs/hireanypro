@@ -2,6 +2,7 @@ import { jsonLdHtml } from '@/lib/json-ld';
 import { getBlogPost, getRelatedPosts, formatCategory } from '@/lib/blog';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { costGuide, costPath } from '@/lib/cost-guides';
 import type { Metadata } from 'next';
 import BlogContent from './BlogContent';
 import { clampDescription } from '@/lib/meta';
@@ -146,6 +147,10 @@ export default async function BlogPostPage({ params }: Props) {
             Search HireAnyPro →
           </Link>
         </div>
+
+        <p className="mt-6 text-sm text-gray-600">
+          Budgeting a project? See <Link href={post.category && costGuide(post.category) ? costPath(post.category) : '/costs'} className="text-blue-800 font-medium hover:underline">{post.category && costGuide(post.category) ? `typical ${costGuide(post.category)!.noun} prices in Florida` : 'typical Florida prices for 22 home services'}</Link>.
+        </p>
 
         {/* Related Posts */}
         {related.length > 0 && (

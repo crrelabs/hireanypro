@@ -20,6 +20,7 @@ import ListingMarketContext from '@/components/ListingMarketContext';
 import StickyQuoteBar from '@/components/StickyQuoteBar';
 import { buildListingFaq, faqJsonLd } from '@/lib/listing-faq';
 import { GUIDE_PATH, licenseRuleFor } from '@/lib/fl-licensing';
+import CostLine from '@/components/CostLine';
 import { getHubCity, hubHref } from '@/lib/city-hubs';
 
 export const revalidate = 3600;
@@ -526,6 +527,8 @@ export default async function ListingPage({ params }: Props) {
             </p>
           </section>
         )}
+
+        {listing.categories && stateCode(listing.state) === 'FL' && <CostLine categorySlug={listing.categories.slug} />}
 
         {/* FAQ from the listing's own facts (mirrored in FAQPage JSON-LD above). */}
         <section className="mt-8 bg-white rounded-xl border border-gray-200 p-6" aria-labelledby="listing-faq">
