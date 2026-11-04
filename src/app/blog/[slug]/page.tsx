@@ -6,6 +6,7 @@ import { costGuide, costPath } from '@/lib/cost-guides';
 import type { Metadata } from 'next';
 import BlogContent from './BlogContent';
 import { clampDescription } from '@/lib/meta';
+import { extractFaq } from '@/lib/blog-faq';
 
 export const revalidate = 86400;
 
@@ -47,17 +48,30 @@ export default async function BlogPostPage({ params }: Props) {
   const related = post.category ? await getRelatedPosts(post.category, post.slug) : [];
   const categoryLabel = post.category ? formatCategory(post.category) : '';
 
+  const url = `https://hireanypro.com/blog/${post.slug}`;
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'BlogPosting',
     headline: post.title,
     description: post.excerpt || post.title,
     author: { '@type': 'Organization', name: post.author },
-    publisher: { '@type': 'Organization', name: 'HireAnyPro' },
+    publisher: { '@type': 'Organization', name: 'HireAnyPro', logo: { '@type': 'ImageObject', url: 'https://hireanypro.com/logo.png' } },
     datePublished: post.published_at || post.created_at,
     dateModified: post.updated_at,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    url,
     ...(post.featured_image && { image: post.featured_image }),
   };
+  // FAQPage schema only when the post has a "## Frequently asked questions" section with ### questions.
+  const faq = extractFaq(post.content);
+  const faqJsonLd = faq.length >= 2 ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.question, acceptedAnswer: { '@type': 'Answer', text: f.answer } })),
+  } : null;
+  const fmtDate = (d: string) => new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/New_York' });
+  const publishedLabel = fmtDate(post.published_at || post.created_at);
+  const updatedLabel = post.updated_at ? fmtDate(post.updated_at) : publishedLabel;
 
   return (
     <>
@@ -65,6 +79,9 @@ export default async function BlogPostPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }}
       />
+      {faqJsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(faqJsonLd) }} />
+      )}
 
       {/* Breadcrumbs */}
       <div className="bg-gray-50 border-b border-gray-100">
@@ -104,13 +121,13 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="flex items-center gap-4 text-sm text-gray-500">
             <span>By {post.author}</span>
             <span>•</span>
-            <time dateTime={post.published_at || post.created_at}>
-              {new Date(post.published_at || post.created_at).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </time>
+            <time dateTime={post.published_at || post.created_at}>{publishedLabel}</time>
+            {updatedLabel !== publishedLabel && (
+              <>
+                <span>•</span>
+                <span>Last updated: <time dateTime={post.updated_at}>{updatedLabel}</time></span>
+              </>
+            )}
           </div>
           {post.tags && post.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-4">
