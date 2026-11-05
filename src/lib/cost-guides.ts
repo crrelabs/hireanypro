@@ -1,7 +1,9 @@
 /**
  * Florida cost guides (/costs/<trade>), one per directory category.
- * Ranges are 2026 planning estimates for typical Florida homes, compiled from published 2025–2026 Florida and
- * national cost guides and contractor price lists. They are not quotes; the page says so. Review once a year.
+ * Ranges are 2026 planning estimates for typical Florida homes. Each trade’s headline job was checked on
+ * 2026-11-05 against at least two public cost guides (preferring Angi, HomeGuide, Fixr, EnergySage, and Florida
+ * contractor guides when available); secondary table rows use those guides or a closely related planning estimate
+ * and are logged in data/cost-sources.md. They are not quotes; the page says so. Review once a year.
  */
 export type CostJob = { job: string; low: number; high: number; unit?: string; note?: string };
 export type CostGuide = {
@@ -17,28 +19,35 @@ export type CostGuide = {
   florida: string;
   tips: string[];
   faq: { q: string; a: string }[];
+  /** Public cost guides checked 2026-11-05. Only URLs recorded in the cost-sources research. */
+  sources?: { label: string; url: string }[];
 };
 
-export const COSTS_UPDATED = '2026-11-04';
+export const COSTS_UPDATED = '2026-11-05';
 export const COSTS_PATH = '/costs';
 export const costPath = (slug: string) => `${COSTS_PATH}/${slug}`;
 
 const usd = (n: number) => (Number.isInteger(n) ? `$${n.toLocaleString('en-US')}` : `$${n.toFixed(2)}`);
-export const costRange = (j: CostJob) =>
-  j.unit?.startsWith('%') ? `${j.low}–${j.high}${j.unit}` : `${usd(j.low)}–${usd(j.high)}${j.unit ? ` ${j.unit}` : ''}`;
+export const costRange = (j: CostJob) => {
+  if (j.unit?.startsWith('%')) return `${j.low}–${j.high}${j.unit}`;
+  // $1–$2.75 reads like a dropped cent. Show $1.00 when the low end is a small whole number and the high end has cents.
+  const padLow = Number.isInteger(j.low) && !Number.isInteger(j.high) && j.low < 10 && j.high < 10;
+  const money = (n: number, pad: boolean) => (pad || !Number.isInteger(n) ? `$${n.toFixed(2)}` : usd(n));
+  return `${money(j.low, padLow)}–${money(j.high, false)}${j.unit ? ` ${j.unit}` : ''}`;
+};
 
 const G: CostGuide[] = [
   {
     slug: 'plumbing', title: 'Plumber', noun: 'plumber',
-    headline: { job: 'Tank water heater replacement (40–50 gal, installed)', low: 1300, high: 2500 },
+    headline: { job: 'Tank water heater replacement (40–50 gal, installed)', low: 1000, high: 2500 },
     jobs: [
       { job: 'Hourly rate (licensed plumber)', low: 75, high: 175, unit: 'per hour', note: 'Many Florida shops price by the job instead.' },
       { job: 'Service call / diagnostic', low: 75, high: 175 },
       { job: 'Clear a clogged drain', low: 150, high: 400 },
       { job: 'Replace a faucet (labor + standard faucet)', low: 200, high: 450 },
       { job: 'Replace a toilet (installed)', low: 250, high: 800 },
-      { job: 'Tank water heater replacement (40–50 gal, installed)', low: 1300, high: 2500, note: 'Permit usually extra.' },
-      { job: 'Tankless water heater (installed)', low: 2500, high: 4800 },
+      { job: 'Tank water heater replacement (40–50 gal, installed)', low: 1000, high: 2500, note: 'Permit usually extra.' },
+      { job: 'Tankless water heater (installed)', low: 1800, high: 5000 },
       { job: 'Slab leak detection and repair', low: 2000, high: 6000 },
       { job: 'Whole-house repipe (about 1,500 sq ft)', low: 4000, high: 12000 },
     ],
@@ -46,6 +55,11 @@ const G: CostGuide[] = [
     florida: 'Many Florida homes sit on concrete slabs, so leaks under the floor cost more to find and fix. Hard water in much of the state shortens water heater life, and South Florida labor rates run higher than the Panhandle.',
     tips: ['Ask whether the quote is flat-rate or hourly, and what happens if the job runs long.', 'For water heaters, confirm the price includes the permit, haul-away and code upgrades (expansion tank, pan).', 'Get 2–3 written quotes for anything over $1,000.'],
     faq: [{ q: 'Do Florida plumbers need a license?', a: 'Yes. Plumbing contractors in Florida must be licensed by the state (DBPR). Check the license at myfloridalicense.com before you hire.' }],
+    sources: [
+      { label: 'Angi: water heater installation', url: 'https://www.angi.com/articles/how-much-does-water-heater-installation-cost.htm' },
+      { label: 'HomeGuide: water heater installation', url: 'https://homeguide.com/costs/water-heater-installation-cost' },
+      { label: 'Angi: Tampa water heater cost', url: 'https://www.angi.com/articles/how-much-does-water-heater-installation-cost/fl/tampa' },
+    ],
   },
   {
     slug: 'hvac', title: 'AC Repair and HVAC', noun: 'AC repair or HVAC job',
@@ -65,6 +79,12 @@ const G: CostGuide[] = [
     florida: 'Florida ACs run most of the year, so systems wear out faster (often 10–15 years) and summer is the busiest, most expensive season. Most homes use a heat pump or AC with electric heat rather than a furnace.',
     tips: ['Get the quote in writing with the brand, tonnage and SEER2 rating.', 'Ask if the price includes the permit, new pad, drain line and thermostat.', 'Schedule replacements in spring or fall if you can.'],
     faq: [{ q: 'How long does an AC last in Florida?', a: 'Often 10–15 years, less near the coast where salt air corrodes the outdoor unit. Regular maintenance and drain-line cleaning help.' }],
+    sources: [
+      { label: 'Space Coast Cooling: Florida AC replacement', url: 'https://www.spacecoastcooling.com/blog/new-ac-system-cost-florida' },
+      { label: 'Costadia: Florida heat pump installation', url: 'https://www.costadia.com/hvac/heat-pump-installation/florida' },
+      { label: 'HomeGuide: ductless mini-split cost', url: 'https://homeguide.com/costs/ductless-mini-split-ac-cost' },
+      { label: 'Star Air: Central Florida AC installation', url: 'https://starairconditioning.com/blog/ac-installation-cost-central-florida' },
+    ],
   },
   {
     slug: 'roofing', title: 'Roof Replacement and Repair', noun: 'roof replacement or repair',
@@ -82,6 +102,12 @@ const G: CostGuide[] = [
     florida: 'Florida roofs must meet wind-load building codes, and Miami-Dade and Broward (the High-Velocity Hurricane Zone) have the strictest product approvals, which raises cost. Many insurers want roofs under 15–20 years old, and demand (and prices) spike after hurricanes.',
     tips: ['Ask for the price per square (100 sq ft) and how much decking replacement is included.', 'Confirm the roofer pulls the permit and holds a Florida roofing license.', 'Be careful with door-to-door crews after storms and never pay in full up front.'],
     faq: [{ q: 'Do roofers need a license in Florida?', a: 'Yes. Roofing contractors must hold a Florida roofing license (certified or registered) from DBPR, and most roof replacements need a permit.' }],
+    sources: [
+      { label: 'HomeGuide: roof replacement cost', url: 'https://homeguide.com/costs/roof-replacement-cost' },
+      { label: 'Fixr: Florida roof replacement', url: 'https://www.fixr.com/costs/roof-replacement-florida' },
+      { label: 'Pitch Roofing: Florida architectural shingles', url: 'https://pitchroofing.com/roofing/architectural-shingles-cost/' },
+      { label: 'Florida Home Pros: new roof cost', url: 'https://www.theflhomepros.com/guides/new-roof-cost' },
+    ],
   },
   {
     slug: 'electrical', title: 'Electrician', noun: 'electrician',
@@ -100,6 +126,12 @@ const G: CostGuide[] = [
     florida: 'Lightning and hurricane outages make surge protection and generators common Florida jobs. Older homes with certain panel brands often need replacement before insurers will write a policy.',
     tips: ['Ask if a permit is needed and who pulls it.', 'Bundle small jobs into one visit to avoid several service-call fees.', 'Check the license: Florida electrical contractors are licensed by the state.'],
     faq: [{ q: 'Do electricians need a license in Florida?', a: 'Yes. Electrical contractors must be licensed by the Florida Electrical Contractors\u2019 Licensing Board (DBPR). Look them up at myfloridalicense.com.' }],
+    sources: [
+      { label: 'HomeGuide: electrical panel replacement', url: 'https://homeguide.com/costs/cost-to-replace-electrical-panel' },
+      { label: 'Angi: 200-amp panel upgrade', url: 'https://www.angi.com/articles/ask-angie-what-does-it-cost-upgrade-200-amps.htm' },
+      { label: 'HomeGuide: EV charger installation', url: 'https://homeguide.com/costs/electric-car-charging-stations-cost' },
+      { label: 'Angi: EV charging station installation', url: 'https://www.angi.com/articles/installing-electric-car-charging-station.htm' },
+    ],
   },
   {
     slug: 'painting', title: 'House Painting', noun: 'house painter',
@@ -108,7 +140,7 @@ const G: CostGuide[] = [
       { job: 'Paint one interior room (walls)', low: 400, high: 1200 },
       { job: 'Interior painting', low: 2, high: 6, unit: 'per sq ft of floor' },
       { job: 'Exterior house painting (single-story home)', low: 3000, high: 8000 },
-      { job: 'Exterior painting, two-story home', low: 5000, high: 12000 },
+      { job: 'Exterior painting, two-story home', low: 4500, high: 8000 },
       { job: 'Kitchen cabinet painting', low: 3000, high: 8000 },
       { job: 'Pressure washing before painting', low: 150, high: 450 },
     ],
@@ -116,6 +148,11 @@ const G: CostGuide[] = [
     florida: 'Most Florida homes are stucco, which needs crack repair and often elastomeric or high-build coatings. Sun, rain and humidity mean exterior paint usually lasts 5–10 years.',
     tips: ['Ask which paint line and how many coats are included.', 'Get the prep work spelled out (pressure washing, caulking, crack repair).', 'Painters have no statewide license in Florida, so check local licensing and insurance.'],
     faq: [{ q: 'How often should you paint a house in Florida?', a: 'Exterior paint usually lasts 5–10 years in Florida, depending on sun exposure, the paint used and how well the surface was prepared.' }],
+    sources: [
+      { label: 'Angi: exterior house painting', url: 'https://www.angi.com/articles/cost-paint-house-exterior.htm' },
+      { label: 'HomeGuide: exterior house painting', url: 'https://homeguide.com/costs/cost-to-paint-exterior-of-house' },
+      { label: 'Fixr: Florida exterior house painting', url: 'https://www.fixr.com/costs/paint-house-exterior-florida' },
+    ],
   },
   {
     slug: 'landscaping', title: 'Landscaping and Lawn Care', noun: 'landscaper',
@@ -125,7 +162,7 @@ const G: CostGuide[] = [
       { job: 'Weekly lawn maintenance (small to medium yard)', low: 120, high: 300, unit: 'per month', note: 'Usually mow, edge and blow; many yards go every other week in winter.' },
       { job: 'Hedge and shrub trimming', low: 100, high: 400 },
       { job: 'Mulch (installed)', low: 50, high: 100, unit: 'per cubic yard' },
-      { job: 'New sod (St. Augustine, installed)', low: 1.5, high: 3, unit: 'per sq ft' },
+      { job: 'New sod (St. Augustine, installed)', low: 1, high: 2.75, unit: 'per sq ft' },
       { job: 'Irrigation repair', low: 100, high: 400 },
       { job: 'New irrigation system', low: 2500, high: 5000 },
     ],
@@ -133,6 +170,10 @@ const G: CostGuide[] = [
     florida: 'Florida grass grows almost all year, so most homes need weekly service from about April to October. St. Augustine is the most common lawn and needs regular irrigation and pest treatment.',
     tips: ['Ask what a "visit" includes (edging, blowing, trimming).', 'Check whether the price changes in the dry season.', 'Landscaping has no statewide license, but fertilizer and pesticide work requires FDACS certification.'],
     faq: [{ q: 'How much is lawn care per month in South Florida?', a: 'Weekly mowing, edging and blowing for a small to medium yard is typically about $120–$300 per month. Larger yards, trimming and fertilizing cost more.' }],
+    sources: [
+      { label: 'Florida lawn maintenance cost (2026)', url: 'https://bluecollarq.net/blog/lawn-maintenance-cost-florida-2026' },
+      { label: 'Angi: sod installation in Orlando', url: 'https://www.angi.com/articles/how-much-does-it-cost-lay-sod/fl/orlando' },
+    ],
   },
   {
     slug: 'cleaning', title: 'House Cleaning', noun: 'house cleaner',
@@ -148,6 +189,9 @@ const G: CostGuide[] = [
     florida: 'Vacation-rental turnovers are a big part of cleaning work in Florida tourist areas, and humidity means mildew in bathrooms and on grout comes back faster.',
     tips: ['Ask if supplies are included and whether the price is flat or hourly.', 'Recurring plans usually cost 10–20% less per visit than one-time cleans.', 'Ask whether the company is insured and does background checks.'],
     faq: [{ q: 'How much does a deep cleaning cost?', a: 'A deep cleaning of a 2–3 bedroom home typically costs about $250–$500, roughly 1.5–2 times a standard cleaning.' }],
+    sources: [
+      { label: 'Angi: house cleaning cost', url: 'https://www.angi.com/articles/how-much-does-it-cost-hire-house-cleaner.htm' },
+    ],
   },
   {
     slug: 'pest-control', title: 'Pest Control', noun: 'pest control service',
@@ -165,6 +209,11 @@ const G: CostGuide[] = [
     florida: 'Florida\u2019s climate keeps pests active all year. Drywood termites often need whole-house tenting, and subterranean termites are common statewide, so many homes keep an annual termite bond.',
     tips: ['Ask what is covered between visits (free re-treatments).', 'For termites, get the warranty terms in writing.', 'Florida pest control companies must be licensed by FDACS.'],
     faq: [{ q: 'How much does termite tenting cost in Florida?', a: 'Tent fumigation for drywood termites typically costs about $1,200–$3,500 for a single-family home, depending on its size.' }],
+    sources: [
+      { label: 'Florida pest control pricing', url: 'https://pestcontrolpricing.com/florida-pest-control-cost/' },
+      { label: 'Angi: termite treatment in Orlando', url: 'https://www.angi.com/articles/how-much-does-termite-treatment-cost/fl/orlando' },
+      { label: 'Florida Home Pros: termite tenting cost', url: 'https://www.theflhomepros.com/guides/termite-tenting-cost' },
+    ],
   },
   {
     slug: 'flooring', title: 'Flooring Installation', noun: 'flooring installer',
@@ -181,6 +230,9 @@ const G: CostGuide[] = [
     florida: 'Tile and luxury vinyl plank are the most popular floors in Florida because they handle humidity and sand. On concrete slabs, ripping out old tile and leveling can add a lot to the bill.',
     tips: ['Ask if removal, leveling and baseboards are in the per-foot price.', 'Order 10% extra material for cuts and future repairs.', 'Confirm moisture testing on slabs before wood floors.'],
     faq: [{ q: 'What is the cheapest flooring for a Florida home?', a: 'Luxury vinyl plank and carpet are usually the cheapest installed options; LVP is more popular because it is waterproof and handles humidity well.' }],
+    sources: [
+      { label: 'HomeGuide: luxury vinyl plank cost', url: 'https://homeguide.com/costs/luxury-vinyl-flooring-cost' },
+    ],
   },
   {
     slug: 'general-contractor', title: 'General Contractor and Remodeling', noun: 'general contractor',
@@ -197,6 +249,10 @@ const G: CostGuide[] = [
     florida: 'Florida building codes require wind-rated windows, doors and structural connections, especially in Miami-Dade and Broward. Big jobs usually need a Notice of Commencement recorded with the county.',
     tips: ['Get at least 3 itemized bids with the same scope.', 'Keep deposits modest: Florida law sets permit and start deadlines when a contractor takes more than 10% up front.', 'Ask for lien releases from subcontractors before the final payment.'],
     faq: [{ q: 'Do general contractors need a license in Florida?', a: 'Yes. General, building and residential contractors are licensed by the state (DBPR). Check the license at myfloridalicense.com and ask for proof of insurance.' }],
+    sources: [
+      { label: 'HomeGuide: bathroom remodel cost', url: 'https://homeguide.com/costs/bathroom-remodel-cost' },
+      { label: 'HomeGuide: kitchen remodel cost', url: 'https://homeguide.com/costs/kitchen-remodel-cost' },
+    ],
   },
   {
     slug: 'handyman', title: 'Handyman', noun: 'handyman',
@@ -214,6 +270,10 @@ const G: CostGuide[] = [
     florida: 'Florida has no statewide handyman license, but handymen cannot do work that needs a licensed contractor, such as electrical, plumbing, HVAC, roofing or structural work.',
     tips: ['Make a list and book one visit for several small jobs.', 'Ask whether the price is hourly or per task.', 'Check county licensing and insurance.'],
     faq: [{ q: 'Does a handyman need a license in Florida?', a: 'There is no state handyman license, but some counties license handymen, and any electrical, plumbing, HVAC, roofing or structural work needs a licensed contractor.' }],
+    sources: [
+      { label: 'Angi: handyman prices', url: 'https://www.angi.com/articles/what-are-common-handyman-prices.htm' },
+      { label: 'HomeGuide: handyman prices', url: 'https://homeguide.com/costs/handyman-prices' },
+    ],
   },
   {
     slug: 'locksmith', title: 'Locksmith', noun: 'locksmith',
@@ -229,6 +289,9 @@ const G: CostGuide[] = [
     florida: 'Rekeying after moving into a new home or a vacation rental changeover is one of the most common Florida locksmith jobs.',
     tips: ['Ask for the total price on the phone, including the service call.', 'Beware of ads quoting very low prices that rise on arrival.', 'Ask for ID and a business name on the invoice.'],
     faq: [{ q: 'Is it cheaper to rekey or replace locks?', a: 'Rekeying is usually cheaper: about $20–$50 per lock plus the service call, versus $150–$400 to replace an entry lock.' }],
+    sources: [
+      { label: 'Angi: locksmith costs', url: 'https://www.angi.com/articles/keys-home-locksmith-assistance-and-costs.htm' },
+    ],
   },
   {
     slug: 'pool-service', title: 'Pool Service', noun: 'pool service',
@@ -245,13 +308,16 @@ const G: CostGuide[] = [
     florida: 'Florida pools are used most of the year and heat and rain swing water chemistry fast, so weekly service is the norm. Variable-speed pumps are required for most replacement pumps and cut electric bills.',
     tips: ['Ask if chemicals are included in the monthly price.', 'Ask for a written checklist of what each visit covers.', 'For equipment, compare installed prices, not just the part.'],
     faq: [{ q: 'How much is pool service per month in Florida?', a: 'Weekly cleaning with chemicals typically costs about $100–$200 per month for a standard residential pool.' }],
+    sources: [
+      { label: 'Florida pool service cost', url: 'https://acleanpoolusa.com/blog/how-much-does-pool-service-cost-florida.html' },
+    ],
   },
   {
     slug: 'garage-door', title: 'Garage Door Repair', noun: 'garage door repair',
-    headline: { job: 'Torsion spring replacement', low: 200, high: 450 },
+    headline: { job: 'Torsion spring replacement', low: 150, high: 350 },
     jobs: [
       { job: 'Service call', low: 75, high: 150 },
-      { job: 'Torsion spring replacement', low: 200, high: 450 },
+      { job: 'Torsion spring replacement', low: 150, high: 350 },
       { job: 'Garage door opener (installed)', low: 350, high: 900 },
       { job: 'New single garage door (installed)', low: 1000, high: 3000 },
       { job: 'New double garage door, wind-rated (installed)', low: 1500, high: 4500 },
@@ -259,14 +325,18 @@ const G: CostGuide[] = [
     drivers: ['Door size and wind rating', 'Insulation and windows', 'Opener type (belt, chain, wall-mount)', 'Emergency calls'],
     florida: 'In Florida, replacement garage doors must meet wind-load codes, and impact-rated doors cost more but can lower windstorm insurance premiums.',
     tips: ['Replace both springs at once on two-spring doors.', 'Ask for the wind rating and product approval number on new doors.', 'Get a written price before work starts.'],
-    faq: [{ q: 'How much does it cost to replace a garage door spring?', a: 'Typically about $200–$450 including labor; replacing both springs on a two-spring door is usually recommended.' }],
+    faq: [{ q: 'How much does it cost to replace a garage door spring?', a: 'Typically about $150–$350 including labor; replacing both springs on a two-spring door is usually recommended.' }],
+    sources: [
+      { label: 'HomeGuide: garage door spring replacement', url: 'https://homeguide.com/costs/garage-door-spring-replacement-cost' },
+      { label: 'Angi: garage door spring replacement', url: 'https://www.angi.com/articles/how-much-should-garage-door-spring-replacement-cost.htm' },
+    ],
   },
   {
     slug: 'fencing', title: 'Fence Installation', noun: 'fence installer',
-    headline: { job: 'Vinyl privacy fence (installed)', low: 30, high: 60, unit: 'per linear ft' },
+    headline: { job: 'Vinyl privacy fence (installed)', low: 35, high: 65, unit: 'per linear ft' },
     jobs: [
       { job: 'Wood privacy fence (installed)', low: 25, high: 45, unit: 'per linear ft' },
-      { job: 'Vinyl privacy fence (installed)', low: 30, high: 60, unit: 'per linear ft' },
+      { job: 'Vinyl privacy fence (installed)', low: 35, high: 65, unit: 'per linear ft' },
       { job: 'Aluminum fence (installed)', low: 35, high: 70, unit: 'per linear ft' },
       { job: 'Chain link fence (installed)', low: 15, high: 35, unit: 'per linear ft' },
       { job: 'Gate (installed)', low: 300, high: 1500 },
@@ -276,14 +346,18 @@ const G: CostGuide[] = [
     florida: 'Vinyl and aluminum are popular in Florida because wood rots in the heat and humidity. Pool fences must meet Florida pool-barrier rules, and many cities require a fence permit.',
     tips: ['Check HOA and city rules before you buy.', 'Ask if permit, post concrete and old-fence removal are included.', 'Call 811 (Sunshine 811) to mark utilities before digging.'],
     faq: [{ q: 'Do I need a permit for a fence in Florida?', a: 'Many Florida cities and counties require a fence permit, and HOAs often have their own rules. Your installer should know the local requirements.' }],
+    sources: [
+      { label: 'HomeGuide: vinyl fence cost', url: 'https://homeguide.com/costs/vinyl-fence-cost' },
+      { label: 'Angi: vinyl fence cost', url: 'https://www.angi.com/articles/vinyl-fence-cost.htm' },
+    ],
   },
   {
     slug: 'moving-companies', title: 'Movers', noun: 'mover',
-    headline: { job: 'Local move, 2–3 bedroom home', low: 1200, high: 3000 },
+    headline: { job: 'Local move, 2–3 bedroom home', low: 1000, high: 2500 },
     jobs: [
       { job: 'Two movers and a truck (local)', low: 100, high: 200, unit: 'per hour' },
       { job: 'Local move, studio or 1 bedroom', low: 400, high: 1200 },
-      { job: 'Local move, 2–3 bedroom home', low: 1200, high: 3000 },
+      { job: 'Local move, 2–3 bedroom home', low: 1000, high: 2500 },
       { job: 'In-state move (e.g. Miami to Orlando), 2–3 bedrooms', low: 2000, high: 5000 },
       { job: 'Out-of-state move, 2–3 bedrooms', low: 3000, high: 9000 },
       { job: 'Packing service', low: 300, high: 1500 },
@@ -291,14 +365,18 @@ const G: CostGuide[] = [
     drivers: ['Home size and amount of stuff', 'Distance and stairs or elevators', 'Packing and specialty items (piano, safe)', 'Season: summer and month-end are busiest'],
     florida: 'Movers that move households within Florida must be registered with FDACS; interstate movers need a USDOT number from FMCSA. Summer heat and hurricane season can affect scheduling.',
     tips: ['Get a written estimate after an in-home or video survey.', 'Check FDACS registration for in-state movers.', 'Be wary of very low quotes and large cash deposits.'],
-    faq: [{ q: 'How much do movers cost in Florida?', a: 'A local move of a 2–3 bedroom home typically costs about $1,200–$3,000; two movers and a truck usually run about $100–$200 per hour.' }],
+    faq: [{ q: 'How much do movers cost in Florida?', a: 'A local move of a 2–3 bedroom home typically costs about $1,000–$2,500; two movers and a truck usually run about $100–$200 per hour.' }],
+    sources: [
+      { label: 'Angi: movers in Tampa', url: 'https://www.angi.com/articles/how-much-does-it-cost-hire-movers/fl/tampa' },
+      { label: 'Angi: movers in Orlando', url: 'https://www.angi.com/articles/how-much-does-it-cost-hire-movers/fl/orlando' },
+    ],
   },
   {
     slug: 'solar-installation', title: 'Solar Panel Installation', noun: 'solar installation',
-    headline: { job: 'Rooftop solar system (about 8 kW, installed)', low: 20000, high: 28000 },
+    headline: { job: 'Rooftop solar system (about 8 kW, installed)', low: 16000, high: 24000 },
     jobs: [
-      { job: 'Installed price per watt', low: 2.5, high: 3.5, unit: 'per watt' },
-      { job: 'Rooftop solar system (about 8 kW, installed)', low: 20000, high: 28000 },
+      { job: 'Installed price per watt', low: 2, high: 2.8, unit: 'per watt' },
+      { job: 'Rooftop solar system (about 8 kW, installed)', low: 16000, high: 24000 },
       { job: 'Home battery (installed)', low: 10000, high: 17000 },
       { job: 'Panel removal and reinstall (for a reroof)', low: 2000, high: 5000 },
     ],
@@ -306,6 +384,10 @@ const G: CostGuide[] = [
     florida: 'Florida exempts residential solar equipment from sales tax and from property tax on the added home value. The 30% federal residential solar tax credit ended for systems installed after 2025, so compare 2026 quotes without it.',
     tips: ['Compare price per watt, not just the monthly payment.', 'Replace an old roof before installing panels.', 'Read loan, lease or PPA terms carefully.'],
     faq: [{ q: 'Is there still a federal solar tax credit in 2026?', a: 'The 30% federal residential clean energy credit (Section 25D) ended for systems installed after December 31, 2025. Florida still exempts residential solar from sales tax and from property tax on the added value.' }],
+    sources: [
+      { label: 'EnergySage: Florida solar panel cost', url: 'https://www.energysage.com/local-data/solar-panel-cost/fl/' },
+      { label: 'EnergySage: Florida battery storage cost', url: 'https://www.energysage.com/local-data/energy-storage-cost/fl/' },
+    ],
   },
   {
     slug: 'window-cleaning', title: 'Window Cleaning', noun: 'window cleaner',
@@ -321,6 +403,10 @@ const G: CostGuide[] = [
     florida: 'Salt spray near the coast and hard-water spots from sprinklers mean Florida windows often need cleaning more often, and hard-water stain removal costs extra.',
     tips: ['Ask if screens and tracks are included.', 'Recurring plans are cheaper per visit.', 'Confirm insurance for two-story and ladder work.'],
     faq: [{ q: 'How much does window cleaning cost?', a: 'A single-story home inside and out typically costs about $150–$400, or roughly $5–$15 per pane.' }],
+    sources: [
+      { label: 'Angi: window cleaning cost', url: 'https://www.angi.com/articles/how-much-does-window-cleaning-cost.htm' },
+      { label: 'HomeGuide: window cleaning prices', url: 'https://homeguide.com/costs/window-cleaning-prices' },
+    ],
   },
   {
     slug: 'carpet-cleaning', title: 'Carpet Cleaning', noun: 'carpet cleaner',
@@ -336,6 +422,9 @@ const G: CostGuide[] = [
     florida: 'Humidity slows drying in Florida, so ask about drying time and run the AC after cleaning. Tile and grout cleaning is a common add-on because so many Florida homes have tile.',
     tips: ['Ask for the price per room and what counts as a room.', 'Watch out for very low "per room" ads with expensive add-ons.', 'Ask how long drying takes.'],
     faq: [{ q: 'How much does carpet cleaning cost per room?', a: 'Usually about $40–$80 per room, with a minimum charge; whole-home packages for 3–5 rooms often run $150–$350.' }],
+    sources: [
+      { label: 'Angi: carpet cleaning cost', url: 'https://www.angi.com/articles/how-much-does-carpet-cleaning-cost.htm' },
+    ],
   },
   {
     slug: 'tree-service', title: 'Tree Service', noun: 'tree service',
@@ -352,6 +441,10 @@ const G: CostGuide[] = [
     florida: 'Hurricane-season prep (trimming palms and thinning canopies) is the busiest time. Many Florida counties and cities, including Miami-Dade, require a permit to remove certain trees.',
     tips: ['Check whether removal needs a county or city permit.', 'Ask if stump grinding and haul-away are included.', 'Get proof of liability insurance before anyone climbs.'],
     faq: [{ q: 'How much does palm tree trimming cost in Florida?', a: 'Typically about $75–$350 per palm, depending on height and type.' }],
+    sources: [
+      { label: 'HomeGuide: tree removal cost', url: 'https://homeguide.com/costs/tree-removal-cost' },
+      { label: 'Angi: tree removal in Tampa', url: 'https://www.angi.com/articles/how-much-does-tree-removal-cost/fl/tampa' },
+    ],
   },
   {
     slug: 'security-alarm', title: 'Home Security System', noun: 'home security system',
@@ -366,13 +459,17 @@ const G: CostGuide[] = [
     florida: 'Florida requires alarm system contractors to be licensed by the state, and many homeowner insurers give a discount for monitored alarms.',
     tips: ['Read the contract length and cancellation terms.', 'Ask if equipment is owned or leased.', 'Ask your insurer about a monitored-alarm discount.'],
     faq: [{ q: 'Do alarm installers need a license in Florida?', a: 'Yes. Alarm system contractors are licensed by the Florida Electrical Contractors\u2019 Licensing Board (DBPR).' }],
+    sources: [
+      { label: 'Ring: professional monitoring', url: 'https://ring.com/professional-monitoring' },
+      { label: 'ADT: monitoring plans', url: 'https://www.adt.com/monitoring-plans-security-services' },
+    ],
   },
   {
     slug: 'appliance-repair', title: 'Appliance Repair', noun: 'appliance repair',
-    headline: { job: 'Refrigerator repair', low: 200, high: 600 },
+    headline: { job: 'Refrigerator repair', low: 150, high: 500 },
     jobs: [
       { job: 'Service call / diagnostic', low: 75, high: 150, note: 'Often credited toward the repair.' },
-      { job: 'Refrigerator repair', low: 200, high: 600 },
+      { job: 'Refrigerator repair', low: 150, high: 500 },
       { job: 'Washer repair', low: 150, high: 450 },
       { job: 'Dryer repair', low: 150, high: 400 },
       { job: 'Dishwasher repair', low: 150, high: 400 },
@@ -382,6 +479,10 @@ const G: CostGuide[] = [
     florida: 'Heat and humidity work refrigerators and ice makers hard in Florida, and power surges from storms are a common cause of control-board failures.',
     tips: ['Ask if the diagnostic fee is credited toward the repair.', 'If the repair is over half the price of a new appliance, consider replacing.', 'Ask about the parts and labor warranty.'],
     faq: [{ q: 'Is it worth repairing an appliance?', a: 'A common rule: if the repair costs more than half the price of a new one and the appliance is past the middle of its life, replacing it usually makes more sense.' }],
+    sources: [
+      { label: 'Angi: refrigerator repair cost', url: 'https://www.angi.com/articles/how-much-does-refrigerator-repair-cost.htm' },
+      { label: 'HomeGuide: refrigerator repair cost', url: 'https://homeguide.com/costs/refrigerator-repair-cost' },
+    ],
   },
 ];
 
