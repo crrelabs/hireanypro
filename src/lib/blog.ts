@@ -1,5 +1,7 @@
 import { supabase } from './supabase';
 
+export { formatCategory } from './blog-format';
+
 export type BlogPost = {
   id: string;
   title: string;
@@ -85,8 +87,4 @@ export async function getCategories() {
 
   const cats = [...new Set((data || []).map(d => d.category).filter(Boolean))];
   return cats as string[];
-}
-
-export function formatCategory(cat: string) {
-  return cat.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
