@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import SmsToggle from './SmsToggle';
 import BadgeBox from './BadgeBox';
+import { onHuman, track } from '@/lib/track';
 
 type DashboardData = {
   listings: Array<{
@@ -23,6 +24,8 @@ type DashboardData = {
     cityRank?: number | null;
     cityTotal?: number | null;
     proRank?: number | null;
+    hasWebsite?: boolean;
+    badgeDetected?: boolean;
   }>;
   inquiries: Array<{
     id: string;
@@ -56,6 +59,10 @@ function DashboardPage() {
   const [loginError, setLoginError] = useState('');
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [bannerReady, setBannerReady] = useState(false);
+  const [dismissedBanners, setDismissedBanners] = useState<Record<string, true>>({});
+  const [badgeExpand, setBadgeExpand] = useState<{ id: string; n: number } | null>(null);
+  const viewedBanners = useRef(new Set<string>());
 
   const loadDashboard = useCallback(async () => {
     setLoading(true);
@@ -83,6 +90,48 @@ function DashboardPage() {
   }, []);
 
   useEffect(() => { loadDashboard(); }, [loadDashboard]);
+
+  useEffect(() => {
+    if (!data) {
+      setBannerReady(false);
+      return;
+    }
+    const next: Record<string, true> = {};
+    for (const l of data.listings) {
+      try {
+        if (window.localStorage.getItem(`hap_badge_banner_dismissed:${l.id}`) === '1') next[l.id] = true;
+      } catch { /* storage unavailable */ }
+    }
+    setDismissedBanners(next);
+    setBannerReady(true);
+  }, [data]);
+
+  const bannerListings = (data?.listings || []).filter((l) => l.hasWebsite && !l.badgeDetected && !dismissedBanners[l.id]);
+  const bannerKey = bannerListings.map((l) => l.id).join(',');
+  const bannerListingsRef = useRef(bannerListings);
+  bannerListingsRef.current = bannerListings;
+
+  useEffect(() => {
+    if (!bannerReady || !bannerKey) return;
+    return onHuman(() => {
+      for (const l of bannerListingsRef.current) {
+        if (viewedBanners.current.has(l.id)) continue;
+        viewedBanners.current.add(l.id);
+        track('badge_banner_view', { listing_slug: l.slug });
+      }
+    });
+  }, [bannerReady, bannerKey]);
+
+  function openBadge(l: { id: string; slug: string }) {
+    track('badge_banner_click', { listing_slug: l.slug });
+    setBadgeExpand((prev) => ({ id: l.id, n: prev && prev.id === l.id ? prev.n + 1 : 1 }));
+  }
+
+  function dismissBanner(l: { id: string; slug: string }) {
+    try { window.localStorage.setItem(`hap_badge_banner_dismissed:${l.id}`, '1'); } catch { /* ignore */ }
+    setDismissedBanners((prev) => ({ ...prev, [l.id]: true }));
+    track('badge_banner_dismiss', { listing_slug: l.slug });
+  }
 
   async function sendLink() {
     if (!email) return;
@@ -170,6 +219,25 @@ function DashboardPage() {
         <span className="text-sm text-gray-500">{email} · <button onClick={logout} className="text-blue-800 hover:underline">Sign out</button></span>
       </div>
 
+      {bannerReady && bannerListings.length > 0 && (
+        <div className="space-y-3 mb-8">
+          {bannerListings.map((l) => (
+            <div key={l.id} className="rounded-xl border-2 border-blue-800 bg-blue-50 px-5 py-4">
+              <p className="font-semibold text-gray-900">Get more trust from your own website visitors: add your free HireAnyPro badge. It links to your reviews.</p>
+              <p className="text-sm text-gray-600 mt-1">{l.name}</p>
+              <div className="mt-3 flex items-center gap-4">
+                <button type="button" onClick={() => openBadge(l)} className="bg-blue-800 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg">
+                  Get the badge code
+                </button>
+                <button type="button" onClick={() => dismissBanner(l)} className="text-sm text-blue-800 hover:underline">
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         <div className="bg-white rounded-xl border border-gray-200 p-5">
@@ -239,7 +307,10 @@ function DashboardPage() {
                   </div>
                 )}
                 <SmsToggle listingId={l.id} initialPhone={l.smsPhone || null} />
-                <BadgeBox slug={l.slug} name={l.name} />
+                {l.badgeDetected && (
+                  <p className="text-sm text-green-700 mt-2">✓ Badge found on your website</p>
+                )}
+                <BadgeBox slug={l.slug} name={l.name} anchorId={`badge-${l.id}`} expandToken={badgeExpand?.id === l.id ? badgeExpand.n : 0} />
               </div>
               <div className="flex items-center gap-3">
                 <span className={`text-xs font-bold px-3 py-1 rounded-full uppercase ${
