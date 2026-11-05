@@ -4,15 +4,18 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import QuoteFinder from '@/components/QuoteFinder';
+import CostJobsTable from '@/components/CostJobsTable';
 import report from '@/data/florida-ratings-2026-by-category.json';
 import { COST_GUIDES, COSTS_UPDATED, costGuide, costPath, costRange } from '@/lib/cost-guides';
+import { cityCostCitiesForTrade, costCityPath } from '@/lib/city-costs';
 import { faqPageJsonLd, lowerCategory } from '@/lib/directory-content';
 import { prosLabel } from '@/lib/pros-label';
 import { clampDescription } from '@/lib/meta';
 import { GUIDE_PATH } from '@/lib/fl-licensing';
 
 export const dynamicParams = false;
-export const revalidate = 86400;
+// Hourly: the page now lists city cost links from the live hub index.
+export const revalidate = 3600;
 export function generateStaticParams() {
   return COST_GUIDES.map((g) => ({ trade: g.slug }));
 }
@@ -48,6 +51,7 @@ export default async function CostGuidePage({ params }: { params: Promise<{ trad
   const url = `${BASE}${costPath(g.slug)}`;
   const title = titleFor(g.title);
   const cities = (cat?.cities || []).filter((c) => c.href).slice(0, 10);
+  const priceCities = await cityCostCitiesForTrade(g.slug);
   const faqs = [
     { q: `How much does ${article(g.noun)} ${g.noun} cost in Florida?`, a: `It depends on the job. ${g.headline.job} typically costs ${costRange(g.headline)} in Florida in 2026. ${g.jobs.filter((j) => j.job !== g.headline.job).slice(0, 2).map((j) => `${j.job}: ${costRange(j)}.`).join(' ')}` },
     ...g.faq,
@@ -76,7 +80,6 @@ export default async function CostGuidePage({ params }: { params: Promise<{ trad
     },
     faqPageJsonLd(faqs),
   ];
-  const td = 'p-3 align-top';
 
   return (
     <>
@@ -94,19 +97,7 @@ export default async function CostGuidePage({ params }: { params: Promise<{ trad
         </div>
 
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">{g.title} prices in Florida (2026)</h2>
-        <div className="overflow-x-auto mb-8">
-          <table className="w-full text-sm border border-gray-200 rounded-lg">
-            <thead className="bg-gray-50 text-left"><tr><th className="p-3">Job</th><th className="p-3">Typical price</th></tr></thead>
-            <tbody>
-              {g.jobs.map((j) => (
-                <tr key={j.job} className="border-t border-gray-100">
-                  <td className={td}>{j.job}{j.note && <span className="block text-xs text-gray-500 mt-0.5">{j.note}</span>}</td>
-                  <td className={`${td} font-medium whitespace-nowrap`}>{costRange(j)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <CostJobsTable jobs={g.jobs} />
 
         <QuoteFinder source="cost_guide" initialCategory={g.slug} className="mb-10"
           categories={[{ slug: g.slug, name: cat?.name || g.title }]}
@@ -125,6 +116,20 @@ export default async function CostGuidePage({ params }: { params: Promise<{ trad
 
         <h2 className="text-xl font-semibold text-gray-900 mb-3">What is different in Florida</h2>
         <p className="text-gray-700 mb-8">{g.florida} See also: <Link href={GUIDE_PATH} className="text-blue-800 hover:underline">how to check a contractor license in Florida</Link>.</p>
+
+        {priceCities.length > 0 && (
+          <section className="mb-10">
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">Prices by city</h2>
+            <p className="text-gray-700 text-sm mb-3">
+              The same Florida ranges, with how many {prosLabel(lc)} HireAnyPro lists in each city. Only cities with at least 3 listings are linked.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {priceCities.map((c) => (
+                <Link key={c.city} href={costCityPath(g.slug, c.city)} className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:text-blue-800">{`${g.title} cost in ${c.name} (${fmt(c.count)})`}</Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {cat && (
           <section className="mb-10">

@@ -25,6 +25,7 @@ Key facts:
 - Ratings shown are public customer ratings and review counts.
 - Page pattern for a service in a city: https://hireanypro.com/services/{category}/{city} (e.g. https://hireanypro.com/services/plumbing/miami)
 - Page pattern for every service in a city: https://hireanypro.com/cities/{city} (e.g. https://hireanypro.com/cities/miami)
+- Page pattern for what a service costs in a city: https://hireanypro.com/costs/{category}/{city} (e.g. https://hireanypro.com/costs/plumbing/miami). Same 2026 Florida price ranges as /costs/{category}, plus how many pros are listed in that city. Only Florida hub cities where that service has at least 3 listings.
 
 ## Main pages
 - [Home](https://hireanypro.com/)

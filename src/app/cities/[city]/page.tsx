@@ -10,6 +10,8 @@ import QuoteFinder from '@/components/QuoteFinder';
 import { getCountyData, countySlug, citySlug, stateName } from '@/lib/geo';
 import { getHubCities, getHubCity, hubHref, type HubCity } from '@/lib/city-hubs';
 import { faqPageJsonLd, formatCount, listJoin, lowerCategory, serviceListPhrase, shouldIndexCityPage } from '@/lib/directory-content';
+import { costGuide } from '@/lib/cost-guides';
+import { costCityPath } from '@/lib/city-costs';
 import { prosLabel } from '@/lib/pros-label';
 import { clampDescription } from '@/lib/meta';
 
@@ -268,6 +270,11 @@ export default async function CityHubPage({ params }: Props) {
                   {href && (
                     <Link href={href} className="inline-block mt-3 text-sm text-blue-800 font-medium hover:underline">
                       Compare all {formatCount(s.count)} →
+                    </Link>
+                  )}
+                  {hub.state === 'FL' && costGuide(s.slug) && shouldIndexCityPage(s.count) && (
+                    <Link href={costCityPath(s.slug, hub.slug)} className="inline-block mt-2 text-sm text-blue-800 font-medium hover:underline">
+                      {`Typical prices in ${hub.name}`}
                     </Link>
                   )}
                 </div>
