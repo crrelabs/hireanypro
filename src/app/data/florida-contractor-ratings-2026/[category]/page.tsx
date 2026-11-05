@@ -9,7 +9,7 @@ import report from '@/data/florida-ratings-2026-by-category.json';
 import overall from '@/data/florida-ratings-2026.json';
 import { countySlug } from '@/lib/geo';
 import { lowerCategory } from '@/lib/directory-content';
-import { clampDescription } from '@/lib/meta';
+import { clampDescription, dataCategoryTitle } from '@/lib/meta';
 
 // Per-trade cut of the dated Florida ratings snapshot (regenerate with scripts/build-category-ratings-report.py).
 // Aggregates only: no per-business "best of" lists, so miscategorized rows can't end up named on a citable page.
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   const c = find((await params).category);
   if (!c) return {};
   const url = `${BASE}/${c.slug}`;
-  const title = `Florida ${c.name} Ratings and Reviews by City (2026 Data)`;
+  const title = dataCategoryTitle(c.name);
   return {
     title,
     description: clampDescription(`${fmt(c.listings)} Florida ${lowerCategory(c.name)} businesses: average Google rating ${one(c.avgRating)}, ${c.pct45}% rated 4.5+, median ${fmt(c.medianReviews)} reviews. Breakdown by city and county.`),

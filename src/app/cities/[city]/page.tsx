@@ -9,7 +9,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import QuoteFinder from '@/components/QuoteFinder';
 import { getCountyData, countySlug, citySlug, stateName } from '@/lib/geo';
 import { getHubCities, getHubCity, hubHref, type HubCity } from '@/lib/city-hubs';
-import { faqPageJsonLd, formatCount, listJoin, lowerCategory, shouldIndexCityPage } from '@/lib/directory-content';
+import { faqPageJsonLd, formatCount, listJoin, lowerCategory, serviceListPhrase, shouldIndexCityPage } from '@/lib/directory-content';
 import { prosLabel } from '@/lib/pros-label';
 import { clampDescription } from '@/lib/meta';
 
@@ -116,7 +116,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { hub, total, services, avg, reviews } = data;
   const title = titleFor(hub.name, hub.state, total);
   const ratingBit = avg ? ` Average rating ${avg.toFixed(1)}/5 across ${formatCount(reviews)} Google reviews.` : '';
-  const description = clampDescription(`Compare ${plural(total, 'local pro', 'local pros')} in ${hub.name}, ${stateName(hub.state)}: ${listJoin(services.slice(0, 3).map((s) => lowerCategory(s.name)))} and more.${ratingBit} Free quotes.`);
+  const phrase = serviceListPhrase(services.map((s) => lowerCategory(s.name)));
+  const serviceBit = phrase ? `: ${phrase}` : '';
+  const description = clampDescription(`Compare ${plural(total, 'local pro', 'local pros')} in ${hub.name}, ${stateName(hub.state)}${serviceBit}.${ratingBit} Free quotes.`);
   const url = `https://hireanypro.com/cities/${city}`;
   return {
     title,

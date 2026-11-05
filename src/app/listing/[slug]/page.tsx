@@ -172,7 +172,19 @@ export default async function ListingPage({ params }: Props) {
   if (!listing) {
     // Removed listings (merged duplicates, non-business entries, fixed slugs) get a permanent (308) redirect.
     // Map lives in src/data/listing-redirects.json (too many entries for next.config redirects on Vercel).
-    const target = (listingRedirects as Record<string, string>)[decodeURIComponent(slug)];
+    const decoded = decodeURIComponent(slug);
+    // Dotted "St." in the inbound slug (hello-floors-st-pete-st.-petersburg). No live slug contains "st.-".
+    const undotted = decoded.replace(/st\.-/g, 'st-');
+    if (undotted !== decoded) {
+      const { data: alt, error: altError } = await supabase
+        .from('listings')
+        .select('slug')
+        .eq('slug', undotted)
+        .maybeSingle();
+      if (altError) throw new Error(`listing ${slug}: ${altError.message}`);
+      if (alt?.slug) permanentRedirect(`/listing/${alt.slug}`);
+    }
+    const target = (listingRedirects as Record<string, string>)[decoded];
     if (target) permanentRedirect(target);
     notFound();
   }

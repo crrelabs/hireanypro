@@ -3,29 +3,18 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import { formatCategory } from '@/lib/blog';
+import { blogToc, headingId, stripDuplicateTitle } from '@/lib/blog-markdown';
 
-type TocItem = { id: string; text: string; level: number };
-
-export default function BlogContent({ content, category }: { content: string; category: string | null }) {
-  const [toc, setToc] = useState<TocItem[]>([]);
-
-  useEffect(() => {
-    const headings = content.match(/^#{1,3}\s+.+$/gm) || [];
-    const items = headings.map((h) => {
-      const level = (h.match(/^#+/) || [''])[0].length;
-      const text = h.replace(/^#+\s+/, '');
-      const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      return { id, text, level };
-    });
-    setToc(items);
-  }, [content]);
+export default function BlogContent({ content, category, title }: { content: string; category: string | null; title: string }) {
+  const body = stripDuplicateTitle(content, title);
+  const toc = blogToc(content, title);
 
   const categoryLabel = category ? formatCategory(category) : '';
 
   // Insert mid-article CTA after roughly half the content
-  const lines = content.split('\n');
+  const lines = body.split('\n');
   const mid = Math.floor(lines.length / 2);
   const firstHalf = lines.slice(0, mid).join('\n');
   const secondHalf = lines.slice(mid).join('\n');
@@ -84,25 +73,33 @@ export default function BlogContent({ content, category }: { content: string; ca
   );
 }
 
+function nodeText(children: ReactNode): string {
+  if (children == null || typeof children === 'boolean') return '';
+  if (typeof children === 'string' || typeof children === 'number') return String(children);
+  if (Array.isArray(children)) return children.map(nodeText).join('');
+  if (typeof children === 'object' && 'props' in children) {
+    return nodeText((children as { props?: { children?: ReactNode } }).props?.children);
+  }
+  return '';
+}
+
 function MarkdownBlock({ content }: { content: string }) {
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
       components={{
-        h1: ({ children, ...props }) => {
-          const text = String(children);
-          const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-          return <h1 id={id} {...props}>{children}</h1>;
+        // The page template already renders post.title as the only <h1>.
+        h1: ({ children, node, ...props }) => {
+          void node;
+          return <h2 id={headingId(nodeText(children))} {...props}>{children}</h2>;
         },
-        h2: ({ children, ...props }) => {
-          const text = String(children);
-          const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-          return <h2 id={id} {...props}>{children}</h2>;
+        h2: ({ children, node, ...props }) => {
+          void node;
+          return <h2 id={headingId(nodeText(children))} {...props}>{children}</h2>;
         },
-        h3: ({ children, ...props }) => {
-          const text = String(children);
-          const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-          return <h3 id={id} {...props}>{children}</h3>;
+        h3: ({ children, node, ...props }) => {
+          void node;
+          return <h3 id={headingId(nodeText(children))} {...props}>{children}</h3>;
         },
       }}
     >

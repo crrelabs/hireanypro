@@ -15,6 +15,7 @@ import tradeReport from '@/data/florida-ratings-2026-by-category.json';
 import { stateName } from '@/lib/geo';
 import { CARD_COLUMNS, toCard, getCategoryCities, getCategoryBySlug, getCategoryRollup, type CardListing } from '@/lib/listings';
 import { formatCount, lowerCategory, shouldIndexCityPage, type CategoryNarrativeInput, prosLabel } from '@/lib/directory-content';
+import { categoryDocumentTitle } from '@/lib/meta';
 const TRADE_DATA = new Set(tradeReport.categories.map((c) => c.slug)); // trades with a /data ratings page
 
 // Cached pages (ISR): rendered on first request, then served from Vercel's cache and refreshed in the background.
@@ -57,7 +58,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const story = await categoryNarrative(category);
   const lcName = lowerCategory(category.name);
   const top = story.topCities[0];
-  const title = `${/(companies|services)$/i.test(category.name) ? category.name : `${category.name} Pros`} in Florida: ${formatCount(story.total)} Listings by City | HireAnyPro`;
+  const title = categoryDocumentTitle(category.name, formatCount(story.total));
   const description = top
     ? `Compare ${formatCount(story.total)} ${prosLabel(lcName)} in ${formatCount(story.cityCount)} cities${story.counties[0] ? `, led by ${story.counties[0].county} County` : ''}. Most listings are in ${top.name}. Ratings and free quotes.`
     : `Compare ${prosLabel(lcName)} in Florida. Ratings and free quotes on HireAnyPro.`;

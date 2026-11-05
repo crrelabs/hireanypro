@@ -47,6 +47,16 @@ export function listJoin(items: string[]): string {
   return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
 }
 
+/**
+ * Names for a meta description. The first `shown` are listed; when more exist, the phrase
+ * ends ", and more" instead of "and Z and more" (listJoin already puts "and" before the last name).
+ */
+export function serviceListPhrase(items: string[], shown = 3): string {
+  const top = items.slice(0, shown).filter(Boolean);
+  if (items.length > top.length) return `${top.join(', ')}, and more`;
+  return listJoin(top);
+}
+
 export type TextPart = { text: string; href?: string };
 
 export type CityStatInput = {
