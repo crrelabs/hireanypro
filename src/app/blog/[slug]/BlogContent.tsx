@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { formatCategory } from '@/lib/blog';
+import { formatCategory } from '@/lib/blog-format';
 import { blogToc, headingId, stripDuplicateTitle } from '@/lib/blog-markdown';
 
 export default function BlogContent({ content, category, title }: { content: string; category: string | null; title: string }) {
