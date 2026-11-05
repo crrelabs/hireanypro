@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import report from '@/data/florida-ratings-2026-by-category.json';
 import { costGuide, costPath } from '@/lib/cost-guides';
+import { countPublicListings } from '@/lib/listing-count';
 
 const TRADES = new Set(report.categories.map((c) => c.slug));
 
@@ -8,12 +9,12 @@ export const revalidate = 86400;
 
 // Plain-text site summary for AI assistants (llmstxt.org). Counts come live from the database.
 export async function GET() {
-  const [{ count: listingCount, error: countError }, { data: cats, error: catError }] = await Promise.all([
-    supabase.from('listings').select('id', { count: 'exact', head: true }).not('slug', 'like', 'zz-hap-test%'),
+  const [listingCount, { data: cats, error: catError }] = await Promise.all([
+    countPublicListings(),
     supabase.from('categories').select('name, slug').order('name'),
   ]);
-  if (countError || catError) throw new Error(`llms.txt: ${(countError || catError)?.message}`); // keep the last good copy
-  const n = (listingCount || 0).toLocaleString('en-US');
+  if (catError) throw new Error(`llms.txt: ${catError.message}`); // keep the last good copy
+  const n = listingCount.toLocaleString('en-US');
   const catLines = (cats || []).map((c) => `- [${c.name}](https://hireanypro.com/category/${c.slug})${TRADES.has(c.slug) ? `: ratings data at https://hireanypro.com/data/florida-contractor-ratings-2026/${c.slug}` : ''}${costGuide(c.slug) ? `; typical prices at https://hireanypro.com${costPath(c.slug)}` : ''}`).join('\n');
   const body = `# HireAnyPro
 

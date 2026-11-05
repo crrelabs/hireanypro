@@ -38,6 +38,7 @@ type ClaimFormProps = {
   intro: ReactNode;
   benefits: ReactNode;
   benefitsAfter: ReactNode;
+  proof: ReactNode;
   trust: ReactNode;
 };
 
@@ -60,6 +61,7 @@ function ClaimFormBody({
   intro,
   benefits,
   benefitsAfter,
+  proof,
   trust,
 }: ClaimFormProps & { search: string }) {
   const params = new URLSearchParams(search);
@@ -269,6 +271,8 @@ function ClaimFormBody({
           <p className="text-gray-600">{express ? 'One click, free forever. No credit card, no verification email.' : 'Free forever. No credit card. Takes about a minute.'}</p>
         </div>
       ) : intro}
+
+      {proof}
 
       {!focused && benefits}
 
