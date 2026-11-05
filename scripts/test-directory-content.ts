@@ -11,6 +11,7 @@ import {
   isBoilerplateDescription,
   neighborsInCounty,
   neighborsInState,
+  serviceListPhrase,
   shouldIndexCityPage,
 } from '../src/lib/directory-content';
 
@@ -28,6 +29,11 @@ assert.equal(shouldIndexCityPage(0), false);
 assert.equal(shouldIndexCityPage(1), false);
 assert.equal(shouldIndexCityPage(2), false);
 assert.equal(shouldIndexCityPage(3), true);
+assert.equal(serviceListPhrase(['roofing', 'HVAC', 'solar installation', 'plumbing']), 'roofing, HVAC, solar installation, and more');
+assert.equal(serviceListPhrase(['roofing', 'HVAC', 'solar installation']), 'roofing, HVAC, and solar installation');
+assert.equal(serviceListPhrase(['roofing', 'HVAC']), 'roofing and HVAC');
+assert.equal(serviceListPhrase(['roofing']), 'roofing');
+assert.equal(serviceListPhrase([]), '');
 
 const hours = normalizeHours('{"monday":"08:00-17:00","tuesday":"08:00-17:00","saturday":"09:00-13:00"}');
 assert.ok(hours);

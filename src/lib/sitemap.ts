@@ -53,11 +53,11 @@ function maxLastmod(values: Array<string | null | undefined>): string | undefine
 // Page templates were rewritten on these dates (PR #52: city + category pages; 2026-10-28: county hubs). The page content
 // changed even where no listing row did, so lastmod must not be older than the rewrite or crawlers skip the new copy.
 export const CITY_PAGES_REVISED = '2026-11-04'; // 2026-11-04: typical Florida cost line. 2026-11-03: ranked top-10 table (2026-11-02: link to the city hub)
-export const CATEGORY_PAGES_REVISED = '2026-11-04'; // 2026-11-04: typical cost line. 2026-11-02: licensing line (2026-10-31: quote finder)
+export const CATEGORY_PAGES_REVISED = '2026-11-05'; // 2026-11-05: brand suffix only when the title stays ≤65. 2026-11-04: typical cost line. 2026-11-02: licensing line (2026-10-31: quote finder)
 // 2026-10-31: every listing page gained an FAQ section + FAQPage markup, so listing lastmod is floored to that date.
 export const LISTING_PAGES_REVISED = '2026-11-04'; // 2026-11-04: typical cost line. 2026-11-02: license check box
 export const COUNTY_PAGES_REVISED = '2026-11-02'; // 2026-11-02: city chips link city hubs
-export const CITY_HUBS_REVISED = '2026-11-04'; // 2026-11-04: cost guides link
+export const CITY_HUBS_REVISED = '2026-11-05'; // 2026-11-05: meta lists top services as "X, Y, Z, and more". 2026-11-04: cost guides link
 export { CITY_COST_PAGES_REVISED }; // 2026-11-05: /costs/<trade>/<city>
 export function withFloor(lastmod: string | null | undefined, floor: string): string {
   return lastmod && lastmod > floor ? lastmod : floor;

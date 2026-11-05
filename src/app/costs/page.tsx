@@ -44,7 +44,7 @@ export default function CostsIndex() {
             </tbody>
           </table>
         </div>
-        <p className="text-xs text-gray-500 mt-6">Estimates for typical Florida homes, compiled from published 2025–2026 cost guides and contractor price lists. Not quotes.</p>
+        <p className="text-xs text-gray-500 mt-6">Estimates for typical Florida homes in 2026. On 2026-11-05 each guide’s headline job was checked against at least two public sources (Angi, HomeGuide, Fixr, EnergySage, and Florida contractor guides where available). Not quotes. Each trade page lists its Sources.</p>
       </div>
     </>
   );

@@ -20,6 +20,13 @@ const nextConfig: NextConfig = {
       // Common guessed URLs that 404'd in the Nov 2 request logs.
       { source: '/about-us', destination: '/about', permanent: true },
       { source: '/contact-us', destination: '/contact', permanent: true },
+      // ES/PT spellings that 404'd in the Nov 5 request logs.
+      { source: '/contacto', destination: '/contact', permanent: true },
+      { source: '/contactos', destination: '/contact', permanent: true },
+      { source: '/contato', destination: '/contact', permanent: true },
+      { source: '/get-quotes', destination: '/', permanent: true },
+      { source: '/sitemaps.xml', destination: '/sitemap.xml', permanent: true },
+      { source: '/sitemaps/:path*', destination: '/sitemap/:path*', permanent: true },
       { source: '/data', destination: '/data/florida-contractor-ratings-2026', permanent: true },
       { source: '/guides', destination: '/guides/florida-contractor-license-check', permanent: false },
       { source: '/services/:category', destination: '/category/:category', permanent: true },
