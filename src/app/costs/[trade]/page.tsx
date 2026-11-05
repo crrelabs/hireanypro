@@ -84,7 +84,7 @@ export default async function CostGuidePage({ params }: { params: Promise<{ trad
       <article className="max-w-4xl mx-auto px-4 py-8">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Cost guides', href: '/costs' }, { label: `${g.title} cost` }]} />
         <h1 className="text-3xl font-bold text-gray-900 mb-3">How much does {article(g.noun)} {g.noun} cost in Florida?</h1>
-        <p className="text-sm text-gray-500 mb-6">Updated November 2026 · HireAnyPro cost guide for Florida homeowners</p>
+        <p className="text-sm text-gray-500 mb-6">Updated November 5, 2026 · HireAnyPro cost guide for Florida homeowners</p>
 
         <div className="bg-blue-50 border border-blue-100 rounded-xl p-5 mb-8">
           <p className="text-gray-800">
@@ -149,10 +149,21 @@ export default async function CostGuidePage({ params }: { params: Promise<{ trad
           ))}
         </div>
 
-        <p className="text-xs text-gray-500 mb-6">
-          How we estimate: ranges are typical installed prices for Florida homes in 2026, compiled from published 2025–2026 Florida and national cost guides and contractor price lists.
-          South Florida and resort areas tend to sit at the high end, North Florida and the Panhandle at the low end. Prices are not quotes and change with materials, season and storms.
+        <p className="text-xs text-gray-500 mb-4">
+          How we estimate: ranges are typical installed prices for Florida homes in 2026. On 2026-11-05 we checked each guide’s headline job against at least two public sources (Angi, HomeGuide, Fixr, EnergySage, and Florida contractor guides where available) and logged sources in our cost-sources file; secondary jobs use those guides or a related planning estimate. South Florida and resort areas tend to sit at the high end, North Florida and the Panhandle at the low end. Prices are not quotes and change with materials, season and storms. See Sources below.
         </p>
+        {g.sources && g.sources.length > 0 && (
+          <section className="mb-6" aria-labelledby="cost-sources-heading">
+            <h2 id="cost-sources-heading" className="text-sm font-semibold text-gray-900 mb-2">Sources</h2>
+            <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+              {g.sources.map((s) => (
+                <li key={s.url}>
+                  <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-blue-800 hover:underline">{s.label}</a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
         <p className="text-sm text-gray-500">Other cost guides: {COST_GUIDES.filter((x) => x.slug !== g.slug).map((x, i) => (<span key={x.slug}>{i ? ' · ' : ''}<Link href={costPath(x.slug)} className="text-blue-800 hover:underline">{x.title}</Link></span>))}</p>
       </article>
     </>
