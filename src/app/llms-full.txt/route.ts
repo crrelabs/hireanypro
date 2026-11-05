@@ -1,5 +1,5 @@
-import { supabase } from '@/lib/supabase';
 import report from '@/data/florida-ratings-2026-by-category.json';
+import { countPublicListings } from '@/lib/listing-count';
 import overall from '@/data/florida-ratings-2026.json';
 import { lowerCategory } from '@/lib/directory-content';
 import { prosLabel } from '@/lib/pros-label';
@@ -17,8 +17,7 @@ const fmt = (n: number | null | undefined) => (n == null ? 'n/a' : n.toLocaleStr
  * No per-business rankings here: the city pages are the source for current pros.
  */
 export async function GET() {
-  const { count, error } = await supabase.from('listings').select('id', { count: 'exact', head: true }).not('slug', 'like', 'zz-hap-test%');
-  if (error) throw new Error(`llms-full.txt: ${error.message}`); // keep the last good copy
+  const count = await countPublicListings(); // throws on a read error so the last good copy stays cached
   const asOf = report.asOf;
   const o = overall.overall;
   const sections = report.categories.map((c) => {
