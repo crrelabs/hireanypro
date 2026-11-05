@@ -6,7 +6,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import OwnerClaimFinder from '@/components/OwnerClaimFinder';
-import { getProsCategoryStory, prosFaqs } from '@/lib/for-pros';
+import { forProsDocumentTitle, getProsCategoryStory, prosFaqs } from '@/lib/for-pros';
 import { formatCount, faqPageJsonLd } from '@/lib/directory-content';
 
 export async function generateStaticParams() {
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category } = await params;
   const s = await getProsCategoryStory(category);
   if (!s) return { title: 'Not Found' };
-  const title = `List Your ${s.name} Business Free in Florida | HireAnyPro for Pros`;
+  const title = forProsDocumentTitle(s.name, s.slug);
   const description = `${formatCount(s.total)} Florida ${s.lc} businesses are listed on HireAnyPro. Claim yours free, fix your details and get quote requests from homeowners.`;
   const url = `https://hireanypro.com/for-pros/${s.slug}`;
   return { title, description, alternates: { canonical: url }, openGraph: { title, description, url, siteName: 'HireAnyPro', images: [{ url: '/logo.png', alt: 'HireAnyPro' }] } };

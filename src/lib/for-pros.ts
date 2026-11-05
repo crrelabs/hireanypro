@@ -1,6 +1,19 @@
 import { supabase } from '@/lib/supabase';
 import { getCategoryBySlug, getCategoryCities, getCategoryRollup } from '@/lib/listings';
 import { shouldIndexCityPage, lowerCategory, formatCount } from '@/lib/directory-content';
+import { withBrandSuffix } from '@/lib/meta';
+
+/** Lowercase singular trade for "your {noun} business". Plural category names get a singular form. */
+export function businessNoun(slug: string, name: string): string {
+  if (slug === 'moving-companies') return 'moving company';
+  return lowerCategory(name);
+}
+
+/** /for-pros/[category] document title. Brand suffix only when the result stays ≤65 characters. */
+export function forProsDocumentTitle(name: string, slug: string): string {
+  const trade = slug === 'moving-companies' ? 'Moving Company' : name;
+  return withBrandSuffix(`List Your ${trade} Business Free in Florida`, ' | HireAnyPro for Pros');
+}
 
 export type ProsCategoryStory = {
   name: string;
@@ -35,7 +48,8 @@ export async function getProsCategoryStory(slug: string): Promise<ProsCategorySt
   return {
     name: category.name,
     slug: category.slug,
-    lc: lowerCategory(category.name),
+    // "moving companies business" / "moving companies businesses" — use the singular noun.
+    lc: businessNoun(category.slug, category.name),
     total,
     cityCount: cities.length,
     claimed: claimedRes.count || 0,

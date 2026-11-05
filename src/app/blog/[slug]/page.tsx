@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { costGuide, costPath } from '@/lib/cost-guides';
 import type { Metadata } from 'next';
 import BlogContent from './BlogContent';
-import { clampDescription } from '@/lib/meta';
+import { clampDescription, clampTitle } from '@/lib/meta';
 import { extractFaq } from '@/lib/blog-faq';
 
 export const revalidate = 86400;
@@ -24,7 +24,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) return { title: 'Post Not Found' };
 
   return {
-    title: post.title.length > 46 ? post.title : `${post.title} | HireAnyPro Blog`, // keep titles under ~65 chars
+    // Brand suffix only on short titles; clamp either way so the document title stays ~65 characters. OG keeps the full title.
+    title: clampTitle(post.title.length > 46 ? post.title : `${post.title} | HireAnyPro Blog`),
     description: clampDescription(post.excerpt || post.title),
     alternates: { canonical: `https://hireanypro.com/blog/${slug}` },
     openGraph: {
@@ -147,7 +148,7 @@ export default async function BlogPostPage({ params }: Props) {
         )}
 
         {/* Content */}
-        <BlogContent content={post.content} category={post.category} />
+        <BlogContent content={post.content} category={post.category} title={post.title} />
 
         {/* Bottom CTA */}
         <div className="bg-gradient-to-r from-blue-800 to-blue-900 text-white rounded-xl p-8 mt-12 text-center">
