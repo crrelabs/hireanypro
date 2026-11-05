@@ -12,6 +12,8 @@ import CityRanking from '@/components/CityRanking';
 import { rankCityPros } from '@/lib/city-ranking';
 import StickyQuoteBar from '@/components/StickyQuoteBar';
 import CostLine from '@/components/CostLine';
+import { costGuide } from '@/lib/cost-guides';
+import { costCityPath } from '@/lib/city-costs';
 import { tradeAlias, cityAliasCandidates } from '@/lib/slug-aliases';
 import { getCountyData, primaryCitiesInCounty, countySlug, citySlug, stateName } from '@/lib/geo';
 import {
@@ -249,7 +251,13 @@ export default async function CityLandingPage({ params }: Props) {
 
         <CityIntro {...copy} />
         <CityStatsBlock categoryName={category.name} cityName={cityName} count={group.count} stats={stats} />
-        {group.state === 'FL' && <CostLine categorySlug={category.slug} />}
+        {group.state === 'FL' && (
+          <CostLine
+            categorySlug={category.slug}
+            cityName={cityName}
+            cityCostHref={hubCity && costGuide(category.slug) && shouldIndexCityPage(group.count) ? costCityPath(category.slug, hubCity.slug) : undefined}
+          />
+        )}
 
         <CityQuoteForm categorySlug={category.slug} categoryName={category.name} citySlug={cSlug} cityName={cityName} />
         <StickyQuoteBar targetId="get-quotes" form="city_multi_quote" label={`Get up to 3 free quotes in ${cityName}`} />

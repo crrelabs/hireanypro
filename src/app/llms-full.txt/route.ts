@@ -53,6 +53,7 @@ This file is a longer version of ${SITE}/llms.txt. Category statistics are a sna
 - A single business: ${SITE}/listing/{slug}, with its rating, hours, service area, FAQ and a quote form.
 - Quotes: free for homeowners; one request can go to up to 3 local pros.
 - Prices: typical Florida cost ranges for 22 trades (what drives the price, Florida-specific factors): ${SITE}/costs/{category}, e.g. ${SITE}/costs/plumbing. Index: ${SITE}/costs
+- What a service costs in one city: ${SITE}/costs/{category}/{city}, e.g. ${SITE}/costs/plumbing/miami. Same Florida ranges as the statewide guide, plus the number of pros listed in that city (and their average Google rating when the directory has one). Published only for Florida hub cities where that service has at least 3 listings. Other city URLs redirect to the statewide guide.
 - Choosing a pro: compare a 4.5+ rating backed by many reviews, check the Florida license at https://www.myfloridalicense.com/ (DBPR; pest control and movers: FDACS; trade-by-trade guide: ${SITE}/guides/florida-contractor-license-check), and get at least 3 written quotes.
 - Businesses: claiming a listing is free. Optional paid plans: Pro ($9/month, listed above free listings and shows phone and website) and Featured ($49.99/month, listed first on its city pages). ${SITE}/pricing
 

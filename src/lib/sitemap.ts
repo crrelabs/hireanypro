@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import tradeReport from '@/data/florida-ratings-2026-by-category.json';
 import { COST_GUIDES, COSTS_UPDATED, costPath } from '@/lib/cost-guides';
+import { CITY_COST_PAGES_REVISED, costCityPath, eligibleCityCosts } from '@/lib/city-costs';
 import { getAllBlogSlugs } from '@/lib/blog';
 import { cityPageSlug, countySlug } from '@/lib/geo';
 import { shouldIndexCityPage } from '@/lib/directory-content';
@@ -57,6 +58,7 @@ export const CATEGORY_PAGES_REVISED = '2026-11-04'; // 2026-11-04: typical cost 
 export const LISTING_PAGES_REVISED = '2026-11-04'; // 2026-11-04: typical cost line. 2026-11-02: license check box
 export const COUNTY_PAGES_REVISED = '2026-11-02'; // 2026-11-02: city chips link city hubs
 export const CITY_HUBS_REVISED = '2026-11-04'; // 2026-11-04: cost guides link
+export { CITY_COST_PAGES_REVISED }; // 2026-11-05: /costs/<trade>/<city>
 export function withFloor(lastmod: string | null | undefined, floor: string): string {
   return lastmod && lastmod > floor ? lastmod : floor;
 }
@@ -178,10 +180,11 @@ async function fetchListingGeoRows(): Promise<ListingGeoRow[]> {
 }
 
 export async function getPagesSitemapUrls(): Promise<SitemapUrl[]> {
-  const [categories, blogSlugs, latestListing] = await Promise.all([
-    assertOk(await supabase.from('categories').select('slug, created_at').order('slug')),
+  const [categories, blogSlugs, latestListing, hubs] = await Promise.all([
+    assertOk(await supabase.from('categories').select('id, slug, created_at').order('slug')),
     getAllBlogSlugs(),
     getLatestListingUpdatedAt(),
+    getHubCities(),
   ]);
 
   const latestCategory = maxLastmod((categories || []).map((c) => c.created_at));
@@ -199,6 +202,14 @@ export async function getPagesSitemapUrls(): Promise<SitemapUrl[]> {
     { loc: `${BASE_URL}/cities`, lastmod: '2026-11-02', changefreq: 'weekly', priority: 0.7 },
     { loc: `${BASE_URL}/costs`, lastmod: COSTS_UPDATED, changefreq: 'monthly', priority: 0.7 },
     ...COST_GUIDES.map((g) => ({ loc: `${BASE_URL}${costPath(g.slug)}`, lastmod: COSTS_UPDATED, changefreq: 'monthly' as const, priority: 0.7 })),
+    ...eligibleCityCosts(hubs, new Map((categories || []).map((c) => [c.slug as string, c.id as string])))
+      .sort((a, b) => a.trade.localeCompare(b.trade) || a.city.localeCompare(b.city))
+      .map((p) => ({
+        loc: `${BASE_URL}${costCityPath(p.trade, p.city)}`,
+        lastmod: withFloor(latestListing, CITY_COST_PAGES_REVISED),
+        changefreq: 'weekly' as const,
+        priority: 0.6,
+      })),
     { loc: `${BASE_URL}/claim`, changefreq: 'monthly', priority: 0.5 },
     { loc: `${BASE_URL}/for-pros`, lastmod: '2026-10-30', changefreq: 'monthly', priority: 0.6 },
   ];
@@ -306,7 +317,7 @@ export function buildSitemapIndexEntries(
 ): SitemapIndexEntry[] {
   const listingChunks = Math.ceil(listingCount / LISTING_CHUNK_SIZE);
   const entries: SitemapIndexEntry[] = [
-    { loc: `${BASE_URL}/sitemap/pages.xml`, lastmod: withFloor(latestListing, CATEGORY_PAGES_REVISED) },
+    { loc: `${BASE_URL}/sitemap/pages.xml`, lastmod: withFloor(latestListing, CITY_COST_PAGES_REVISED) },
     { loc: `${BASE_URL}/sitemap/cities.xml`, lastmod: withFloor(latestListing, COUNTY_PAGES_REVISED) },
   ];
 

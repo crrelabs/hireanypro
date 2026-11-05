@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { renderSitemapIndex, renderUrlset } from '../src/lib/sitemap-xml';
-import { buildSitemapIndexEntries, parseListingChunk } from '../src/lib/sitemap';
+import { buildSitemapIndexEntries, CITY_COST_PAGES_REVISED, COUNTY_PAGES_REVISED, LISTING_PAGES_REVISED, parseListingChunk } from '../src/lib/sitemap';
 
 const urlset = renderUrlset([
   { loc: 'https://hireanypro.com', lastmod: '2026-08-01T00:00:00.000Z', changefreq: 'daily', priority: 1 },
@@ -34,9 +34,9 @@ assert.equal(indexEntries[0].loc, 'https://hireanypro.com/sitemap/pages.xml');
 assert.equal(indexEntries[1].loc, 'https://hireanypro.com/sitemap/cities.xml');
 assert.equal(indexEntries[2].loc, 'https://hireanypro.com/sitemap/listings/0.xml');
 assert.equal(indexEntries[7].loc, 'https://hireanypro.com/sitemap/listings/5.xml');
-assert.ok(indexEntries.slice(2).every((e) => e.lastmod === '2026-08-15T12:00:00.000Z'));
-// Page/city sitemaps never report a lastmod older than the last template rewrite.
-assert.equal(indexEntries[0].lastmod, '2026-10-27');
-assert.equal(indexEntries[1].lastmod, '2026-10-28');
+// An older listing timestamp must not pull page/city/listing sitemap lastmod below the template rewrite.
+assert.equal(indexEntries[0].lastmod, CITY_COST_PAGES_REVISED);
+assert.equal(indexEntries[1].lastmod, COUNTY_PAGES_REVISED);
+assert.ok(indexEntries.slice(2).every((e) => e.lastmod === LISTING_PAGES_REVISED));
 
 console.log('sitemap-xml unit checks passed');
