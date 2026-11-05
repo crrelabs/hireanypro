@@ -2,10 +2,16 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
-import type { Category } from '@/lib/supabase';
 import { isAutomatedBrowser } from '@/lib/track';
+
+type Category = {
+  id: string;
+  name: string;
+  slug: string;
+  icon: string;
+  parent_id: string | null;
+};
 
 const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
 
@@ -23,6 +29,7 @@ function EditForm() {
   const listingId = params.id as string;
 
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -41,13 +48,25 @@ function EditForm() {
   const [hours, setHours] = useState<HoursMap>({});
 
   useEffect(() => {
+    let cancelled = false;
     async function load() {
-      const [{ data: listing }, { data: cats }] = await Promise.all([
-        supabase.from('listings').select('*').eq('id', listingId).single(),
-        supabase.from('categories').select('id, name, slug, icon, parent_id').order('name'),
-      ]);
-
-      if (listing) {
+      setLoading(true);
+      setLoadError(null);
+      try {
+        const res = await fetch(`/api/listing/${encodeURIComponent(listingId)}`, { cache: 'no-store' });
+        const body = await res.json().catch(() => ({}));
+        if (cancelled) return;
+        if (res.status === 401 || res.status === 403) {
+          setLoadError(body.error || (res.status === 401
+            ? 'Your session expired. Please sign in again from the dashboard.'
+            : 'You do not own this listing.'));
+          return;
+        }
+        if (!res.ok || !body.listing) {
+          setLoadError(body.error || 'Could not load this listing.');
+          return;
+        }
+        const listing = body.listing;
         setName(listing.name || '');
         setDescription(listing.description || '');
         setPhone(listing.phone || '');
@@ -59,11 +78,15 @@ function EditForm() {
         setZip(listing.zip || '');
         setCategoryId(listing.category_id || '');
         setHours(listing.hours || {});
+        setCategories(body.categories || []);
+      } catch {
+        if (!cancelled) setLoadError('Network error. Please try again.');
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      setCategories(cats || []);
-      setLoading(false);
     }
     load();
+    return () => { cancelled = true; };
   }, [listingId]);
 
   function updateHours(day: string, field: 'open' | 'close', value: string) {
@@ -115,6 +138,22 @@ function EditForm() {
 
   if (loading) {
     return <div className="max-w-3xl mx-auto py-20 px-4 text-center text-gray-500">Loading listing...</div>;
+  }
+
+  if (loadError) {
+    return (
+      <div className="max-w-3xl mx-auto py-12 px-4">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">Edit Listing</h1>
+          <Link href="/dashboard" className="text-sm text-blue-800 hover:text-blue-600 font-medium">
+            ← Back to Dashboard
+          </Link>
+        </div>
+        <div className="mb-6 p-4 rounded-lg text-sm font-medium bg-red-50 text-red-800 border border-red-200">
+          {loadError}
+        </div>
+      </div>
+    );
   }
 
   return (
