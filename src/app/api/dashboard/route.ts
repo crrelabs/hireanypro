@@ -10,6 +10,165 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+const BADGE_TTL_MS = 86_400_000;
+const BADGE_MAX_BYTES = 1024 * 1024;
+const BADGE_TIMEOUT_MS = 3000;
+const badgeCache = new Map<string, { at: number; detected: boolean }>();
+
+/** Listing website fields must not be able to point this server at localhost or a private address. */
+function isBlockedHost(hostname: string): boolean {
+  const host = hostname.toLowerCase().replace(/^\[|\]$/g, '');
+  if (!host || host === 'localhost' || host.endsWith('.localhost') || host.endsWith('.local')) return true;
+  if (host === '0.0.0.0' || host === '::1' || host === '::') return true;
+  const v4 = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (v4) {
+    const n = v4.slice(1).map((x) => Number(x));
+    if (n.some((x) => x > 255)) return true;
+    const [a, b] = n;
+    if (a === 0 || a === 10 || a === 127) return true;
+    if (a === 169 && b === 254) return true;
+    if (a === 172 && b >= 16 && b <= 31) return true;
+    if (a === 192 && b === 168) return true;
+    if (a === 100 && b >= 64 && b <= 127) return true;
+    return false;
+  }
+  if (host.includes(':')) {
+    const h = host.split('%')[0];
+    if (h === '::1' || h === '::') return true;
+    if (/^f[cd]/i.test(h) || /^fe[89ab]/i.test(h)) return true;
+  }
+  return false;
+}
+
+/** Homepage URL for a listing website. Adds https:// when the value has no scheme. */
+function homepageUrl(website: string): string | null {
+  const trimmed = website.trim();
+  if (!trimmed) return null;
+  const hasScheme = /^[a-z][a-z0-9+.-]*:/i.test(trimmed);
+  let url: URL;
+  try {
+    url = new URL(hasScheme ? trimmed : `https://${trimmed}`);
+  } catch {
+    return null;
+  }
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') return null;
+  if (isBlockedHost(url.hostname)) return null;
+  const host = url.hostname;
+  const isIp = /^\d{1,3}(\.\d{1,3}){3}$/.test(host) || host.includes(':');
+  if (!isIp && !host.includes('.')) return null;
+  return `${url.protocol}//${url.host}/`;
+}
+
+/** Badge is installed when the homepage HTML links the listing or the badge image. www. is allowed. */
+function htmlHasBadge(html: string, slug: string): boolean {
+  if (!slug) return false;
+  const slugEsc = slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(`(^|[^a-z0-9.])(?:www\\.)?hireanypro\\.com/(?:listing|api/badge)/${slugEsc}(?![a-z0-9-])`, 'i');
+  return re.test(html);
+}
+
+async function readLimited(res: Response, max: number): Promise<string> {
+  const reader = res.body?.getReader();
+  if (!reader) {
+    const text = await res.text();
+    return text.length > max ? text.slice(0, max) : text;
+  }
+  const parts: Uint8Array[] = [];
+  let total = 0;
+  try {
+    while (total < max) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (!value || value.byteLength === 0) continue;
+      const room = max - total;
+      const slice = value.byteLength > room ? value.subarray(0, room) : value;
+      parts.push(slice);
+      total += slice.byteLength;
+    }
+  } finally {
+    await reader.cancel().catch(() => undefined);
+  }
+  const buf = new Uint8Array(total);
+  let offset = 0;
+  for (const part of parts) {
+    buf.set(part, offset);
+    offset += part.byteLength;
+  }
+  return new TextDecoder('utf-8', { fatal: false }).decode(buf);
+}
+
+async function fetchHomepage(url: string, signal: AbortSignal): Promise<Response | null> {
+  let current = url;
+  for (let hop = 0; hop < 4; hop++) {
+    const res = await fetch(current, {
+      signal,
+      redirect: 'manual',
+      headers: {
+        Accept: 'text/html,application/xhtml+xml',
+        'User-Agent': 'Mozilla/5.0 (compatible; HireAnyPro-BadgeCheck/1.0; +https://hireanypro.com)',
+      },
+      next: { revalidate: 86400 },
+    });
+    if (res.status >= 300 && res.status < 400) {
+      const loc = res.headers.get('location');
+      await res.body?.cancel().catch(() => undefined);
+      if (!loc) return null;
+      let nextUrl: URL;
+      try { nextUrl = new URL(loc, current); } catch { return null; }
+      if (nextUrl.protocol !== 'http:' && nextUrl.protocol !== 'https:') return null;
+      if (isBlockedHost(nextUrl.hostname)) return null;
+      current = nextUrl.toString();
+      continue;
+    }
+    return res;
+  }
+  return null;
+}
+
+/** Failure, timeout, or a blocked URL means the badge was not detected. Never throws. */
+async function detectBadgeOnSite(url: string, slug: string): Promise<boolean> {
+  const key = `${slug}\n${url}`;
+  const now = Date.now();
+  const hit = badgeCache.get(key);
+  if (hit && now - hit.at < BADGE_TTL_MS) return hit.detected;
+  if (badgeCache.size > 200) {
+    for (const [k, v] of badgeCache) {
+      if (now - v.at >= BADGE_TTL_MS) badgeCache.delete(k);
+    }
+  }
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), BADGE_TIMEOUT_MS);
+  let detected = false;
+  try {
+    const res = await fetchHomepage(url, ctrl.signal);
+    if (res?.ok) {
+      const html = await readLimited(res, BADGE_MAX_BYTES);
+      detected = htmlHasBadge(html, slug);
+    } else {
+      await res?.body?.cancel().catch(() => undefined);
+    }
+  } catch {
+    detected = false;
+  } finally {
+    clearTimeout(timer);
+  }
+  badgeCache.set(key, { at: now, detected });
+  return detected;
+}
+
+async function badgeForListing(website: unknown, slug: unknown): Promise<{ hasWebsite: boolean; badgeDetected: boolean }> {
+  const raw = typeof website === 'string' ? website.trim() : '';
+  const cleanSlug = typeof slug === 'string' ? slug.trim() : '';
+  if (!raw) return { hasWebsite: false, badgeDetected: false };
+  const url = homepageUrl(raw);
+  if (!url || !cleanSlug) return { hasWebsite: true, badgeDetected: false };
+  try {
+    return { hasWebsite: true, badgeDetected: await detectBadgeOnSite(url, cleanSlug) };
+  } catch {
+    return { hasWebsite: true, badgeDetected: false };
+  }
+}
+
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req);
   if (isRateLimited(`dashboard:${ip}`, 20, 60000)) {
@@ -59,9 +218,13 @@ export async function POST(req: NextRequest) {
         .eq('status', 'opt_in');
       const optMap = Object.fromEntries((optRows || []).map((r) => [r.listing_id, r.to_phone]));
       const views = await recentViews(listingIds, 30, supabase);
+      const rows = listingData || [];
+      // Homepage checks run alongside the rank queries. A failed fetch is "not detected" and must not fail the dashboard.
+      const badgeChecks = Promise.all(rows.map((l) => badgeForListing(l.website, l.slug)));
       // Position on the city x service page: Featured first, then Pro, then free, each by review count (lib/listings).
-      const ranks = await Promise.all((listingData || []).map((l) => cityPosition(l)));
-      listings = (listingData || []).map((l, i) => {
+      const ranks = await Promise.all(rows.map((l) => cityPosition(l)));
+      const badges = await badgeChecks;
+      listings = rows.map((l, i) => {
         const strength = listingStrength(l);
         const cat = Array.isArray(l.categories) ? l.categories[0] : l.categories;
         return {
@@ -69,6 +232,7 @@ export async function POST(req: NextRequest) {
           tier: planMap[l.id] || l.tier, smsPhone: optMap[l.id] || null, views30: views[l.id] || 0,
           city: l.city, categoryName: (cat as { name?: string } | null)?.name || null,
           strength: strength.score, checklist: strength.items, ...ranks[i],
+          hasWebsite: badges[i].hasWebsite, badgeDetected: badges[i].badgeDetected,
         };
       });
     }

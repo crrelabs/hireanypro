@@ -27,3 +27,10 @@ export function isAutomatedBrowser(): boolean {
   if ((navigator as Navigator & { webdriver?: boolean }).webdriver) return true;
   return /HeadlessChrome|PhantomJS|Puppeteer|Playwright|bot|crawler|spider|Lighthouse|Chrome-Lighthouse/i.test(navigator.userAgent || '');
 }
+
+/** GA4 funnel event. Skips headless browsers. "View" events still need onHuman() so an email scanner that runs JavaScript does not count. */
+export function track(name: string, params: Record<string, unknown> = {}) {
+  if (typeof window === 'undefined' || isAutomatedBrowser()) return;
+  const w = window as unknown as { gtag?: (...a: unknown[]) => void };
+  w.gtag?.('event', name, { page_path: window.location.pathname, ...params });
+}
