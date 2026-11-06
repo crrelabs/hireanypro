@@ -44,7 +44,7 @@ export default async function BlogPage({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Home Service Tips &amp; Guides</h1>
           <p className="text-blue-200 text-lg max-w-2xl mx-auto">
-            Expert advice to help you hire the right professionals and maintain your Miami home.
+            Expert advice to help you hire the right professionals and maintain your Florida home.
           </p>
         </div>
       </section>

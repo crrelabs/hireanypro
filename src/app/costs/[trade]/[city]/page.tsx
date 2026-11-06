@@ -9,7 +9,7 @@ import { COSTS_UPDATED, costPath, costRange, type CostGuide } from '@/lib/cost-g
 import { costCityPath, resolveCityCost, type CityCostFacts } from '@/lib/city-costs';
 import { faqPageJsonLd, formatCount, lowerCategory } from '@/lib/directory-content';
 import { prosLabel } from '@/lib/pros-label';
-import { clampDescription } from '@/lib/meta';
+import { clampDescription, clampTitle } from '@/lib/meta';
 import { hubHref } from '@/lib/city-hubs';
 
 // ISR, same as other directory pages. Next 16 ignores revalidate without generateStaticParams.
@@ -44,11 +44,22 @@ function h1For(guide: CostGuide, city: string, state: string): string {
   return `${guide.title} Cost in ${city}, ${state} (2026)`;
 }
 
+/** Keep the document title ≤65. Drop "(2026)" before shortening the guide name so the city stays. */
 function metaTitle(guide: CostGuide, city: string, state: string): string {
-  const full = h1For(guide, city, state);
-  if (full.length <= 62) return full;
-  const noYear = `${guide.title} Cost in ${city}, ${state}`;
-  return noYear.length <= 65 ? noYear : full;
+  const place = `${city}, ${state}`;
+  const withYear = `${guide.title} Cost in ${place} (2026)`;
+  if (withYear.length <= 65) return withYear;
+  const noYear = `${guide.title} Cost in ${place}`;
+  if (noYear.length <= 65) return noYear;
+  const tail = ` Cost in ${place}`;
+  const room = 65 - tail.length;
+  if (room < 3) return clampTitle(noYear);
+  let short = guide.title.slice(0, room).trimEnd();
+  const space = short.lastIndexOf(' ');
+  if (space >= 3) short = short.slice(0, space);
+  short = short.replace(/[,:;–—-]+$/u, '').trim();
+  const title = short ? `${short}${tail}` : '';
+  return title.length > 0 && title.length <= 65 ? title : clampTitle(noYear);
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
