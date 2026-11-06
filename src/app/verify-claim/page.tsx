@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { isAutomatedBrowser } from '@/lib/track';
+import { claimRankSentence, readClaimRank, type ClaimRankFields } from '@/lib/claim-rank-ui';
 
 function VerifyClaimContent() {
   const params = useSearchParams();
@@ -15,6 +16,7 @@ function VerifyClaimContent() {
   const [listingId, setListingId] = useState('');
   const [already, setAlready] = useState(false);
   const [linkSent, setLinkSent] = useState(false);
+  const [rank, setRank] = useState<ClaimRankFields | null>(null);
 
   useEffect(() => {
     if (!token) {
@@ -39,6 +41,7 @@ function VerifyClaimContent() {
           setAlready(!!data.alreadyVerified);
           setEmail(data.email || '');
           setListingId(data.listingId || '');
+          setRank(data.alreadyVerified ? null : readClaimRank(data));
           setMessage('Your claim has been verified! You can now manage your listing.');
         } else {
           if (data.reissued) { w.gtag?.('event', 'claim_link_reissued', { page_path: '/verify-claim' }); setReissued(true); }
@@ -77,13 +80,14 @@ function VerifyClaimContent() {
           {listingId && (
             <div className="mt-10 text-left bg-white border-2 border-blue-800 rounded-xl p-6">
               <p className="text-xs font-bold uppercase tracking-wide text-blue-800 mb-1">Optional upgrade</p>
+              {rank && <p className="text-sm text-gray-800 mb-3">{claimRankSentence(rank)}</p>}
               <h2 className="text-xl font-bold text-gray-900 mb-2">Get every quote request in your inbox: Pro, $9/month</h2>
               <ul className="text-sm text-gray-700 space-y-1 mb-4 list-disc pl-5">
                 <li>See the customer&apos;s name, phone and email on every request (free plans see a locked preview)</li>
                 <li>Your phone, email and website shown on your listing</li>
                 <li>Ranked above free listings in your category and city, plus a Verified badge</li>
               </ul>
-              <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(listingId)}&src=verify_claim&cmp=post_claim`}
+              <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(listingId)}&src=${rank ? 'claim_success' : 'verify_claim'}&cmp=${rank ? 'post_claim_rank' : 'post_claim'}`}
                 className="block text-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors">
                 Upgrade to Pro: $9/month
               </Link>

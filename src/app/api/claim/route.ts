@@ -10,6 +10,7 @@ import { recordSmsOptIn } from '@/lib/sms-leads';
 import { verifyClaimLink } from '@/lib/claim-link';
 import { setSessionCookie } from '@/lib/session';
 import { revalidateListing } from '@/lib/revalidate';
+import { rankUpgradeForListing } from '@/lib/city-rank';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -82,7 +83,8 @@ export async function POST(req: NextRequest) {
       notifyVerifiedClaim(listing.name || 'Unknown Business', email, listing.slug || '').catch(() => {});
       await revalidateListing(supabase, listing.id);
       if (listing.slug) await sendClaimConfirmed(email, listing.name || 'your business', listing.slug).catch(() => false);
-      const res = NextResponse.json({ success: true, verified: true, listingId: listing.id });
+      const rank = await rankUpgradeForListing(supabase, listing.id);
+      const res = NextResponse.json({ success: true, verified: true, listingId: listing.id, ...(rank ?? {}) });
       setSessionCookie(res, email);
       return res;
     }
