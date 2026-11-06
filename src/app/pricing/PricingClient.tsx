@@ -6,6 +6,7 @@ import { isAutomatedBrowser, onHuman } from '@/lib/track';
 import PlanSpotCard from '@/components/PlanSpotCard';
 import SocialProofStrip from '@/components/SocialProofStrip';
 import type { SocialProofStats } from '@/lib/social-proof-copy';
+import { pricingCampaign } from '@/lib/pricing-campaign';
 
 type Biz = { id: string; name: string; slug: string; city?: string | null; state?: string | null; tier?: string | null; claimed?: boolean | null };
 const track = (name: string, p: Record<string, unknown> = {}) => {
@@ -119,7 +120,7 @@ export default function PricingClient({ proof }: { proof: SocialProofStats }) {
   // A click on a plan counts, because pricing_view's listener has already marked this visitor as human.
   useEffect(() => {
     if (!selectedPlan) return;
-    return onHuman(() => track('checkout_open', { plan: selectedPlan }));
+    return onHuman(() => track('checkout_open', { plan: selectedPlan, ...pricingCampaign(window.location.search) }));
   }, [selectedPlan]);
 
   const searchSeq = useRef(0);
@@ -152,7 +153,7 @@ export default function PricingClient({ proof }: { proof: SocialProofStats }) {
     if (!biz && !listingId) { setError('Please choose your business first.'); return; }
     setLoading(selectedPlan);
     setError('');
-    track('checkout_start', { plan: selectedPlan, listing_slug: biz?.slug || listingId });
+    track('checkout_start', { plan: selectedPlan, listing_slug: biz?.slug || listingId, ...pricingCampaign(window.location.search) });
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',

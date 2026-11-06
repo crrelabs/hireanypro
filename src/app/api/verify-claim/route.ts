@@ -6,6 +6,7 @@ import { sendClaimVerification, sendClaimConfirmed } from '@/lib/claim-email';
 import { setSessionCookie } from '@/lib/session';
 import { revalidateListing } from '@/lib/revalidate';
 import { rankUpgradeForListing } from '@/lib/city-rank';
+import { viewCount } from '@/lib/listing-views';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -102,8 +103,11 @@ export async function POST(req: NextRequest) {
     }
 
     // Verified email = proof of ownership: sign the owner straight into their dashboard.
-    const rank = await rankUpgradeForListing(supabase, claim.listing_id);
-    const res = NextResponse.json({ success: true, email: claim.email, listingId: claim.listing_id, ...(rank ?? {}) });
+    const [rank, views30] = await Promise.all([
+      rankUpgradeForListing(supabase, claim.listing_id),
+      viewCount(claim.listing_id, 30, supabase),
+    ]);
+    const res = NextResponse.json({ success: true, email: claim.email, listingId: claim.listing_id, ...(rank ?? {}), views30 });
     if (claim.email) setSessionCookie(res, claim.email);
     return res;
   } catch (error: unknown) {

@@ -11,6 +11,7 @@ import { verifyClaimLink } from '@/lib/claim-link';
 import { setSessionCookie } from '@/lib/session';
 import { revalidateListing } from '@/lib/revalidate';
 import { rankUpgradeForListing } from '@/lib/city-rank';
+import { viewCount } from '@/lib/listing-views';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -83,8 +84,11 @@ export async function POST(req: NextRequest) {
       notifyVerifiedClaim(listing.name || 'Unknown Business', email, listing.slug || '').catch(() => {});
       await revalidateListing(supabase, listing.id);
       if (listing.slug) await sendClaimConfirmed(email, listing.name || 'your business', listing.slug).catch(() => false);
-      const rank = await rankUpgradeForListing(supabase, listing.id);
-      const res = NextResponse.json({ success: true, verified: true, listingId: listing.id, ...(rank ?? {}) });
+      const [rank, views30] = await Promise.all([
+        rankUpgradeForListing(supabase, listing.id),
+        viewCount(listing.id, 30, supabase),
+      ]);
+      const res = NextResponse.json({ success: true, verified: true, listingId: listing.id, ...(rank ?? {}), views30 });
       setSessionCookie(res, email);
       return res;
     }
