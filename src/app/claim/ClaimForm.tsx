@@ -7,6 +7,7 @@ import TurnstileWidget from '@/components/TurnstileWidget';
 import { isAutomatedBrowser, onHuman } from '@/lib/track';
 import ClaimValueCard from '@/components/ClaimValueCard';
 import { claimRankSentence, readClaimRank, type ClaimRankFields } from '@/lib/claim-rank-ui';
+import { claimViewsSentence, readClaimViews, withViewsCmp } from '@/lib/claim-views-ui';
 
 type ListingResult = {
   id: string;
@@ -86,6 +87,7 @@ function ClaimFormBody({
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [rank, setRank] = useState<ClaimRankFields | null>(null);
+  const [views, setViews] = useState<number | null>(null);
   const [pendingVerification, setPendingVerification] = useState(false);
   const [error, setError] = useState('');
   const [resent, setResent] = useState(false);
@@ -206,6 +208,7 @@ function ClaimFormBody({
           track('claim_verified', { listing_slug: selected.slug, method: 'one_click' });
           setClaimedListingId(data.listingId || selected.id);
           setRank(readClaimRank(data));
+          setViews(readClaimViews(data));
           setSuccess(true);
         } else if (data.pendingVerification) {
           setPendingVerification(true);
@@ -258,7 +261,8 @@ function ClaimFormBody({
               <li>Your phone, email and website shown on your listing</li>
               <li>Ranked above free listings, plus a Verified badge</li>
             </ul>
-            <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(claimedListingId)}&src=claim_success&cmp=${rank ? 'post_claim_rank' : 'post_claim'}`}
+            {views != null && <p className="text-sm text-gray-800 mb-3">{claimViewsSentence(views)}</p>}
+            <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(claimedListingId)}&src=claim_success&cmp=${withViewsCmp(rank ? 'post_claim_rank' : 'post_claim', views)}`}
               className="block text-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg">Upgrade to Pro: $9/month</Link>
             <p className="text-xs text-gray-500 text-center mt-2">Cancel anytime. Your free listing stays free if you skip this.</p>
           </div>

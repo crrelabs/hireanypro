@@ -5,6 +5,7 @@ import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { isAutomatedBrowser } from '@/lib/track';
 import { claimRankSentence, readClaimRank, type ClaimRankFields } from '@/lib/claim-rank-ui';
+import { claimViewsSentence, readClaimViews, withViewsCmp } from '@/lib/claim-views-ui';
 
 function VerifyClaimContent() {
   const params = useSearchParams();
@@ -17,6 +18,7 @@ function VerifyClaimContent() {
   const [already, setAlready] = useState(false);
   const [linkSent, setLinkSent] = useState(false);
   const [rank, setRank] = useState<ClaimRankFields | null>(null);
+  const [views, setViews] = useState<number | null>(null);
 
   useEffect(() => {
     if (!token) {
@@ -42,6 +44,7 @@ function VerifyClaimContent() {
           setEmail(data.email || '');
           setListingId(data.listingId || '');
           setRank(data.alreadyVerified ? null : readClaimRank(data));
+          setViews(data.alreadyVerified ? null : readClaimViews(data));
           setMessage('Your claim has been verified! You can now manage your listing.');
         } else {
           if (data.reissued) { w.gtag?.('event', 'claim_link_reissued', { page_path: '/verify-claim' }); setReissued(true); }
@@ -87,7 +90,8 @@ function VerifyClaimContent() {
                 <li>Your phone, email and website shown on your listing</li>
                 <li>Ranked above free listings in your category and city, plus a Verified badge</li>
               </ul>
-              <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(listingId)}&src=${rank ? 'claim_success' : 'verify_claim'}&cmp=${rank ? 'post_claim_rank' : 'post_claim'}`}
+              {views != null && <p className="text-sm text-gray-800 mb-3">{claimViewsSentence(views)}</p>}
+              <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(listingId)}&src=${rank ? 'claim_success' : 'verify_claim'}&cmp=${withViewsCmp(rank ? 'post_claim_rank' : 'post_claim', views)}`}
                 className="block text-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors">
                 Upgrade to Pro: $9/month
               </Link>

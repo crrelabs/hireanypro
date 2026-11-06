@@ -6,6 +6,7 @@ import Link from 'next/link';
 import SmsToggle from './SmsToggle';
 import BadgeBox from './BadgeBox';
 import { onHuman, track } from '@/lib/track';
+import { dashboardViewsNudge } from '@/lib/claim-views-ui';
 
 type DashboardData = {
   listings: Array<{
@@ -39,6 +40,17 @@ type DashboardData = {
   monthInquiries: number;
   views30: number;
 };
+
+function FreeViewsNudge({ views, tier, listingId }: { views?: number; tier: string; listingId: string }) {
+  const nudge = dashboardViewsNudge(views, tier);
+  if (!nudge) return null;
+  return (
+    <div className="text-sm text-gray-700 mt-2 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
+      {nudge}{' '}
+      <Link href={`/pricing?plan=pro&listing=${listingId}&src=dashboard&cmp=views_nudge`} className="text-blue-800 font-semibold hover:underline">Show them with Pro ($9/mo)</Link>
+    </div>
+  );
+}
 
 export default function DashboardPageWrapper() {
   return (
@@ -288,12 +300,7 @@ function DashboardPage() {
                 <div className="text-sm text-gray-500 mt-1">
                   {l.rating ? <>⭐ {Number(l.rating).toFixed(1)} ({l.review_count || 0} {l.review_count === 1 ? 'review' : 'reviews'}) · </> : null}👀 {l.views30 || 0} {l.views30 === 1 ? 'view' : 'views'} in the last 30 days
                 </div>
-                {l.tier === 'free' && (l.views30 || 0) >= 3 && (
-                  <div className="text-sm text-gray-700 mt-2 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
-                    {l.views30} people looked at your listing this month, but free listings hide your phone and website.{' '}
-                    <Link href={`/pricing?plan=pro&listing=${l.id}&src=dashboard&cmp=views_nudge`} className="text-blue-800 font-semibold hover:underline">Show them with Pro ($9/mo)</Link>
-                  </div>
-                )}
+                <FreeViewsNudge views={l.views30} tier={l.tier} listingId={l.id} />
                 {typeof l.strength === 'number' && l.checklist && (
                   <div className="mt-3 rounded-lg border border-gray-200 bg-gray-50 px-3 py-3" data-testid="listing-strength">
                     <div className="flex items-center justify-between text-sm">

@@ -24,3 +24,10 @@ export async function recentViews(ids: string[], days = 30, client?: SupabaseCli
   }
   return out;
 }
+
+/** 30-day view sum for one listing. 0 when the read fails or the id has no rows. Never throws. */
+export async function viewCount(id: string, days = 30, client?: SupabaseClient | null): Promise<number> {
+  const n = (await recentViews([id], days, client))[id] || 0;
+  if (!Number.isFinite(n) || n <= 0) return 0;
+  return Math.floor(n);
+}
