@@ -23,7 +23,7 @@ import { supabase } from '@/lib/supabase';
  * - requested slug is a trade or city alias of a page that does exist → the canonical /costs/<trade>/<city>
  * Unknown trade (not a guide and not an alias) → 404.
  */
-export const CITY_COST_PAGES_REVISED = '2026-11-05';
+export const CITY_COST_PAGES_REVISED = '2026-11-06';
 
 export const costCityPath = (trade: string, city: string) => `${costPath(trade)}/${city}`;
 

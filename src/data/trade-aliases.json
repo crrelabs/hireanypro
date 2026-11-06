@@ -4,7 +4,7 @@
   "ac": "hvac", "ac-repair": "hvac", "air-conditioning": "hvac", "air-conditioning-repair": "hvac", "hvac-repair": "hvac", "hvac-contractors": "hvac",
   "roofer": "roofing", "roofers": "roofing", "roof-repair": "roofing",
   "painter": "painting", "painters": "painting",
-  "landscaper": "landscaping", "landscapers": "landscaping", "lawn-care": "landscaping",
+  "landscaper": "landscaping", "landscapers": "landscaping", "lawn-care": "landscaping", "lawn-maintenance": "landscaping", "yard-maintenance": "landscaping", "grass-cutting": "landscaping", "lawn-service": "landscaping", "lawn-services": "landscaping",
   "cleaners": "cleaning", "house-cleaning": "cleaning", "maid-service": "cleaning", "cleaning-services": "cleaning",
   "pest": "pest-control", "exterminator": "pest-control", "exterminators": "pest-control",
   "floors": "flooring", "flooring-contractors": "flooring",

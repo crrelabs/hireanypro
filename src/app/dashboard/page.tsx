@@ -106,6 +106,23 @@ function DashboardPage() {
     setBannerReady(true);
   }, [data]);
 
+  const smsNudgeListings = (data?.listings || []).filter((l) => !l.smsPhone);
+  const smsNudgeKey = smsNudgeListings.map((l) => l.id).join(',');
+  const smsNudgeRef = useRef(smsNudgeListings);
+  smsNudgeRef.current = smsNudgeListings;
+  const viewedSmsNudges = useRef(new Set<string>());
+
+  useEffect(() => {
+    if (!smsNudgeKey) return;
+    return onHuman(() => {
+      for (const l of smsNudgeRef.current) {
+        if (viewedSmsNudges.current.has(l.id)) continue;
+        viewedSmsNudges.current.add(l.id);
+        track('sms_opt_in_nudge_view', { listing_slug: l.slug });
+      }
+    });
+  }, [smsNudgeKey]);
+
   const bannerListings = (data?.listings || []).filter((l) => l.hasWebsite && !l.badgeDetected && !dismissedBanners[l.id]);
   const bannerKey = bannerListings.map((l) => l.id).join(',');
   const bannerListingsRef = useRef(bannerListings);
@@ -306,7 +323,14 @@ function DashboardPage() {
                     )}
                   </div>
                 )}
-                <SmsToggle listingId={l.id} initialPhone={l.smsPhone || null} />
+                {!l.smsPhone && (
+                  <p className="mt-3 text-sm text-gray-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                    <a href={`#sms-${l.id}`} className="font-medium text-blue-800 hover:underline">Turn on text alerts for new quote requests</a>
+                  </p>
+                )}
+                <div id={`sms-${l.id}`}>
+                  <SmsToggle listingId={l.id} initialPhone={l.smsPhone || null} />
+                </div>
                 {l.badgeDetected && (
                   <p className="text-sm text-green-700 mt-2">✓ Badge found on your website</p>
                 )}

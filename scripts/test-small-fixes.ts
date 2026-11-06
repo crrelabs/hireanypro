@@ -82,6 +82,9 @@ assert.equal(blogToc(kept, 'Roof Repair Tips')[0].level, 2);
 const aliases = TRADE_ALIASES as Record<string, string>;
 assert.equal(aliases['pool-maintenance'], 'pool-service');
 assert.equal(aliases.maintenance, 'handyman');
+for (const lawn of ['lawn-maintenance', 'yard-maintenance', 'grass-cutting', 'lawn-service', 'lawn-services', 'lawn-care']) {
+  assert.equal(aliases[lawn], 'landscaping', lawn);
+}
 
 const dotted = 'hello-floors-st-pete-st.-petersburg';
 assert.equal(dotted.replace(/st\.-/g, 'st-'), 'hello-floors-st-pete-st-petersburg');

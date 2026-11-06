@@ -49,6 +49,10 @@ export const metadata: Metadata = {
     images: [{ url: '/logo.png', alt: 'HireAnyPro' }],
   },
   twitter: { card: 'summary', title: 'HireAnyPro — Find Trusted Home Service Pros in Florida', images: ['/logo.png'] },
+  icons: {
+    icon: [{ url: '/favicon.ico' }],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
 };
 
 export default function RootLayout({

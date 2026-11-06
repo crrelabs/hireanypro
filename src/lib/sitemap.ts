@@ -58,7 +58,7 @@ export const CATEGORY_PAGES_REVISED = '2026-11-05'; // 2026-11-05: brand suffix 
 export const LISTING_PAGES_REVISED = '2026-11-04'; // 2026-11-04: typical cost line. 2026-11-02: license check box
 export const COUNTY_PAGES_REVISED = '2026-11-02'; // 2026-11-02: city chips link city hubs
 export const CITY_HUBS_REVISED = '2026-11-05'; // 2026-11-05: meta lists top services as "X, Y, Z, and more". 2026-11-04: cost guides link
-export { CITY_COST_PAGES_REVISED }; // 2026-11-05: /costs/<trade>/<city>
+export { CITY_COST_PAGES_REVISED }; // 2026-11-06: city cost pages. 2026-11-05: /costs/<trade>/<city>
 export function withFloor(lastmod: string | null | undefined, floor: string): string {
   return lastmod && lastmod > floor ? lastmod : floor;
 }
