@@ -5,7 +5,7 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import CityQuoteForm from '@/components/CityQuoteForm';
 import CostJobsTable from '@/components/CostJobsTable';
-import { costPath, costRange, type CostGuide } from '@/lib/cost-guides';
+import { COSTS_UPDATED, costPath, costRange, type CostGuide } from '@/lib/cost-guides';
 import { costCityPath, resolveCityCost, type CityCostFacts } from '@/lib/city-costs';
 import { faqPageJsonLd, formatCount, lowerCategory } from '@/lib/directory-content';
 import { prosLabel } from '@/lib/pros-label';
@@ -104,6 +104,16 @@ export default async function CityCostPage({ params }: Props) {
   const jsonLd = [
     {
       '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: h1,
+      dateModified: COSTS_UPDATED,
+      datePublished: COSTS_UPDATED,
+      mainEntityOfPage: url,
+      author: { '@type': 'Organization', name: 'HireAnyPro', url: BASE },
+      publisher: { '@type': 'Organization', name: 'HireAnyPro', logo: { '@type': 'ImageObject', url: `${BASE}/logo.png` } },
+    },
+    {
+      '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Home', item: BASE },
@@ -171,11 +181,21 @@ export default async function CityCostPage({ params }: Props) {
           ))}
         </div>
 
-        <p className="text-xs text-gray-500">
-          How we estimate: ranges are typical installed prices for Florida homes in 2026, compiled from published 2025–2026 Florida and national cost guides and contractor price lists.
-          South Florida and resort areas tend to sit at the high end, North Florida and the Panhandle at the low end. Prices are not quotes and change with materials, season and storms.
-          Listing counts and ratings are HireAnyPro directory facts for {hub.name}, not a price survey.
+        <p className="text-xs text-gray-500 mb-4">
+          How we estimate: ranges are typical installed prices for Florida homes in 2026. On 2026-11-05 we checked each guide’s headline job against at least two public sources (Angi, HomeGuide, Fixr, EnergySage, and Florida contractor guides where available) and logged sources in our cost-sources file; secondary jobs use those guides or a related planning estimate. South Florida and resort areas tend to sit at the high end, North Florida and the Panhandle at the low end. Prices are not quotes and change with materials, season and storms. Listing counts and ratings are HireAnyPro directory facts for {hub.name}, not a price survey. See Sources below.
         </p>
+        {guide.sources && guide.sources.length > 0 && (
+          <section className="mb-6" aria-labelledby="cost-sources-heading">
+            <h2 id="cost-sources-heading" className="text-sm font-semibold text-gray-900 mb-2">Sources</h2>
+            <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+              {guide.sources.map((s) => (
+                <li key={s.url}>
+                  <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-blue-800 hover:underline">{s.label}</a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </article>
     </>
   );
