@@ -15,6 +15,7 @@ export function ClaimIntro() {
     <div className="text-center mb-10">
       <h1 className="text-3xl font-bold text-gray-900 mb-3">Claim Your Business Listing</h1>
       <p className="text-gray-600">Free forever. No credit card. Takes about a minute.</p>
+      <p className="mt-3 text-sm"><a href="#faq" className="text-blue-800 hover:underline">Questions?</a></p>
     </div>
   );
 }
