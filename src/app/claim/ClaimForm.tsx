@@ -41,6 +41,7 @@ type ClaimFormProps = {
   benefitsAfter: ReactNode;
   proof: ReactNode;
   trust: ReactNode;
+  faq: ReactNode;
 };
 
 export default function ClaimForm(props: ClaimFormProps) {
@@ -64,6 +65,7 @@ function ClaimFormBody({
   benefitsAfter,
   proof,
   trust,
+  faq,
 }: ClaimFormProps & { search: string }) {
   const params = new URLSearchParams(search);
   const preselectedSlug = params.get('listing');
@@ -434,6 +436,7 @@ function ClaimFormBody({
 
       {focused && benefitsAfter}
       {trust}
+      {faq}
     </div>
   );
 }

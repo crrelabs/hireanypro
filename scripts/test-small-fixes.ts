@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { blogToc, stripDuplicateTitle } from '../src/lib/blog-markdown';
+import { claimFaqJsonLd, claimFaqs } from '../src/lib/claim-faq';
 import { businessNoun, forProsDocumentTitle } from '../src/lib/for-pros';
+import { jsonLdHtml } from '../src/lib/json-ld';
 import { categoryDocumentTitle, clampTitle, dataCategoryTitle } from '../src/lib/meta';
 import TRADE_ALIASES from '../src/data/trade-aliases.json';
 
@@ -88,5 +91,40 @@ for (const lawn of ['lawn-maintenance', 'yard-maintenance', 'grass-cutting', 'la
 
 const dotted = 'hello-floors-st-pete-st.-petersburg';
 assert.equal(dotted.replace(/st\.-/g, 'st-'), 'hello-floors-st-pete-st-petersburg');
+
+const claimLd = claimFaqJsonLd();
+assert.equal(claimLd['@type'], 'FAQPage');
+assert.deepEqual(claimLd.mainEntity.map((q) => q.name), claimFaqs.map((f) => f.q));
+assert.deepEqual(claimLd.mainEntity.map((q) => q.acceptedAnswer.text), claimFaqs.map((f) => f.a));
+assert.deepEqual(claimFaqs.map((f) => f.q), [
+  'Is claiming free?',
+  'How do I verify?',
+  'What does Pro ($9/mo) add vs free?',
+  'Can I edit after claiming?',
+]);
+const claimLdHtml = jsonLdHtml(claimLd);
+assert.match(claimLdHtml, /"@type":"FAQPage"/);
+assert.doesNotMatch(claimLdHtml, /<\/script/i);
+for (const f of claimFaqs) {
+  const text = `${f.q} ${f.a}`.toLowerCase();
+  assert.equal(text.includes('free trial'), false, f.q);
+  assert.equal(text.includes('money-back'), false, f.q);
+  assert.equal(text.includes('money back'), false, f.q);
+}
+assert.match(claimFaqs[0].a, /free forever/);
+assert.match(claimFaqs[1].a, /24 hours/);
+assert.match(claimFaqs[1].a, /one click/i);
+assert.match(claimFaqs[2].a, /above free listings/);
+assert.match(claimFaqs[3].a, /dashboard/);
+
+const claimPage = readFileSync(new URL('../src/app/claim/page.tsx', import.meta.url), 'utf8');
+const claimContent = readFileSync(new URL('../src/app/claim/claim-content.tsx', import.meta.url), 'utf8');
+const claimForm = readFileSync(new URL('../src/app/claim/ClaimForm.tsx', import.meta.url), 'utf8');
+assert.match(claimPage, /<ClaimFaq\s*\/>/);
+assert.match(claimContent, /id="faq"/);
+assert.match(claimContent, /jsonLdHtml\(claimFaqJsonLd\(\)\)/);
+assert.doesNotMatch(claimContent, /@supabase\/supabase-js/);
+assert.doesNotMatch(claimForm, /@supabase\/supabase-js/);
+assert.doesNotMatch(claimForm, /claim-content/);
 
 console.log('small-fixes unit checks passed');
