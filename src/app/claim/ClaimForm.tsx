@@ -273,6 +273,7 @@ function ClaimFormBody({
         <div className="text-center mb-10">
           <h1 className="text-3xl font-bold text-gray-900 mb-3">Claim {selected.name}</h1>
           <p className="text-gray-600">{express ? 'One click, free forever. No credit card, no verification email.' : 'Free forever. No credit card. Takes about a minute.'}</p>
+          <p className="mt-3 text-sm"><a href="#faq" className="text-blue-800 hover:underline">Questions?</a></p>
         </div>
       ) : intro}
 
