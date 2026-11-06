@@ -6,6 +6,7 @@ import Link from 'next/link';
 import TurnstileWidget from '@/components/TurnstileWidget';
 import { isAutomatedBrowser, onHuman } from '@/lib/track';
 import ClaimValueCard from '@/components/ClaimValueCard';
+import { claimRankSentence, readClaimRank, type ClaimRankFields } from '@/lib/claim-rank-ui';
 
 type ListingResult = {
   id: string;
@@ -84,6 +85,7 @@ function ClaimFormBody({
   const [smsOptIn, setSmsOptIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [rank, setRank] = useState<ClaimRankFields | null>(null);
   const [pendingVerification, setPendingVerification] = useState(false);
   const [error, setError] = useState('');
   const [resent, setResent] = useState(false);
@@ -203,6 +205,7 @@ function ClaimFormBody({
         if (data.verified) {
           track('claim_verified', { listing_slug: selected.slug, method: 'one_click' });
           setClaimedListingId(data.listingId || selected.id);
+          setRank(readClaimRank(data));
           setSuccess(true);
         } else if (data.pendingVerification) {
           setPendingVerification(true);
@@ -248,13 +251,14 @@ function ClaimFormBody({
         {claimedListingId && (
           <div className="mt-10 text-left bg-white border-2 border-blue-800 rounded-xl p-6">
             <p className="text-xs font-bold uppercase tracking-wide text-blue-800 mb-1">Optional upgrade</p>
+            {rank && <p className="text-sm text-gray-800 mb-3">{claimRankSentence(rank)}</p>}
             <h2 className="text-xl font-bold text-gray-900 mb-2">Get every quote request in your inbox: Pro, $9/month</h2>
             <ul className="text-sm text-gray-700 space-y-1 mb-4 list-disc pl-5">
               <li>See the customer&apos;s name, phone and email on every request</li>
               <li>Your phone, email and website shown on your listing</li>
               <li>Ranked above free listings, plus a Verified badge</li>
             </ul>
-            <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(claimedListingId)}&src=claim_success&cmp=post_claim`}
+            <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(claimedListingId)}&src=claim_success&cmp=${rank ? 'post_claim_rank' : 'post_claim'}`}
               className="block text-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg">Upgrade to Pro: $9/month</Link>
             <p className="text-xs text-gray-500 text-center mt-2">Cancel anytime. Your free listing stays free if you skip this.</p>
           </div>

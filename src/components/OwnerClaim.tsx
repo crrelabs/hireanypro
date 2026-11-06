@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { isAutomatedBrowser, onHuman } from '@/lib/track';
 import ClaimValueCard from '@/components/ClaimValueCard';
+import { claimRankSentence, readClaimRank, type ClaimRankFields } from '@/lib/claim-rank-ui';
 
 /**
  * Owners who open their listing from one of our claim emails arrive with ?ct=<signed token> (and utm_medium=outreach).
@@ -54,6 +55,7 @@ export function OwnerClaimBanner({ slug, name, listingId }: { slug: string; name
   const mountedAt = useRef(Date.now());
   const [state, setState] = useState<TapState>('idle');
   const [err, setErr] = useState('');
+  const [rank, setRank] = useState<ClaimRankFields | null>(null);
   useEffect(() => {
     if (fromEmail) return onHuman(() => track('owner_banner_view', { listing_slug: slug, one_click: !!ct }));
   }, [fromEmail, ct, slug]);
@@ -78,6 +80,7 @@ export function OwnerClaimBanner({ slug, name, listingId }: { slug: string; name
       if (data.success && data.verified) {
         track('claim_submit', { listing_slug: slug, method: 'one_click', surface: 'listing_banner' });
         track('claim_verified', { listing_slug: slug, method: 'one_click', surface: 'listing_banner' });
+        setRank(readClaimRank(data));
         setState('done');
         return;
       }
@@ -96,9 +99,10 @@ export function OwnerClaimBanner({ slug, name, listingId }: { slug: string; name
       <div className="mb-6 rounded-xl border-2 border-green-500 bg-green-50 p-5">
         <p className="font-bold text-gray-900 text-lg">🎉 {name} is now yours.</p>
         <p className="text-sm text-gray-700 mb-3">You&apos;re signed in. Add your phone, hours, services and a real description so homeowners pick you.</p>
+        {rank && <p className="text-sm text-gray-800 mb-3">{claimRankSentence(rank)}</p>}
         <div className="flex flex-col sm:flex-row gap-3">
           <Link href={listingId ? `/dashboard/edit/${listingId}?src=claim_success` : '/dashboard'} className="text-center bg-blue-800 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-lg">Finish my listing (2 min)</Link>
-          <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(listingId || slug)}&src=claim_success&cmp=listing_one_tap`}
+          <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(listingId || slug)}&src=claim_success&cmp=${rank ? 'listing_one_tap_rank' : 'listing_one_tap'}`}
             className="text-center border-2 border-orange-500 text-orange-700 hover:bg-orange-100 font-semibold px-5 py-2.5 rounded-lg">Optional: rank above free listings with Pro ($9/mo)</Link>
         </div>
       </div>

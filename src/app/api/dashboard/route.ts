@@ -4,6 +4,7 @@ import { isRateLimited, getClientIp } from '@/lib/rate-limit';
 import { sessionEmail, likeExact } from '@/lib/session';
 import { recentViews } from '@/lib/listing-views';
 import { listingStrength } from '@/lib/listing-strength';
+import { cityPosition } from '@/lib/city-rank';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -222,7 +223,7 @@ export async function POST(req: NextRequest) {
       // Homepage checks run alongside the rank queries. A failed fetch is "not detected" and must not fail the dashboard.
       const badgeChecks = Promise.all(rows.map((l) => badgeForListing(l.website, l.slug)));
       // Position on the city x service page: Featured first, then Pro, then free, each by review count (lib/listings).
-      const ranks = await Promise.all(rows.map((l) => cityPosition(l)));
+      const ranks = await Promise.all(rows.map((l) => cityPosition(supabase, l)));
       const badges = await badgeChecks;
       listings = rows.map((l, i) => {
         const strength = listingStrength(l);
@@ -281,30 +282,3 @@ export async function POST(req: NextRequest) {
   }
 }
 
-type RankRow = { id: string; tier: string | null; review_count: number | null; city: string | null; state: string | null; category_id: string | null };
-
-/** Where this listing sits on its city x service page now, and where Pro would put it. Null when unknown. */
-async function cityPosition(l: RankRow): Promise<{ cityRank: number | null; cityTotal: number | null; proRank: number | null }> {
-  if (!l.city || !l.category_id) return { cityRank: null, cityTotal: null, proRank: null };
-  try {
-    const base = () => supabase.from('listings').select('id', { count: 'exact', head: true })
-      .eq('category_id', l.category_id).eq('city', l.city).eq('state', l.state || 'FL');
-    const mine = Number(l.review_count || 0);
-    const [total, featured, proMore, freeMore] = await Promise.all([
-      base(),
-      base().or('featured.eq.true,tier.eq.featured').neq('id', l.id),
-      base().eq('tier', 'pro').not('featured', 'is', true).gt('review_count', mine).neq('id', l.id),
-      base().or('tier.is.null,tier.eq.free').not('featured', 'is', true).gt('review_count', mine).neq('id', l.id),
-    ]);
-    if (total.error || featured.error || proMore.error || freeMore.error) return { cityRank: null, cityTotal: null, proRank: null };
-    const paidAbove = (featured.count || 0);
-    const proCount = await base().eq('tier', 'pro').not('featured', 'is', true).neq('id', l.id);
-    const isFree = (l.tier || 'free') === 'free';
-    // Free: every Featured and Pro listing is above it, plus free listings with more reviews.
-    const cityRank = isFree ? paidAbove + (proCount.count || 0) + (freeMore.count || 0) + 1 : paidAbove + (proMore.count || 0) + 1;
-    const proRank = paidAbove + (proMore.count || 0) + 1;
-    return { cityRank, cityTotal: total.count || null, proRank };
-  } catch {
-    return { cityRank: null, cityTotal: null, proRank: null };
-  }
-}
