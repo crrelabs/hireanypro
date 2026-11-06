@@ -23,6 +23,14 @@ for (let h = 0; h < 24; h++) {
 }
 
 type HoursMap = Record<string, { open: string; close: string } | string>;
+type HoursPreset = 'mon_fri_8_5' | 'mon_sat_8_6' | 'clear';
+
+function hoursFromPreset(preset: HoursPreset): HoursMap {
+  if (preset === 'clear') return Object.fromEntries(DAYS.map((day) => [day, 'Closed']));
+  const close = preset === 'mon_fri_8_5' ? '17:00' : '18:00';
+  const openDays = preset === 'mon_fri_8_5' ? 5 : 6;
+  return Object.fromEntries(DAYS.map((day, i) => [day, i < openDays ? { open: '08:00', close } : 'Closed']));
+}
 
 function EditForm() {
   const params = useParams();
@@ -46,6 +54,7 @@ function EditForm() {
   const [zip, setZip] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [hours, setHours] = useState<HoursMap>({});
+  const [hoursPreset, setHoursPreset] = useState<HoursPreset | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -96,6 +105,11 @@ function EditForm() {
     });
   }
 
+  function applyHoursPreset(preset: HoursPreset) {
+    setHours(hoursFromPreset(preset));
+    setHoursPreset(preset);
+  }
+
   function toggleClosed(day: string) {
     setHours((prev) => {
       if (prev[day] === 'Closed') {
@@ -126,7 +140,12 @@ function EditForm() {
         if (!isAutomatedBrowser()) {
           const w = window as unknown as { gtag?: (...a: unknown[]) => void };
           const src = new URLSearchParams(window.location.search).get('src') || 'direct';
-          w.gtag?.('event', 'listing_saved', { source: src, has_listing: true, form: description.trim().length >= 120 ? 'description_ok' : 'description_short' });
+          w.gtag?.('event', 'listing_saved', {
+            source: src,
+            has_listing: true,
+            form: description.trim().length >= 120 ? 'description_ok' : 'description_short',
+            ...(hoursPreset ? { hours_preset: hoursPreset } : {}),
+          });
         }
       }
     } catch {
@@ -183,6 +202,9 @@ function EditForm() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
               <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4} className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800 focus:border-transparent text-gray-900" />
+              <p className={`mt-1 text-xs ${description.trim().length >= 120 ? 'text-green-700' : 'text-gray-500'}`}>
+                {description.trim().length} characters. Complete at 120+ characters
+              </p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
@@ -243,6 +265,11 @@ function EditForm() {
         {/* Hours */}
         <div>
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Business Hours</h2>
+          <div className="flex flex-wrap gap-2 mb-4">
+            <button type="button" onClick={() => applyHoursPreset('mon_fri_8_5')} className="text-sm px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-gray-800 hover:bg-gray-50">Mon–Fri 8am–5pm</button>
+            <button type="button" onClick={() => applyHoursPreset('mon_sat_8_6')} className="text-sm px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-gray-800 hover:bg-gray-50">Mon–Sat 8am–6pm</button>
+            <button type="button" onClick={() => applyHoursPreset('clear')} className="text-sm px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-gray-800 hover:bg-gray-50">Clear hours</button>
+          </div>
           <div className="space-y-3">
             {DAYS.map((day) => {
               const isClosed = hours[day] === 'Closed';
