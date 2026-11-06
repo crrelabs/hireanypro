@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { jsonLdHtml } from '@/lib/json-ld';
+import { claimFaqJsonLd, claimFaqs } from '@/lib/claim-faq';
 
 const BENEFITS: [string, string, string][] = [
   ['📨', 'Get customer quote requests', 'When homeowners request quotes in your area, claimed pros receive them by email (and text, if you opt in).'],
@@ -62,5 +64,28 @@ export function ClaimTrust({ claimedCount }: { claimedCount: number }) {
         <Link href="/privacy" className="text-blue-800 hover:underline">Privacy Policy</Link>.
       </p>
     </section>
+  );
+}
+
+/** Same questions in the HTML and in FAQPage JSON-LD. id="faq" is the in-page target. */
+export function ClaimFaq() {
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(claimFaqJsonLd()) }} />
+      <section id="faq" className="mt-10" aria-labelledby="claim-faq">
+        <h2 id="claim-faq" className="text-lg font-semibold text-gray-900 mb-4">Questions about claiming</h2>
+        <div className="space-y-3">
+          {claimFaqs.map((f) => (
+            <details key={f.q} className="bg-white border border-gray-200 rounded-lg p-4 group">
+              <summary className="font-semibold text-gray-900 cursor-pointer list-none flex justify-between items-center gap-4">
+                {f.q}
+                <span className="text-gray-400 group-open:rotate-45 transition-transform" aria-hidden="true">+</span>
+              </summary>
+              <p className="text-gray-700 text-sm mt-2">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+    </>
   );
 }
