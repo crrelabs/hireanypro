@@ -8,7 +8,7 @@ const supabase = createClient(
 );
 
 // Columns the edit form reads. Never select('*') here.
-const LISTING_COLUMNS = 'name, description, phone, email, website, address, city, state, zip, category_id, hours';
+const LISTING_COLUMNS = 'name, description, phone, email, website, address, city, state, zip, category_id, hours, tier';
 
 function json(body: unknown, status = 200) {
   return NextResponse.json(body, { status, headers: { 'Cache-Control': 'no-store' } });
