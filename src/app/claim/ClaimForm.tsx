@@ -4,7 +4,8 @@ import { useState, useEffect, useLayoutEffect, useRef, Suspense, type ReactNode 
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import TurnstileWidget from '@/components/TurnstileWidget';
-import { isAutomatedBrowser, onHuman } from '@/lib/track';
+import BadgeClaimCta from '@/components/BadgeClaimCta';
+import { onHuman, track } from '@/lib/track';
 import ClaimValueCard from '@/components/ClaimValueCard';
 import { claimRankSentence, readClaimRank, type ClaimRankFields } from '@/lib/claim-rank-ui';
 import { claimViewsSentence, readClaimViews, withViewsCmp } from '@/lib/claim-views-ui';
@@ -148,12 +149,6 @@ function ClaimFormBody({
     return () => { live = false; };
   }, [preselectedSlug]);
 
-  function track(name: string, params: Record<string, unknown> = {}) {
-    if (isAutomatedBrowser()) return;
-    const w = window as unknown as { gtag?: (...args: unknown[]) => void };
-    w.gtag?.('event', name, { page_path: window.location.pathname, ...params });
-  }
-
   // Funnel: one claim_view per listing once it is known, split by one-click vs email-link.
   const viewedSlug = useRef<string | null>(null);
   useEffect(() => {
@@ -253,6 +248,7 @@ function ClaimFormBody({
         <Link href={claimedListingId ? `/dashboard/edit/${claimedListingId}?src=claim_success` : '/dashboard'} className="inline-block bg-blue-800 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium">
           Finish my listing →
         </Link>
+        <BadgeClaimCta listingSlug={selected?.slug} />
         {claimedListingId && (
           <div className="mt-10 text-left bg-white border-2 border-blue-800 rounded-xl p-6">
             <p className="text-xs font-bold uppercase tracking-wide text-blue-800 mb-1">Optional upgrade</p>

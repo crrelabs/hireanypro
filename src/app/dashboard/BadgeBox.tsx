@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { badgeSnippet } from '@/lib/badge';
+import { track } from '@/lib/track';
 
 /** "Find us on HireAnyPro" badge with copyable HTML for the owner's own website. */
 export default function BadgeBox({
@@ -42,7 +43,14 @@ export default function BadgeBox({
   }, [expandToken, anchorId]);
 
   async function copy() {
-    try { await navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 2500); } catch { setCopied(false); }
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      track('badge_copy', { listing_slug: slug });
+      setTimeout(() => setCopied(false), 5000);
+    } catch {
+      setCopied(false);
+    }
   }
   return (
     <div id={anchorId} className="scroll-mt-24">
@@ -60,6 +68,18 @@ export default function BadgeBox({
             <button onClick={copy} className="text-sm bg-blue-800 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 font-medium">{copied ? 'Copied ✓' : 'Copy code'}</button>
             <button onClick={() => setOpen(false)} className="text-sm text-gray-500 hover:underline">Hide</button>
           </div>
+          {copied && (
+            <p className="text-sm text-green-800 mt-2" role="status">Paste it on your site, then refresh this dashboard in a day to confirm.</p>
+          )}
+          <p className="mt-2 text-xs text-gray-600 leading-5">
+            WordPress: Appearance → Widgets/Custom HTML, or a Custom HTML block
+            <br />
+            Wix: Add → Embed → Embed Code
+            <br />
+            Squarespace: Add Code Block
+            <br />
+            Or paste before {'</body>'} in your theme
+          </p>
         </div>
       )}
     </div>

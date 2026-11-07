@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
-import { isAutomatedBrowser, onHuman } from '@/lib/track';
+import BadgeClaimCta from '@/components/BadgeClaimCta';
+import { onHuman, track } from '@/lib/track';
 import ClaimValueCard from '@/components/ClaimValueCard';
 import { claimRankSentence, readClaimRank, type ClaimRankFields } from '@/lib/claim-rank-ui';
 import { claimViewsSentence, readClaimViews, withViewsCmp } from '@/lib/claim-views-ui';
@@ -25,12 +26,6 @@ function useEmailArrival() {
 
 function claimHref(slug: string, ct: string, source: string) {
   return `/claim?listing=${encodeURIComponent(slug)}&src=${source}${ct ? `&ct=${encodeURIComponent(ct)}` : ''}`;
-}
-
-function track(name: string, params: Record<string, unknown>) {
-  if (isAutomatedBrowser()) return;
-  const w = window as unknown as { gtag?: (...a: unknown[]) => void };
-  w.gtag?.('event', name, { page_path: window.location.pathname, ...params });
 }
 
 function tokenEmailFrom(ct: string): string {
@@ -109,6 +104,7 @@ export function OwnerClaimBanner({ slug, name, listingId }: { slug: string; name
           <Link href={`/pricing?plan=pro&listing=${encodeURIComponent(listingId || slug)}&src=claim_success&cmp=${withViewsCmp(rank ? 'listing_one_tap_rank' : 'listing_one_tap', views)}`}
             className="text-center border-2 border-orange-500 text-orange-700 hover:bg-orange-100 font-semibold px-5 py-2.5 rounded-lg">Optional: rank above free listings with Pro ($9/mo)</Link>
         </div>
+        <BadgeClaimCta listingSlug={slug} />
       </div>
     );
   }
