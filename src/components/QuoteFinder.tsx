@@ -82,7 +82,7 @@ export default function QuoteFinder({ categories, initialCategory, initialCity, 
   const input = 'w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-blue-800 focus:border-transparent outline-none text-gray-900 bg-white';
 
   return (
-    <section className={`rounded-xl border-2 border-orange-200 bg-orange-50 p-6 text-left ${className}`} aria-labelledby={`qf-${source}`}>
+    <section id={`qf-${source}`} className={`rounded-xl border-2 border-orange-200 bg-orange-50 p-6 text-left ${className}`} aria-labelledby={chosen ? undefined : `qf-${source}-heading`}>
       {chosen ? (
         <>
           <button type="button" onClick={() => setChosen(null)} className="text-sm text-blue-800 hover:underline mb-3">← Change service or city</button>
@@ -91,7 +91,7 @@ export default function QuoteFinder({ categories, initialCategory, initialCity, 
         </>
       ) : (
         <>
-          <h2 id={`qf-${source}`} className="text-xl font-bold text-gray-900">{title || 'Get up to 3 free quotes from top-rated local pros'}</h2>
+          <h2 id={`qf-${source}-heading`} className="text-xl font-bold text-gray-900">{title || 'Get up to 3 free quotes from top-rated local pros'}</h2>
           <p className="text-sm text-gray-600 mt-1 mb-4">Pick a service and your city, describe the job once, and we send it to up to 3 top-rated pros. Free, no obligation.</p>
           <form onSubmit={onContinue} onFocus={() => { if (!started) { setStarted(true); track('quote_finder_start'); } }} className="grid grid-cols-1 md:grid-cols-5 gap-3">
             <select value={cat} onChange={(e) => { setCat(e.target.value); setErr(''); }} className={`${input} md:col-span-2`} aria-label="Service">

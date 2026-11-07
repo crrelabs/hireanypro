@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import CityQuoteForm from '@/components/CityQuoteForm';
+import StickyQuoteBar from '@/components/StickyQuoteBar';
 import CostJobsTable from '@/components/CostJobsTable';
 import { COSTS_UPDATED, costPath, costRange, type CostGuide } from '@/lib/cost-guides';
 import { costCityPath, resolveCityCost, type CityCostFacts } from '@/lib/city-costs';
@@ -163,6 +164,7 @@ export default async function CityCostPage({ params }: Props) {
           citySlug={hub.slug}
           cityName={hub.name}
         />
+        <StickyQuoteBar targetId="get-quotes" form="city_cost_multi_quote" label={`Get up to 3 free ${guide.title.toLowerCase()} quotes in ${hub.name}`} />
 
         <h2 className="text-xl font-semibold text-gray-900 mb-3">{`In ${hub.name}`}</h2>
         <p className="text-gray-700 mb-8">

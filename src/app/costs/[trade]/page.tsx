@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import QuoteFinder from '@/components/QuoteFinder';
+import StickyQuoteBar from '@/components/StickyQuoteBar';
 import CostJobsTable from '@/components/CostJobsTable';
 import report from '@/data/florida-ratings-2026-by-category.json';
 import { COST_GUIDES, COSTS_UPDATED, costGuide, costPath, costRange } from '@/lib/cost-guides';
@@ -102,6 +103,7 @@ export default async function CostGuidePage({ params }: { params: Promise<{ trad
         <QuoteFinder source="cost_guide" initialCategory={g.slug} className="mb-10"
           categories={[{ slug: g.slug, name: cat?.name || g.title }]}
           title={`Get up to 3 free quotes from ${prosLabel(lc)} near you`} />
+        <StickyQuoteBar targetId="qf-cost_guide" form="cost_guide_multi_quote" label={`Get up to 3 free quotes from ${prosLabel(lc)}`} />
 
         <div className="grid md:grid-cols-2 gap-6 mb-10">
           <section>
