@@ -211,7 +211,7 @@ export async function getPagesSitemapUrls(): Promise<SitemapUrl[]> {
         priority: 0.6,
       })),
     { loc: `${BASE_URL}/claim`, changefreq: 'monthly', priority: 0.5 },
-    { loc: `${BASE_URL}/for-pros`, lastmod: '2026-10-30', changefreq: 'monthly', priority: 0.6 },
+    { loc: `${BASE_URL}/for-pros`, lastmod: '2026-11-07', changefreq: 'monthly', priority: 0.6 },
   ];
 
   // County hub pages (/region/*) are listed once, in the cities sitemap (with per-county lastmod).
@@ -227,7 +227,7 @@ export async function getPagesSitemapUrls(): Promise<SitemapUrl[]> {
 
   // Owner landing pages, one per trade (added 2026-10-30).
   for (const category of categories) {
-    urls.push({ loc: `${BASE_URL}/for-pros/${category.slug}`, lastmod: '2026-10-30', changefreq: 'monthly', priority: 0.5 });
+    urls.push({ loc: `${BASE_URL}/for-pros/${category.slug}`, lastmod: '2026-11-07', changefreq: 'monthly', priority: 0.5 });
     if (DATA_TRADES.has(category.slug)) urls.push({ loc: `${BASE_URL}/data/florida-contractor-ratings-2026/${category.slug}`, lastmod: '2026-11-01', changefreq: 'monthly', priority: 0.5 });
   }
 

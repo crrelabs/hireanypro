@@ -85,8 +85,13 @@ assert.equal(blogToc(kept, 'Roof Repair Tips')[0].level, 2);
 const aliases = TRADE_ALIASES as Record<string, string>;
 assert.equal(aliases['pool-maintenance'], 'pool-service');
 assert.equal(aliases.maintenance, 'handyman');
-for (const lawn of ['lawn-maintenance', 'yard-maintenance', 'grass-cutting', 'lawn-service', 'lawn-services', 'lawn-care']) {
+for (const lawn of ['lawn-maintenance', 'yard-maintenance', 'grass-cutting', 'lawn-service', 'lawn-services', 'lawn-care', 'yard-work', 'yard-service']) {
   assert.equal(aliases[lawn], 'landscaping', lawn);
+}
+assert.equal(aliases['window-washing'], 'window-cleaning');
+assert.equal(aliases['window-washers'], 'window-cleaning');
+for (const pw of ['pressure-washing', 'pressurewashing', 'power-washing', 'powerwashing']) {
+  assert.equal(aliases[pw], 'cleaning', pw);
 }
 
 const dotted = 'hello-floors-st-pete-st.-petersburg';
