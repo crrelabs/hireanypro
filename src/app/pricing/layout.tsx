@@ -29,6 +29,10 @@ const faqs = [
     a: 'No. Plans are month to month and billed through Stripe. To cancel, email iris@hireanypro.com; cancellation takes effect at the end of the current billing period and there is no cancellation fee.',
   },
   {
+    q: 'Should I pick Pro or Featured?',
+    a: 'Start with Pro ($9/mo) if you want every quote request with the customer’s contact details and to rank above free listings. Choose Featured ($49.99/mo) when you want the top spot on your city and category pages plus a homepage highlight. You can change plans later; both are month to month.',
+  },
+  {
     q: 'What does Featured add?',
     a: 'Everything in Pro, plus top placement in searches, a highlighted listing card, a spot in the featured pros section on the homepage and lead stats in your dashboard.',
   },
