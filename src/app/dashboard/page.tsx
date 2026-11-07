@@ -64,6 +64,7 @@ function DashboardPage() {
   const searchParams = useSearchParams();
   const loginState = searchParams.get('login');
   const paid = !!searchParams.get('session_id');
+  const fromBadgeCta = searchParams.get('src') === 'claim_success' && searchParams.get('cmp') === 'badge_cta';
   const [email, setEmail] = useState('');
   const [authed, setAuthed] = useState<boolean | null>(null);
   const [linkSent, setLinkSent] = useState(false);
@@ -114,9 +115,18 @@ function DashboardPage() {
         if (window.localStorage.getItem(`hap_badge_banner_dismissed:${l.id}`) === '1') next[l.id] = true;
       } catch { /* storage unavailable */ }
     }
+    if (fromBadgeCta) {
+      const target = data.listings.find((l) => l.hasWebsite && !l.badgeDetected);
+      if (target) delete next[target.id];
+    }
     setDismissedBanners(next);
     setBannerReady(true);
-  }, [data]);
+  }, [data, fromBadgeCta]);
+
+  // Claim-success badge link opens the install UI without counting a banner click.
+  const badgeCtaTargetId = fromBadgeCta
+    ? ((data?.listings.find((l) => l.hasWebsite && !l.badgeDetected) || data?.listings[0])?.id ?? null)
+    : null;
 
   const smsNudgeListings = (data?.listings || []).filter((l) => !l.smsPhone);
   const smsNudgeKey = smsNudgeListings.map((l) => l.id).join(',');
@@ -341,7 +351,7 @@ function DashboardPage() {
                 {l.badgeDetected && (
                   <p className="text-sm text-green-700 mt-2">✓ Badge found on your website</p>
                 )}
-                <BadgeBox slug={l.slug} name={l.name} anchorId={`badge-${l.id}`} expandToken={badgeExpand?.id === l.id ? badgeExpand.n : 0} />
+                <BadgeBox slug={l.slug} name={l.name} anchorId={`badge-${l.id}`} expandToken={badgeExpand?.id === l.id ? badgeExpand.n : (bannerReady && badgeCtaTargetId === l.id ? 1 : 0)} />
               </div>
               <div className="flex items-center gap-3">
                 <span className={`text-xs font-bold px-3 py-1 rounded-full uppercase ${
